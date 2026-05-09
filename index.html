@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Richiesta Assistenza Domiciliare — PrivatAssistenza</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f6f9;min-height:100vh}
+.header{background:#1a5276;color:white;padding:20px 16px;text-align:center}
+.header h1{font-size:20px;margin-bottom:4px}
+.header p{font-size:13px;opacity:0.85}
+.container{max-width:620px;margin:24px auto;padding:0 14px 60px}
+.card{background:white;border-radius:10px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.card h2{font-size:15px;color:#1a5276;margin-bottom:14px;border-bottom:2px solid #e8f4fd;padding-bottom:7px}
+label.lbl{display:block;font-size:13px;font-weight:700;color:#555;margin-top:12px}
+label.lbl span{color:#e74c3c}
+input[type=text],input[type=tel],input[type=email],input[type=number],select,textarea{
+  width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:15px;
+  background:#fafafa;margin-top:4px;font-family:inherit
+}
+textarea{resize:vertical;min-height:80px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tipo-btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tipo-btn{flex:1;min-width:110px;padding:12px 8px;border-radius:8px;font-size:14px;
+  cursor:pointer;font-weight:400;border:2px solid #ddd;background:white;color:#333;transition:.15s}
+.tipo-btn.attivo{border-color:#1a5276;background:#1a5276;color:white;font-weight:700}
+.tag-group{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.tag{padding:6px 13px;border-radius:20px;font-size:13px;cursor:pointer;
+  border:1px solid #c5d5f5;background:#f0f4ff;color:#333;transition:.15s}
+.tag.attivo{background:#1a5276;color:white;border-color:#1a5276;font-weight:700}
+.accesso-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.accesso-row input{flex:1;margin-top:0}
+.accesso-row button{background:#e74c3c;color:white;border:none;border-radius:50%;
+  width:28px;height:28px;cursor:pointer;font-size:16px;line-height:1;flex-shrink:0}
+.add-btn{background:#e8f4fd;color:#1a5276;border:1px dashed #1a5276;border-radius:6px;
+  padding:8px 14px;cursor:pointer;font-size:13px;margin-top:10px;width:100%}
+.submit-btn{width:100%;padding:16px;background:#1a5276;color:white;border:none;
+  border-radius:10px;font-size:17px;font-weight:700;cursor:pointer;margin-top:8px;transition:.2s}
+.submit-btn:hover{background:#154360}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed}
+.errore{background:#fdecea;color:#c0392b;padding:12px;border-radius:6px;margin-bottom:16px;font-size:14px}
+.toggle-row{display:flex;align-items:center;gap:10px;margin-top:12px;cursor:pointer}
+.toggle-box{width:44px;height:24px;border-radius:12px;background:#ddd;position:relative;transition:.2s;flex-shrink:0}
+.toggle-box.on{background:#1a5276}
+.toggle-box::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;
+  border-radius:50%;background:white;transition:.2s}
+.toggle-box.on::after{left:23px}
+.toggle-label{font-size:14px;font-weight:600;color:#333}
+.hidden{display:none}
+.grazie{min-height:100vh;display:flex;align-items:center;justify-content:center}
+.grazie-box{background:white;border-radius:12px;padding:40px;max-width:480px;text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+.grazie-box .ico{font-size:60px;margin-bottom:12px}
+.grazie-box h2{color:#1a5276;margin-bottom:8px}
+.grazie-box p{color:#555;line-height:1.6}
+.grazie-box .tel{color:#1a5276;font-weight:700;margin-top:20px}
+select option:disabled{color:#aaa}
+.sezione-notte{margin-top:12px}
+.ora-notte-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.ora-notte-btn{padding:10px 18px;border-radius:8px;font-size:14px;cursor:pointer;
+  border:2px solid #ddd;background:white;color:#333;transition:.15s;font-weight:400}
+.ora-notte-btn.attivo{border-color:#1a5276;background:#1a5276;color:white;font-weight:700}
+</style>
+</head>
+<body>
+
+<div id="app-form">
+  <div class="header">
+    <h1>🏠 Richiesta Assistenza Domiciliare</h1>
+    <p>PrivatAssistenza — Compilare per ricevere un preventivo</p>
+  </div>
+  <div class="container">
+    <div id="errore-box" class="errore hidden"></div>
+
+    <!-- REFERENTE -->
+    <div class="card">
+      <h2>👤 Dati Referente</h2>
+      <div class="grid2">
+        <div><label class="lbl">Nome <span>*</span></label><input type="text" id="nome_referente" placeholder="Mario"></div>
+        <div><label class="lbl">Cognome <span>*</span></label><input type="text" id="cognome_referente" placeholder="Rossi"></div>
+      </div>
+      <label class="lbl">Telefono <span>*</span></label><input type="tel" id="telefono_referente" placeholder="333 1234567">
+      <label class="lbl">Email <span>*</span></label><input type="email" id="email_referente" placeholder="mario.rossi@email.it">
+    </div>
+
+    <!-- ASSISTITO -->
+    <div class="card">
+      <h2>🧓 Dati Assistito</h2>
+      <div class="grid2">
+        <div><label class="lbl">Nome <span>*</span></label><input type="text" id="nome_assistito" placeholder="Giuseppe"></div>
+        <div><label class="lbl">Cognome <span>*</span></label><input type="text" id="cognome_assistito" placeholder="Rossi"></div>
+      </div>
+      <label class="lbl">Età</label>
+      <input type="number" id="eta_assistito" placeholder="es. 82" style="width:110px">
+    </div>
+
+    <!-- LUOGO -->
+    <div class="card">
+      <h2>📍 Luogo di Assistenza</h2>
+      <label class="lbl">Sede PrivatAssistenza <span>*</span></label>
+      <select id="sede">
+        <option value="">— Seleziona —</option>
+        <option value="Siena">Siena</option>
+        <option value="Poggibonsi">Poggibonsi</option>
+        <option value="Follonica">Follonica</option>
+      </select>
+      <label class="lbl">Indirizzo <span>*</span></label><input type="text" id="indirizzo_assistenza" placeholder="Via Roma 1">
+      <label class="lbl">Comune <span>*</span></label><input type="text" id="comune_assistenza" placeholder="es. Siena">
+    </div>
+
+    <!-- TIPO SERVIZIO -->
+    <div class="card">
+      <h2>🕐 Tipo di Servizio</h2>
+      <label class="lbl">Seleziona il tipo di assistenza <span>*</span></label>
+      <div class="tipo-btn-group">
+        <button class="tipo-btn" data-val="diurno" onclick="setTipo('diurno')">☀️ Solo Diurno</button>
+        <button class="tipo-btn" data-val="notturno" onclick="setTipo('notturno')">🌙 Solo Notturno</button>
+        <button class="tipo-btn" data-val="entrambi" onclick="setTipo('entrambi')">☀️🌙 Diurno + Notturno</button>
+      </div>
+
+      <!-- SEZIONE DIURNO -->
+      <div id="sezione-diurno" class="hidden">
+        <label class="lbl" style="margin-top:16px">Giorni di assistenza</label>
+        <div class="tag-group" id="tags-giorni-diurni">
+          <span class="tag" data-g="Lunedì" onclick="toggleTag(this,'giorni_diurni')">Lunedì</span>
+          <span class="tag" data-g="Martedì" onclick="toggleTag(this,'giorni_diurni')">Martedì</span>
+          <span class="tag" data-g="Mercoledì" onclick="toggleTag(this,'giorni_diurni')">Mercoledì</span>
+          <span class="tag" data-g="Giovedì" onclick="toggleTag(this,'giorni_diurni')">Giovedì</span>
+          <span class="tag" data-g="Venerdì" onclick="toggleTag(this,'giorni_diurni')">Venerdì</span>
+          <span class="tag" data-g="Sabato" onclick="toggleTag(this,'giorni_diurni')">Sabato</span>
+          <span class="tag" data-g="Domenica" onclick="toggleTag(this,'giorni_diurni')">Domenica</span>
+        </div>
+        <label class="lbl" style="margin-top:14px">Accessi giornalieri (orario e durata)</label>
+        <div id="accessi-list"></div>
+        <button class="add-btn" onclick="aggiungiAccesso()">+ Aggiungi accesso</button>
+      </div>
+
+      <!-- SEZIONE NOTTURNO -->
+      <div id="sezione-notturno" class="hidden sezione-notte">
+        <label class="lbl" style="margin-top:16px">Notti di assistenza</label>
+        <div class="tag-group" id="tags-giorni-notturni">
+          <span class="tag" data-g="Lun-Mar" onclick="toggleTag(this,'giorni_notturni')">Lun→Mar</span>
+          <span class="tag" data-g="Mar-Mer" onclick="toggleTag(this,'giorni_notturni')">Mar→Mer</span>
+          <span class="tag" data-g="Mer-Gio" onclick="toggleTag(this,'giorni_notturni')">Mer→Gio</span>
+          <span class="tag" data-g="Gio-Ven" onclick="toggleTag(this,'giorni_notturni')">Gio→Ven</span>
+          <span class="tag" data-g="Ven-Sab" onclick="toggleTag(this,'giorni_notturni')">Ven→Sab</span>
+          <span class="tag" data-g="Sab-Dom" onclick="toggleTag(this,'giorni_notturni')">Sab→Dom</span>
+          <span class="tag" data-g="Dom-Lun" onclick="toggleTag(this,'giorni_notturni')">Dom→Lun</span>
+        </div>
+        <label class="lbl" style="margin-top:14px">Orario inizio nottata <span>*</span></label>
+        <div class="ora-notte-group">
+          <button class="ora-notte-btn" data-ora="21:00" onclick="setOraNotte('21:00')">Ore 21:00 (fine 06:00)</button>
+          <button class="ora-notte-btn" data-ora="22:00" onclick="setOraNotte('22:00')">Ore 22:00 (fine 07:00)</button>
+        </div>
+      </div>
+
+      <!-- ORE INTEGRATIVE (visibile se notturno o entrambi) -->
+      <div id="sezione-integrative" class="hidden" style="margin-top:16px;padding-top:14px;border-top:1px solid #eee">
+        <div class="toggle-row" onclick="toggleIntegrative()">
+          <div class="toggle-box" id="toggle-int"></div>
+          <span class="toggle-label">Aggiungere ore di assistenza diurna integrativa? (16€/h + IVA 5%)</span>
+        </div>
+        <div id="dettaglio-integrative" class="hidden" style="margin-top:12px">
+          <label class="lbl">Giorni di assistenza integrativa</label>
+          <div class="tag-group" id="tags-giorni-integrative">
+            <span class="tag" data-g="Lunedì" onclick="toggleTag(this,'giorni_integrative')">Lunedì</span>
+            <span class="tag" data-g="Martedì" onclick="toggleTag(this,'giorni_integrative')">Martedì</span>
+            <span class="tag" data-g="Mercoledì" onclick="toggleTag(this,'giorni_integrative')">Mercoledì</span>
+            <span class="tag" data-g="Giovedì" onclick="toggleTag(this,'giorni_integrative')">Giovedì</span>
+            <span class="tag" data-g="Venerdì" onclick="toggleTag(this,'giorni_integrative')">Venerdì</span>
+            <span class="tag" data-g="Sabato" onclick="toggleTag(this,'giorni_integrative')">Sabato</span>
+            <span class="tag" data-g="Domenica" onclick="toggleTag(this,'giorni_integrative')">Domenica</span>
+          </div>
+          <label class="lbl">Ore per giorno</label>
+          <input type="number" id="ore_integrative_num" placeholder="es. 3" style="width:110px">
+          <label class="lbl">Orario indicativo</label>
+          <input type="text" id="orario_integrative" placeholder="es. 09:00-12:00">
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTE -->
+    <div class="card">
+      <h2>📝 Note aggiuntive</h2>
+      <textarea id="note" placeholder="Informazioni aggiuntive sulla situazione dell'assistito, patologie, esigenze particolari..."></textarea>
+    </div>
+
+    <button class="submit-btn" id="btn-invia" onclick="invia()">📤 Invia Richiesta</button>
+  </div>
+</div>
+
+<!-- GRAZIE -->
+<div id="app-grazie" class="grazie hidden">
+  <div class="grazie-box">
+    <div class="ico">✅</div>
+    <h2>Richiesta inviata!</h2>
+    <p>Abbiamo ricevuto la sua richiesta. La contatteremo al più presto per un preventivo personalizzato.</p>
+    <p class="tel">PrivatAssistenza — 0577 600904</p>
+  </div>
+</div>
+
+<script>
+const API = 'https://alessia-631113cd.base44.app/api/functions/salvaClienteAssistenza';
+const stato = {
+  tipo_servizio: '',
+  ora_inizio_notte: '',
+  vuole_integrative: false,
+  giorni_diurni: [],
+  giorni_notturni: [],
+  giorni_integrative: [],
+  accessi: [{id:1, ora:'', durata:''}]
+};
+let accessoId = 2;
+
+function setTipo(val) {
+  stato.tipo_servizio = val;
+  document.querySelectorAll('.tipo-btn').forEach(b => {
+    b.classList.toggle('attivo', b.dataset.val === val);
+  });
+  document.getElementById('sezione-diurno').classList.toggle('hidden', val === 'notturno');
+  document.getElementById('sezione-notturno').classList.toggle('hidden', val === 'diurno');
+  document.getElementById('sezione-integrative').classList.toggle('hidden', val === 'diurno');
+  if (val === 'diurno') renderAccessi();
+}
+
+function setOraNotte(ora) {
+  stato.ora_inizio_notte = ora;
+  document.querySelectorAll('.ora-notte-btn').forEach(b => {
+    b.classList.toggle('attivo', b.dataset.ora === ora);
+  });
+}
+
+function toggleTag(el, key) {
+  const g = el.dataset.g;
+  const arr = stato[key];
+  const idx = arr.indexOf(g);
+  if (idx >= 0) { arr.splice(idx, 1); el.classList.remove('attivo'); }
+  else { arr.push(g); el.classList.add('attivo'); }
+}
+
+function toggleIntegrative() {
+  stato.vuole_integrative = !stato.vuole_integrative;
+  document.getElementById('toggle-int').classList.toggle('on', stato.vuole_integrative);
+  document.getElementById('dettaglio-integrative').classList.toggle('hidden', !stato.vuole_integrative);
+}
+
+function renderAccessi() {
+  const list = document.getElementById('accessi-list');
+  if (!list) return;
+  list.innerHTML = '';
+  stato.accessi.forEach(a => {
+    const row = document.createElement('div');
+    row.className = 'accesso-row';
+    row.innerHTML = `
+      <input type="time" placeholder="Ora" value="${a.ora}" onchange="aggiornaAccesso(${a.id},'ora',this.value)" style="flex:1;margin-top:0">
+      <input type="number" placeholder="Ore durata" value="${a.durata}" onchange="aggiornaAccesso(${a.id},'durata',this.value)" style="flex:1;margin-top:0;width:120px">
+      ${stato.accessi.length > 1 ? `<button onclick="rimuoviAccesso(${a.id})">×</button>` : '<div style="width:28px"></div>'}
+    `;
+    list.appendChild(row);
+  });
+}
+
+function aggiungiAccesso() {
+  stato.accessi.push({id: accessoId++, ora:'', durata:''});
+  renderAccessi();
+}
+
+function rimuoviAccesso(id) {
+  stato.accessi = stato.accessi.filter(a => a.id !== id);
+  renderAccessi();
+}
+
+function aggiornaAccesso(id, campo, val) {
+  const a = stato.accessi.find(x => x.id === id);
+  if (a) a[campo] = val;
+}
+
+function val(id) { return (document.getElementById(id)||{}).value || ''; }
+
+function mostraErrore(msg) {
+  const el = document.getElementById('errore-box');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function nascondiErrore() {
+  document.getElementById('errore-box').classList.add('hidden');
+}
+
+async function invia() {
+  nascondiErrore();
+  const nome_referente = val('nome_referente').trim();
+  const cognome_referente = val('cognome_referente').trim();
+  const telefono_referente = val('telefono_referente').trim();
+  const email_referente = val('email_referente').trim();
+  const nome_assistito = val('nome_assistito').trim();
+  const cognome_assistito = val('cognome_assistito').trim();
+  const sede = val('sede');
+  const indirizzo_assistenza = val('indirizzo_assistenza').trim();
+  const comune_assistenza = val('comune_assistenza').trim();
+
+  if (!nome_referente || !cognome_referente || !telefono_referente || !email_referente ||
+      !nome_assistito || !cognome_assistito || !sede || !indirizzo_assistenza || !comune_assistenza) {
+    mostraErrore('Compila tutti i campi obbligatori.');
+    return;
+  }
+  if (!stato.tipo_servizio) {
+    mostraErrore('Seleziona il tipo di assistenza.');
+    return;
+  }
+  if ((stato.tipo_servizio === 'notturno' || stato.tipo_servizio === 'entrambi') && !stato.ora_inizio_notte) {
+    mostraErrore('Seleziona l\'orario di inizio nottata.');
+    return;
+  }
+
+  const fine_notte = stato.ora_inizio_notte === '21:00' ? '06:00' : stato.ora_inizio_notte === '22:00' ? '07:00' : '';
+  const str_accessi = stato.accessi.filter(a => a.ora || a.durata)
+    .map((a,i) => `Accesso ${i+1}: ${a.ora||'?'} (${a.durata||'?'}h)`).join(' | ');
+  const str_integrative = stato.vuole_integrative && val('ore_integrative_num')
+    ? `${val('ore_integrative_num')}h/giorno - giorni: ${stato.giorni_integrative.join(', ')} - orario: ${val('orario_integrative')} - tariffa: 16EUR/h + IVA 5%`
+    : '';
+
+  const note_full = [
+    `SEDE: ${sede}`,
+    `INDIRIZZO: ${indirizzo_assistenza}`,
+    stato.giorni_diurni.length ? `GIORNI DIURNI: ${stato.giorni_diurni.join(', ')}` : '',
+    stato.giorni_notturni.length ? `NOTTI: ${stato.giorni_notturni.join(', ')}` : '',
+    stato.ora_inizio_notte ? `INIZIO NOTTE: ${stato.ora_inizio_notte} - FINE: ${fine_notte}` : '',
+    val('note') || ''
+  ].filter(Boolean).join('\n');
+
+  const btn = document.getElementById('btn-invia');
+  btn.disabled = true;
+  btn.textContent = '⏳ Invio in corso...';
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        tipo_cliente: 'Persona Fisica',
+        nome: nome_referente,
+        cognome: cognome_referente,
+        telefono_cellulare: telefono_referente,
+        email: email_referente,
+        nome_assistito,
+        cognome_assistito,
+        eta_assistito: val('eta_assistito') || '',
+        assistito_uguale_cliente: false,
+        luogo_assistenza: comune_assistenza,
+        tipo_assistenza: stato.tipo_servizio,
+        orari_diurni: str_accessi,
+        inizio_nottata: stato.ora_inizio_notte,
+        ore_integrative: str_integrative,
+        note: note_full,
+        aliquota_iva: '5%',
+        stato: 'Nuovo'
+      })
+    });
+
+    if (!res.ok) throw new Error('Errore server');
+
+    document.getElementById('app-form').classList.add('hidden');
+    document.getElementById('app-grazie').classList.remove('hidden');
+  } catch(e) {
+    mostraErrore('Errore durante l\'invio. Riprova o chiama il 0577 600904.');
+    btn.disabled = false;
+    btn.textContent = '📤 Invia Richiesta';
+  }
+}
+
+// Init accessi
+renderAccessi();
+</script>
+</body>
+</html>
