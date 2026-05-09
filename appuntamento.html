@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prenota Appuntamento – PrivatAssistenza</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 16px; }
+.card { background: white; border-radius: 16px; padding: 28px; max-width: 480px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.10); margin-top: 10px; }
+.logo { width: 130px; display: block; margin: 0 auto 14px; }
+h2 { text-align: center; color: #1565C0; font-size: 20px; margin-bottom: 4px; }
+.sottotitolo { text-align: center; color: #888; font-size: 11px; margin-bottom: 20px; }
+label { display: block; font-weight: bold; font-size: 13px; color: #444; margin-bottom: 6px; margin-top: 14px; }
+input, textarea, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; font-family: Arial, sans-serif; }
+textarea { height: 70px; resize: none; }
+.btn-group { display: flex; gap: 10px; margin-bottom: 4px; }
+.btn-sede { flex: 1; padding: 12px 8px; border-radius: 10px; border: 2px solid #ddd; background: white; cursor: pointer; font-size: 14px; font-weight: bold; color: #444; transition: all 0.2s; }
+.btn-sede.active { border-color: #1565C0; background: #e3f2fd; color: #1565C0; }
+.slots-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.slot { padding: 8px 14px; border-radius: 8px; border: 2px solid #ddd; background: white; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s; }
+.slot.active { border-color: #1565C0; background: #1565C0; color: white; }
+.btn-tipo { width: 100%; padding: 10px 14px; border-radius: 8px; border: 2px solid #ddd; background: white; cursor: pointer; font-size: 13px; text-align: left; margin-bottom: 8px; transition: all 0.2s; }
+.btn-tipo.active { border-color: #1565C0; background: #e3f2fd; color: #1565C0; font-weight: bold; }
+.btn-primary { width: 100%; margin-top: 16px; padding: 13px; background: #1565C0; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; }
+.btn-primary:disabled { background: #90a4ae; cursor: not-allowed; }
+.btn-secondary { padding: 12px 16px; background: #f5f5f5; color: #444; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; margin-top: 16px; }
+.riepilogo-box { background: #f0f4ff; border-left: 4px solid #1565C0; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
+.modifica { color: #1565C0; cursor: pointer; text-decoration: underline; margin-left: 8px; font-size: 12px; }
+.errore { color: #e53935; font-size: 13px; margin-top: 8px; }
+.footer { text-align: center; font-size: 11px; color: #aaa; margin-top: 24px; }
+.successo-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
+.btn-row { display: flex; gap: 10px; }
+.btn-row .btn-primary { flex: 1; }
+#loading { color: #888; font-size: 13px; margin-top: 8px; }
+#nessuno-slot { color: #e53935; font-size: 13px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <img src="https://base44.app/api/apps/69ef7a8bd1efc59f631113cd/files/mp/public/69ef7a8bd1efc59f631113cd/831d91b14_logo_privatassistenza_real.png" class="logo" />
+  <h2>Prenota un Appuntamento</h2>
+  <p class="sottotitolo">Cooperativa Sociale Il Sostegno · PrivatAssistenza Siena</p>
+
+  <!-- STEP 1 -->
+  <div id="step1">
+    <label>Sede *</label>
+    <div class="btn-group">
+      <button class="btn-sede" onclick="selezionaSede('Siena', this)">📍 Siena</button>
+      <button class="btn-sede" onclick="selezionaSede('Poggibonsi', this)">📍 Poggibonsi</button>
+    </div>
+
+    <div id="sezione-data" style="display:none">
+      <label>Data *</label>
+      <input type="date" id="data" onchange="caricaSlots()" />
+    </div>
+
+    <div id="sezione-slots" style="display:none">
+      <label>Orario disponibile *</label>
+      <div id="loading" style="display:none">Carico orari disponibili...</div>
+      <div id="nessuno-slot" style="display:none">Nessun orario disponibile per questa data. Prova un altro giorno.</div>
+      <div class="slots-grid" id="slots-container"></div>
+    </div>
+
+    <button class="btn-primary" id="btn-continua" style="display:none" onclick="vaiStep2()">Continua →</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" style="display:none">
+    <div class="riepilogo-box" id="riepilogo-step2"></div>
+
+    <label>Motivo dell'appuntamento *</label>
+    <button class="btn-tipo" onclick="selezionaTipo('Informazioni Assistenza Domiciliare', this)">Informazioni Assistenza Domiciliare</button>
+    <button class="btn-tipo" onclick="selezionaTipo('Informazioni Servizio Badanti', this)">Informazioni Servizio Badanti</button>
+    <button class="btn-tipo" onclick="selezionaTipo('Altro', this)">Altro</button>
+
+    <label>Nome *</label>
+    <input type="text" id="nome" placeholder="Mario" />
+    <label>Cognome *</label>
+    <input type="text" id="cognome" placeholder="Rossi" />
+    <label>Telefono *</label>
+    <input type="tel" id="telefono" placeholder="333 1234567" />
+    <label>Email *</label>
+    <input type="email" id="email" placeholder="mario.rossi@email.it" />
+    <label>Note (facoltativo)</label>
+    <textarea id="note" placeholder="Informazioni aggiuntive..."></textarea>
+
+    <div id="errore" class="errore" style="display:none"></div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="tornaStep1()">← Indietro</button>
+      <button class="btn-primary" id="btn-prenota" onclick="prenota()">Conferma Appuntamento ✓</button>
+    </div>
+  </div>
+
+  <!-- SUCCESSO -->
+  <div id="successo" style="display:none">
+    <div class="successo-icon">✅</div>
+    <h2 style="color:#2e7d32;margin-bottom:12px">Appuntamento confermato!</h2>
+    <div class="riepilogo-box" id="riepilogo-successo"></div>
+    <p style="color:#555;font-size:13px;margin-top:12px">Riceverai una email di conferma all'indirizzo fornito.</p>
+    <p style="color:#888;font-size:12px;margin-top:8px">Per modifiche o annullamenti: <strong>0577 600904</strong></p>
+  </div>
+
+  <p class="footer">Tel. 0577 600904 · siena@privatassistenza.it</p>
+</div>
+
+<script>
+const API = 'https://alessia-631113cd.base44.app/api/functions';
+let sede = '';
+let oraSelezionata = '';
+let tipoSelezionato = '';
+
+// Data minima = oggi
+const oggi = new Date().toISOString().split('T')[0];
+document.getElementById('data').min = oggi;
+
+// Leggi parametro sede dall'URL
+const params = new URLSearchParams(window.location.search);
+const sedeParam = params.get('sede');
+if (sedeParam === 'Siena' || sedeParam === 'Poggibonsi') {
+  sede = sedeParam;
+  document.querySelectorAll('.btn-sede').forEach(b => {
+    if (b.textContent.includes(sedeParam)) b.classList.add('active');
+  });
+  document.getElementById('sezione-data').style.display = 'block';
+}
+
+function selezionaSede(s, el) {
+  sede = s;
+  document.querySelectorAll('.btn-sede').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sezione-data').style.display = 'block';
+  document.getElementById('sezione-slots').style.display = 'none';
+  document.getElementById('btn-continua').style.display = 'none';
+  document.getElementById('data').value = '';
+  oraSelezionata = '';
+}
+
+async function caricaSlots() {
+  const data = document.getElementById('data').value;
+  if (!data || !sede) return;
+
+  oraSelezionata = '';
+  document.getElementById('btn-continua').style.display = 'none';
+  document.getElementById('sezione-slots').style.display = 'block';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('nessuno-slot').style.display = 'none';
+  document.getElementById('slots-container').innerHTML = '';
+
+  try {
+    const r = await fetch(`${API}/getDisponibilita`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sede, data })
+    });
+    const d = await r.json();
+    document.getElementById('loading').style.display = 'none';
+
+    if (!d.slots || d.slots.length === 0) {
+      document.getElementById('nessuno-slot').style.display = 'block';
+      return;
+    }
+
+    const container = document.getElementById('slots-container');
+    d.slots.forEach(s => {
+      const btn = document.createElement('button');
+      btn.className = 'slot';
+      btn.textContent = s;
+      btn.onclick = () => {
+        document.querySelectorAll('.slot').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        oraSelezionata = s;
+        document.getElementById('btn-continua').style.display = 'block';
+      };
+      container.appendChild(btn);
+    });
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('nessuno-slot').textContent = 'Errore di connessione. Riprova.';
+    document.getElementById('nessuno-slot').style.display = 'block';
+  }
+}
+
+function vaiStep2() {
+  const data = document.getElementById('data').value;
+  const [y, m, d] = data.split('-');
+  const dataIt = `${d}/${m}/${y}`;
+  document.getElementById('riepilogo-step2').innerHTML =
+    `📅 <strong>${dataIt}</strong> ore <strong>${oraSelezionata}</strong> · 📍 <strong>${sede}</strong>
+    <span class="modifica" onclick="tornaStep1()">modifica</span>`;
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+}
+
+function tornaStep1() {
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('step2').style.display = 'none';
+}
+
+function selezionaTipo(t, el) {
+  tipoSelezionato = t;
+  document.querySelectorAll('.btn-tipo').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+async function prenota() {
+  const nome = document.getElementById('nome').value.trim();
+  const cognome = document.getElementById('cognome').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const note = document.getElementById('note').value.trim();
+  const data = document.getElementById('data').value;
+
+  if (!nome || !cognome || !telefono || !email || !tipoSelezionato) {
+    const err = document.getElementById('errore');
+    err.textContent = 'Compila tutti i campi obbligatori e seleziona il motivo.';
+    err.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('btn-prenota');
+  btn.disabled = true;
+  btn.textContent = 'Invio in corso...';
+  document.getElementById('errore').style.display = 'none';
+
+  try {
+    const r = await fetch(`${API}/prenotaAppuntamento`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sede, data, ora: oraSelezionata, tipo: tipoSelezionato, nome, cognome, telefono, email, note })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      const [y, m, g] = data.split('-');
+      const dataIt = `${g}/${m}/${y}`;
+      document.getElementById('step2').style.display = 'none';
+      document.getElementById('successo').style.display = 'block';
+      document.getElementById('riepilogo-successo').innerHTML =
+        `📅 <strong>${dataIt}</strong> ore <strong>${oraSelezionata}</strong><br>
+         📍 Sede <strong>${sede}</strong><br>
+         📋 ${tipoSelezionato}`;
+    } else {
+      const err = document.getElementById('errore');
+      err.textContent = d.error || 'Errore durante la prenotazione. Riprova.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Conferma Appuntamento ✓';
+    }
+  } catch(e) {
+    const err = document.getElementById('errore');
+    err.textContent = 'Errore di connessione. Riprova.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Conferma Appuntamento ✓';
+  }
+}
+</script>
+</body>
+</html>
