@@ -231,11 +231,20 @@ input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-
         <span class="tag" data-v="Somministrazione pasti">&#127829; Pasti / Alimentazione</span>
         <span class="tag" data-v="Compagnia">&#128525; Compagnia</span>
         <span class="tag" data-v="Mobilizzazione">&#129728; Mobilizzazione</span>
-        <span class="tag" data-v="Pulizie domestiche">&#129529; Pulizie domestiche</span>
         <span class="tag" data-v="Accompagnamento">&#128661; Accompagnamento</span>
         <span class="tag" data-v="Terapia farmacologica">&#128138; Terapia farmacologica</span>
         <span class="tag" data-v="Fisioterapia">&#129496; Fisioterapia</span>
         <span class="tag" data-v="Altro">&#10133; Altro</span>
+      </div>
+      <div id="box-alimentazione" class="hidden" style="margin-top:12px">
+        <label class="lbl">Come si alimenta? <span class="req">*</span></label>
+        <div class="scelta-group" style="flex-wrap:wrap">
+          <button class="scelta-btn" id="alim-autonomo" type="button" style="min-width:130px">&#129385; Autonomamente</button>
+          <button class="scelta-btn" id="alim-aiuto" type="button" style="min-width:130px">&#129309; Con aiuto</button>
+          <button class="scelta-btn" id="alim-imboccato" type="button" style="min-width:130px">&#129748; Va imboccato</button>
+          <button class="scelta-btn" id="alim-sonda" type="button" style="min-width:130px">&#128138; Sonda / PEG</button>
+          <button class="scelta-btn" id="alim-frullato" type="button" style="min-width:130px">&#129362; Cibi frullati</button>
+        </div>
       </div>
       <div id="box-prestazioni-altro" class="hidden" style="margin-top:10px">
         <label class="lbl">Specifica</label>
@@ -597,6 +606,27 @@ input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-
       // mostra campo "altro" se selezionato
       document.getElementById('box-prestazioni-altro').classList.toggle('hidden',
         prestazioniSelezionate.indexOf('Altro') < 0);
+      // mostra box alimentazione
+      document.getElementById('box-alimentazione').classList.toggle('hidden',
+        prestazioniSelezionate.indexOf('Somministrazione pasti') < 0);
+      if(prestazioniSelezionate.indexOf('Somministrazione pasti') < 0) modalitaAlimentazione = '';
+    });
+  });
+
+  /* ========================================================
+     ALIMENTAZIONE — logica modale
+  ======================================================== */
+  var modalitaAlimentazione = '';
+  var alimBtns = ['autonomo','aiuto','imboccato','sonda','frullato'];
+  alimBtns.forEach(function(v){
+    var el = document.getElementById('alim-'+v);
+    if(!el) return;
+    el.addEventListener('click', function(){
+      modalitaAlimentazione = v;
+      alimBtns.forEach(function(b){
+        var btn = document.getElementById('alim-'+b);
+        if(btn) btn.classList.toggle('attivo', b===v);
+      });
     });
   });
 
@@ -657,6 +687,8 @@ input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-
     if((stato.tipoServizio==='notturno'||stato.tipoServizio==='entrambi')&&!stato.oraNotte){
       mostraErrore("Seleziona l'orario di inizio nottata."); return; }
     if(prestazioniSelezionate.length===0){ mostraErrore('Seleziona almeno una prestazione richiesta.'); return; }
+    if(prestazioniSelezionate.indexOf('Somministrazione pasti')>=0 && !modalitaAlimentazione){
+      mostraErrore('Indica come si alimenta l\'assistito.'); return; }
     if(animaliInCasa===null){ mostraErrore('Indica se ci sono animali in casa.'); return; }
     if(!getVal('data_inizio')){ mostraErrore('Indica la data di inizio del servizio.'); return; }
     if(!stato.fineServizio){ mostraErrore('Indica se il servizio ha una data di fine o è fino a revoca.'); return; }
@@ -704,6 +736,7 @@ input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-
         inizio_nottata: stato.oraNotte,
         ore_integrative: stato.vuoleIntegrative?'si':'',
         note: noteFull,
+        modalita_alimentazione: modalitaAlimentazione ? {'autonomo':'Autonomamente','aiuto':'Con aiuto','imboccato':'Va imboccato','sonda':'Sonda/PEG','frullato':'Cibi frullati'}[modalitaAlimentazione] : '',
         prestazioni: prestazioniSelezionate.join(', ') + (prestazioniSelezionate.indexOf('Altro')>=0 && getVal('prestazioni_altro') ? ' (' + getVal('prestazioni_altro') + ')' : ''),
         animali_in_casa: animaliInCasa ? ('Si - ' + (getVal('animali_tipo') || 'non specificato')) : 'No',
         data_inizio: getVal('data_inizio'),
