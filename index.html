@@ -83,6 +83,9 @@ textarea{resize:vertical;min-height:80px}
 .add-accesso-btn:disabled{opacity:0.4;cursor:not-allowed}
 .del-accesso-btn{background:#fdecea;border:none;color:#c0392b;border-radius:50%;
   width:22px;height:22px;font-size:14px;cursor:pointer;flex-shrink:0;line-height:1;padding:0}
+input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:15px;
+  background:#fafafa;margin-top:4px;font-family:inherit;width:100%}
+
 </style>
 </head>
 <body>
@@ -213,7 +216,23 @@ textarea{resize:vertical;min-height:80px}
       </div>
     </div>
 
-    <!-- 5. NOTE -->
+    <!-- 5. DATE SERVIZIO -->
+    <div class="card">
+      <h2>&#128197; Date del Servizio</h2>
+      <label class="lbl">Data di inizio <span class="req">*</span></label>
+      <input type="date" id="data_inizio">
+      <label class="lbl" style="margin-top:14px">Fine del servizio <span class="req">*</span></label>
+      <div class="scelta-group" style="margin-top:8px">
+        <button class="scelta-btn" id="btn-fine-data" type="button">&#128197; Data di fine</button>
+        <button class="scelta-btn" id="btn-fine-revoca" type="button">&#9855; Fino a revoca</button>
+      </div>
+      <div id="box-data-fine" class="hidden" style="margin-top:10px">
+        <label class="lbl">Data di fine</label>
+        <input type="date" id="data_fine">
+      </div>
+    </div>
+
+    <!-- 6. NOTE -->
     <div class="card">
       <h2>&#128221; Note aggiuntive</h2>
       <textarea id="note" placeholder="Patologie, esigenze particolari, altre informazioni utili..."></textarea>
@@ -258,7 +277,8 @@ textarea{resize:vertical;min-height:80px}
     luogoTipo: '',
     assistitoUgualeRichiedente: null,
     stessoIndirizzo: false,
-    vuoleIntegrative: false
+    vuoleIntegrative: false,
+    fineServizio: '' // 'data' o 'revoca'
   };
 
   function getVal(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
@@ -524,6 +544,22 @@ textarea{resize:vertical;min-height:80px}
   }
 
   /* ========================================================
+     DATE SERVIZIO
+  ======================================================== */
+  document.getElementById('btn-fine-data').addEventListener('click', function(){
+    stato.fineServizio = 'data';
+    document.getElementById('btn-fine-data').classList.add('attivo');
+    document.getElementById('btn-fine-revoca').classList.remove('attivo');
+    document.getElementById('box-data-fine').classList.remove('hidden');
+  });
+  document.getElementById('btn-fine-revoca').addEventListener('click', function(){
+    stato.fineServizio = 'revoca';
+    document.getElementById('btn-fine-revoca').classList.add('attivo');
+    document.getElementById('btn-fine-data').classList.remove('attivo');
+    document.getElementById('box-data-fine').classList.add('hidden');
+  });
+
+  /* ========================================================
      SUBMIT
   ======================================================== */
   document.getElementById('btn-invia').addEventListener('click', function(){
@@ -546,6 +582,9 @@ textarea{resize:vertical;min-height:80px}
       mostraErrore("Inserisci l'indirizzo della struttura."); return; }
     if((stato.tipoServizio==='notturno'||stato.tipoServizio==='entrambi')&&!stato.oraNotte){
       mostraErrore("Seleziona l'orario di inizio nottata."); return; }
+    if(!getVal('data_inizio')){ mostraErrore('Indica la data di inizio del servizio.'); return; }
+    if(!stato.fineServizio){ mostraErrore('Indica se il servizio ha una data di fine o è fino a revoca.'); return; }
+    if(stato.fineServizio==='data'&&!getVal('data_fine')){ mostraErrore('Inserisci la data di fine del servizio.'); return; }
 
     var indirizzoFinale='';
     if(stato.stessoIndirizzo&&stato.luogoTipo==='domicilio'){
@@ -589,6 +628,8 @@ textarea{resize:vertical;min-height:80px}
         inizio_nottata: stato.oraNotte,
         ore_integrative: stato.vuoleIntegrative?'si':'',
         note: noteFull,
+        data_inizio: getVal('data_inizio'),
+        data_fine: stato.fineServizio==='revoca' ? 'Fino a revoca' : getVal('data_fine'),
         aliquota_iva:'5%',
         stato:'Nuovo'
       })
