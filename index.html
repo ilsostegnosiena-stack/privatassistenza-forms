@@ -86,6 +86,12 @@ textarea{resize:vertical;min-height:80px}
 input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:15px;
   background:#fafafa;margin-top:4px;font-family:inherit;width:100%}
 
+
+/* Tag selezione multipla */
+.tag-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tag{padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;
+  border:1px solid #c5d5f5;background:#f0f4ff;color:#333;transition:.15s;user-select:none}
+.tag.attivo{background:#1a5276;color:white;border-color:#1a5276;font-weight:700}
 </style>
 </head>
 <body>
@@ -213,6 +219,41 @@ input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-
           <div class="info-box">Indica per ogni giorno le ore integrative diurne (07:00&ndash;20:00), fino a 3 accessi per giorno.</div>
           <div id="giorni-integrative-container"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- 5. PRESTAZIONI RICHIESTE -->
+    <div class="card">
+      <h2>&#129657; Prestazioni Richieste</h2>
+      <label class="lbl">Di cosa ha bisogno l'assistito? <span class="req">*</span> <small style="font-weight:400;color:#888">(anche pi&ugrave; di una)</small></label>
+      <div class="tag-group" id="tags-prestazioni">
+        <span class="tag" data-v="Igiene personale">&#129702; Igiene personale</span>
+        <span class="tag" data-v="Somministrazione pasti">&#127829; Pasti / Alimentazione</span>
+        <span class="tag" data-v="Compagnia">&#128525; Compagnia</span>
+        <span class="tag" data-v="Mobilizzazione">&#129728; Mobilizzazione</span>
+        <span class="tag" data-v="Pulizie domestiche">&#129529; Pulizie domestiche</span>
+        <span class="tag" data-v="Accompagnamento">&#128661; Accompagnamento</span>
+        <span class="tag" data-v="Terapia farmacologica">&#128138; Terapia farmacologica</span>
+        <span class="tag" data-v="Fisioterapia">&#129496; Fisioterapia</span>
+        <span class="tag" data-v="Altro">&#10133; Altro</span>
+      </div>
+      <div id="box-prestazioni-altro" class="hidden" style="margin-top:10px">
+        <label class="lbl">Specifica</label>
+        <input type="text" id="prestazioni_altro" placeholder="es. assistenza notturna, medicazioni...">
+      </div>
+    </div>
+
+    <!-- 5b. ANIMALI -->
+    <div class="card">
+      <h2>&#128062; Animali in Casa</h2>
+      <label class="lbl">Ci sono animali domestici? <span class="req">*</span></label>
+      <div class="scelta-group">
+        <button class="scelta-btn" id="btn-animali-si" type="button">&#9989; S&igrave;</button>
+        <button class="scelta-btn" id="btn-animali-no" type="button">&#10060; No</button>
+      </div>
+      <div id="box-animali-dettaglio" class="hidden" style="margin-top:10px">
+        <label class="lbl">Che tipo di animale?</label>
+        <input type="text" id="animali_tipo" placeholder="es. cane, gatto, uccello...">
       </div>
     </div>
 
@@ -544,6 +585,39 @@ input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-
   }
 
   /* ========================================================
+     PRESTAZIONI — tag multipli
+  ======================================================== */
+  var prestazioniSelezionate = [];
+  document.querySelectorAll('#tags-prestazioni .tag').forEach(function(el){
+    el.addEventListener('click', function(){
+      var v = el.dataset.v;
+      var idx = prestazioniSelezionate.indexOf(v);
+      if(idx >= 0){ prestazioniSelezionate.splice(idx,1); el.classList.remove('attivo'); }
+      else { prestazioniSelezionate.push(v); el.classList.add('attivo'); }
+      // mostra campo "altro" se selezionato
+      document.getElementById('box-prestazioni-altro').classList.toggle('hidden',
+        prestazioniSelezionate.indexOf('Altro') < 0);
+    });
+  });
+
+  /* ========================================================
+     ANIMALI
+  ======================================================== */
+  var animaliInCasa = null;
+  document.getElementById('btn-animali-si').addEventListener('click', function(){
+    animaliInCasa = true;
+    document.getElementById('btn-animali-si').classList.add('attivo');
+    document.getElementById('btn-animali-no').classList.remove('attivo');
+    document.getElementById('box-animali-dettaglio').classList.remove('hidden');
+  });
+  document.getElementById('btn-animali-no').addEventListener('click', function(){
+    animaliInCasa = false;
+    document.getElementById('btn-animali-no').classList.add('attivo');
+    document.getElementById('btn-animali-si').classList.remove('attivo');
+    document.getElementById('box-animali-dettaglio').classList.add('hidden');
+  });
+
+  /* ========================================================
      DATE SERVIZIO
   ======================================================== */
   document.getElementById('btn-fine-data').addEventListener('click', function(){
@@ -582,6 +656,8 @@ input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-
       mostraErrore("Inserisci l'indirizzo della struttura."); return; }
     if((stato.tipoServizio==='notturno'||stato.tipoServizio==='entrambi')&&!stato.oraNotte){
       mostraErrore("Seleziona l'orario di inizio nottata."); return; }
+    if(prestazioniSelezionate.length===0){ mostraErrore('Seleziona almeno una prestazione richiesta.'); return; }
+    if(animaliInCasa===null){ mostraErrore('Indica se ci sono animali in casa.'); return; }
     if(!getVal('data_inizio')){ mostraErrore('Indica la data di inizio del servizio.'); return; }
     if(!stato.fineServizio){ mostraErrore('Indica se il servizio ha una data di fine o è fino a revoca.'); return; }
     if(stato.fineServizio==='data'&&!getVal('data_fine')){ mostraErrore('Inserisci la data di fine del servizio.'); return; }
@@ -628,6 +704,8 @@ input[type=date]{padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-
         inizio_nottata: stato.oraNotte,
         ore_integrative: stato.vuoleIntegrative?'si':'',
         note: noteFull,
+        prestazioni: prestazioniSelezionate.join(', ') + (prestazioniSelezionate.indexOf('Altro')>=0 && getVal('prestazioni_altro') ? ' (' + getVal('prestazioni_altro') + ')' : ''),
+        animali_in_casa: animaliInCasa ? ('Si - ' + (getVal('animali_tipo') || 'non specificato')) : 'No',
         data_inizio: getVal('data_inizio'),
         data_fine: stato.fineServizio==='revoca' ? 'Fino a revoca' : getVal('data_fine'),
         aliquota_iva:'5%',
