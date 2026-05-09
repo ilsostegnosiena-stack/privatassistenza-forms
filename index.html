@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Richiesta Assistenza Domiciliare — PrivatAssistenza</title>
+<title>Richiesta Assistenza — PrivatAssistenza</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f6f9;min-height:100vh}
@@ -13,26 +13,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .container{max-width:620px;margin:24px auto;padding:0 14px 60px}
 .card{background:white;border-radius:10px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
 .card h2{font-size:15px;color:#1a5276;margin-bottom:14px;border-bottom:2px solid #e8f4fd;padding-bottom:7px}
-label.lbl{display:block;font-size:13px;font-weight:700;color:#555;margin-top:12px}
-label.lbl span{color:#e74c3c}
+.lbl{display:block;font-size:13px;font-weight:700;color:#555;margin-top:12px}
+.req{color:#e74c3c}
 input[type=text],input[type=tel],input[type=email],input[type=number],select,textarea{
   width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:15px;
-  background:#fafafa;margin-top:4px;font-family:inherit
-}
+  background:#fafafa;margin-top:4px;font-family:inherit}
 textarea{resize:vertical;min-height:80px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tipo-btn-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.tipo-btn{flex:1;min-width:110px;padding:12px 8px;border-radius:8px;font-size:14px;
+.scelta-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.scelta-btn{flex:1;min-width:100px;padding:12px 8px;border-radius:8px;font-size:14px;
   cursor:pointer;font-weight:400;border:2px solid #ddd;background:white;color:#333;transition:.15s}
-.tipo-btn.attivo{border-color:#1a5276;background:#1a5276;color:white;font-weight:700}
+.scelta-btn.attivo{border-color:#1a5276;background:#1a5276;color:white;font-weight:700}
 .tag-group{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .tag{padding:6px 13px;border-radius:20px;font-size:13px;cursor:pointer;
-  border:1px solid #c5d5f5;background:#f0f4ff;color:#333;transition:.15s}
+  border:1px solid #c5d5f5;background:#f0f4ff;color:#333;transition:.15s;user-select:none}
 .tag.attivo{background:#1a5276;color:white;border-color:#1a5276;font-weight:700}
 .accesso-row{display:flex;align-items:center;gap:8px;margin-top:8px}
 .accesso-row input{flex:1;margin-top:0}
-.accesso-row button{background:#e74c3c;color:white;border:none;border-radius:50%;
-  width:28px;height:28px;cursor:pointer;font-size:16px;line-height:1;flex-shrink:0}
+.del-btn{background:#e74c3c;color:white;border:none;border-radius:50%;
+  width:28px;height:28px;cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;padding:0}
 .add-btn{background:#e8f4fd;color:#1a5276;border:1px dashed #1a5276;border-radius:6px;
   padding:8px 14px;cursor:pointer;font-size:13px;margin-top:10px;width:100%}
 .submit-btn{width:100%;padding:16px;background:#1a5276;color:white;border:none;
@@ -46,7 +45,7 @@ textarea{resize:vertical;min-height:80px}
 .toggle-box::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;
   border-radius:50%;background:white;transition:.2s}
 .toggle-box.on::after{left:23px}
-.toggle-label{font-size:14px;font-weight:600;color:#333}
+.toggle-label{font-size:14px;font-weight:600;color:#333;line-height:1.4}
 .hidden{display:none}
 .grazie{min-height:100vh;display:flex;align-items:center;justify-content:center}
 .grazie-box{background:white;border-radius:12px;padding:40px;max-width:480px;text-align:center;
@@ -54,123 +53,159 @@ textarea{resize:vertical;min-height:80px}
 .grazie-box .ico{font-size:60px;margin-bottom:12px}
 .grazie-box h2{color:#1a5276;margin-bottom:8px}
 .grazie-box p{color:#555;line-height:1.6}
-.grazie-box .tel{color:#1a5276;font-weight:700;margin-top:20px}
-select option:disabled{color:#aaa}
-.sezione-notte{margin-top:12px}
+.tel{color:#1a5276;font-weight:700;margin-top:20px}
 .ora-notte-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 .ora-notte-btn{padding:10px 18px;border-radius:8px;font-size:14px;cursor:pointer;
   border:2px solid #ddd;background:white;color:#333;transition:.15s;font-weight:400}
 .ora-notte-btn.attivo{border-color:#1a5276;background:#1a5276;color:white;font-weight:700}
+.info-box{background:#e8f4fd;border-left:4px solid #1a5276;padding:10px 14px;border-radius:6px;
+  font-size:13px;color:#1a5276;margin-top:10px;line-height:1.5}
 </style>
 </head>
 <body>
 
 <div id="app-form">
   <div class="header">
-    <h1>🏠 Richiesta Assistenza Domiciliare</h1>
-    <p>PrivatAssistenza — Compilare per ricevere un preventivo</p>
+    <h1>&#127968; Richiesta Assistenza Domiciliare</h1>
+    <p>PrivatAssistenza &mdash; Compilare per ricevere un preventivo</p>
   </div>
   <div class="container">
     <div id="errore-box" class="errore hidden"></div>
 
-    <!-- REFERENTE -->
+    <!-- 1. DATI RICHIEDENTE -->
     <div class="card">
-      <h2>👤 Dati Referente</h2>
+      <h2>&#128100; Dati del Richiedente</h2>
       <div class="grid2">
-        <div><label class="lbl">Nome <span>*</span></label><input type="text" id="nome_referente" placeholder="Mario"></div>
-        <div><label class="lbl">Cognome <span>*</span></label><input type="text" id="cognome_referente" placeholder="Rossi"></div>
+        <div><label class="lbl">Nome <span class="req">*</span></label><input type="text" id="nome_richiedente" placeholder="Mario"></div>
+        <div><label class="lbl">Cognome <span class="req">*</span></label><input type="text" id="cognome_richiedente" placeholder="Rossi"></div>
       </div>
-      <label class="lbl">Telefono <span>*</span></label><input type="tel" id="telefono_referente" placeholder="333 1234567">
-      <label class="lbl">Email <span>*</span></label><input type="email" id="email_referente" placeholder="mario.rossi@email.it">
+      <label class="lbl">Codice Fiscale</label><input type="text" id="cf_richiedente" placeholder="RSSMRA80A01H501Z" style="text-transform:uppercase">
+      <label class="lbl">Indirizzo di Residenza</label><input type="text" id="residenza_richiedente" placeholder="Via Roma 1, Siena">
+      <label class="lbl">Telefono <span class="req">*</span></label><input type="tel" id="telefono_richiedente" placeholder="333 1234567">
+      <label class="lbl">Email <span class="req">*</span></label><input type="email" id="email_richiedente" placeholder="mario.rossi@email.it">
     </div>
 
-    <!-- ASSISTITO -->
+    <!-- 2. IL RICHIEDENTE E' ANCHE L'ASSISTITO? -->
     <div class="card">
-      <h2>🧓 Dati Assistito</h2>
-      <div class="grid2">
-        <div><label class="lbl">Nome <span>*</span></label><input type="text" id="nome_assistito" placeholder="Giuseppe"></div>
-        <div><label class="lbl">Cognome <span>*</span></label><input type="text" id="cognome_assistito" placeholder="Rossi"></div>
+      <h2>&#129491; L'assistenza &egrave; per il richiedente?</h2>
+      <label class="lbl">Chi ha bisogno di assistenza? <span class="req">*</span></label>
+      <div class="scelta-group">
+        <button class="scelta-btn" id="btn-stesso" type="button">&#9989; S&igrave;, per me stesso</button>
+        <button class="scelta-btn" id="btn-altro" type="button">&#128101; No, per un'altra persona</button>
       </div>
-      <label class="lbl">Età</label>
-      <input type="number" id="eta_assistito" placeholder="es. 82" style="width:110px">
+      <!-- Dati assistito (visibile solo se persona diversa) -->
+      <div id="sezione-assistito" class="hidden" style="margin-top:14px">
+        <div class="grid2">
+          <div><label class="lbl">Nome Assistito <span class="req">*</span></label><input type="text" id="nome_assistito" placeholder="Giuseppe"></div>
+          <div><label class="lbl">Cognome Assistito <span class="req">*</span></label><input type="text" id="cognome_assistito" placeholder="Bianchi"></div>
+        </div>
+        <label class="lbl">Codice Fiscale Assistito</label><input type="text" id="cf_assistito" placeholder="BNCGPP40A01H501Z" style="text-transform:uppercase">
+        <label class="lbl">Residenza Assistito</label><input type="text" id="residenza_assistito" placeholder="Via Verdi 5, Siena">
+        <label class="lbl">Et&agrave;</label><input type="number" id="eta_assistito" placeholder="es. 82" style="width:110px">
+      </div>
     </div>
 
-    <!-- LUOGO -->
+    <!-- 3. LUOGO DI ASSISTENZA -->
     <div class="card">
-      <h2>📍 Luogo di Assistenza</h2>
-      <label class="lbl">Sede PrivatAssistenza <span>*</span></label>
+      <h2>&#128205; Luogo di Assistenza</h2>
+      <label class="lbl">Tipo di luogo <span class="req">*</span></label>
+      <div class="scelta-group" id="luogo-tipo-group">
+        <button class="scelta-btn" id="btn-domicilio" type="button">&#127968; Domicilio</button>
+        <button class="scelta-btn" id="btn-ospedale" type="button">&#127973; Ospedale</button>
+        <button class="scelta-btn" id="btn-rsa" type="button">&#127968; RSA / Casa di Cura</button>
+      </div>
+
+      <!-- Nome struttura (ospedale/RSA) -->
+      <div id="nome-struttura-box" class="hidden">
+        <label class="lbl">Nome struttura <span class="req">*</span></label>
+        <input type="text" id="nome_struttura" placeholder="es. Ospedale Santa Maria alle Scotte">
+      </div>
+
+      <!-- Indirizzo stesso di residenza? (solo domicilio) -->
+      <div id="stesso-indirizzo-box" class="hidden" style="margin-top:12px">
+        <div class="toggle-row" id="toggle-stesso-ind-row">
+          <div class="toggle-box" id="toggle-stesso-ind"></div>
+          <span class="toggle-label">L'indirizzo di assistenza &egrave; lo stesso di residenza dell'assistito?</span>
+        </div>
+      </div>
+
+      <!-- Indirizzo assistenza (sempre visibile per ospedale/rsa, condizionale per domicilio) -->
+      <div id="indirizzo-assistenza-box" style="margin-top:10px">
+        <label class="lbl">Indirizzo / Comune di Assistenza <span class="req">*</span></label>
+        <input type="text" id="indirizzo_assistenza" placeholder="Via Roma 1, Siena">
+      </div>
+
+      <label class="lbl">Sede PrivatAssistenza di riferimento <span class="req">*</span></label>
       <select id="sede">
-        <option value="">— Seleziona —</option>
+        <option value="">&mdash; Seleziona &mdash;</option>
         <option value="Siena">Siena</option>
         <option value="Poggibonsi">Poggibonsi</option>
         <option value="Follonica">Follonica</option>
       </select>
-      <label class="lbl">Indirizzo <span>*</span></label><input type="text" id="indirizzo_assistenza" placeholder="Via Roma 1">
-      <label class="lbl">Comune <span>*</span></label><input type="text" id="comune_assistenza" placeholder="es. Siena">
     </div>
 
-    <!-- TIPO SERVIZIO -->
+    <!-- 4. TIPO DI SERVIZIO -->
     <div class="card">
-      <h2>🕐 Tipo di Servizio</h2>
-      <label class="lbl">Seleziona il tipo di assistenza <span>*</span></label>
-      <div class="tipo-btn-group">
-        <button class="tipo-btn" data-val="diurno" onclick="setTipo('diurno')">☀️ Solo Diurno</button>
-        <button class="tipo-btn" data-val="notturno" onclick="setTipo('notturno')">🌙 Solo Notturno</button>
-        <button class="tipo-btn" data-val="entrambi" onclick="setTipo('entrambi')">☀️🌙 Diurno + Notturno</button>
+      <h2>&#128336; Tipo di Servizio</h2>
+      <label class="lbl">Seleziona il tipo di assistenza <span class="req">*</span></label>
+      <div class="scelta-group">
+        <button class="scelta-btn" id="btn-diurno" type="button">&#9728;&#65039; Solo Diurno</button>
+        <button class="scelta-btn" id="btn-notturno" type="button">&#127769; Solo Notturno</button>
+        <button class="scelta-btn" id="btn-entrambi" type="button">&#9728;&#65039;&#127769; Diurno+Notturno</button>
       </div>
 
       <!-- SEZIONE DIURNO -->
-      <div id="sezione-diurno" class="hidden">
-        <label class="lbl" style="margin-top:16px">Giorni di assistenza</label>
-        <div class="tag-group" id="tags-giorni-diurni">
-          <span class="tag" data-g="Lunedì" onclick="toggleTag(this,'giorni_diurni')">Lunedì</span>
-          <span class="tag" data-g="Martedì" onclick="toggleTag(this,'giorni_diurni')">Martedì</span>
-          <span class="tag" data-g="Mercoledì" onclick="toggleTag(this,'giorni_diurni')">Mercoledì</span>
-          <span class="tag" data-g="Giovedì" onclick="toggleTag(this,'giorni_diurni')">Giovedì</span>
-          <span class="tag" data-g="Venerdì" onclick="toggleTag(this,'giorni_diurni')">Venerdì</span>
-          <span class="tag" data-g="Sabato" onclick="toggleTag(this,'giorni_diurni')">Sabato</span>
-          <span class="tag" data-g="Domenica" onclick="toggleTag(this,'giorni_diurni')">Domenica</span>
+      <div id="sezione-diurno" class="hidden" style="margin-top:12px">
+        <label class="lbl">Giorni di assistenza</label>
+        <div class="tag-group" id="tags-diurni">
+          <span class="tag" data-g="Lunedi">Luned&igrave;</span>
+          <span class="tag" data-g="Martedi">Marted&igrave;</span>
+          <span class="tag" data-g="Mercoledi">Mercoled&igrave;</span>
+          <span class="tag" data-g="Giovedi">Gioved&igrave;</span>
+          <span class="tag" data-g="Venerdi">Venerd&igrave;</span>
+          <span class="tag" data-g="Sabato">Sabato</span>
+          <span class="tag" data-g="Domenica">Domenica</span>
         </div>
-        <label class="lbl" style="margin-top:14px">Accessi giornalieri (orario e durata)</label>
+        <label class="lbl" style="margin-top:14px">Accessi giornalieri (orario e durata in ore)</label>
         <div id="accessi-list"></div>
-        <button class="add-btn" onclick="aggiungiAccesso()">+ Aggiungi accesso</button>
+        <button class="add-btn" id="add-accesso" type="button">+ Aggiungi accesso</button>
       </div>
 
       <!-- SEZIONE NOTTURNO -->
-      <div id="sezione-notturno" class="hidden sezione-notte">
-        <label class="lbl" style="margin-top:16px">Notti di assistenza</label>
-        <div class="tag-group" id="tags-giorni-notturni">
-          <span class="tag" data-g="Lun-Mar" onclick="toggleTag(this,'giorni_notturni')">Lun→Mar</span>
-          <span class="tag" data-g="Mar-Mer" onclick="toggleTag(this,'giorni_notturni')">Mar→Mer</span>
-          <span class="tag" data-g="Mer-Gio" onclick="toggleTag(this,'giorni_notturni')">Mer→Gio</span>
-          <span class="tag" data-g="Gio-Ven" onclick="toggleTag(this,'giorni_notturni')">Gio→Ven</span>
-          <span class="tag" data-g="Ven-Sab" onclick="toggleTag(this,'giorni_notturni')">Ven→Sab</span>
-          <span class="tag" data-g="Sab-Dom" onclick="toggleTag(this,'giorni_notturni')">Sab→Dom</span>
-          <span class="tag" data-g="Dom-Lun" onclick="toggleTag(this,'giorni_notturni')">Dom→Lun</span>
+      <div id="sezione-notturno" class="hidden" style="margin-top:12px">
+        <label class="lbl">Notti di assistenza</label>
+        <div class="tag-group" id="tags-notturni">
+          <span class="tag" data-g="Lun-Mar">Lun&rarr;Mar</span>
+          <span class="tag" data-g="Mar-Mer">Mar&rarr;Mer</span>
+          <span class="tag" data-g="Mer-Gio">Mer&rarr;Gio</span>
+          <span class="tag" data-g="Gio-Ven">Gio&rarr;Ven</span>
+          <span class="tag" data-g="Ven-Sab">Ven&rarr;Sab</span>
+          <span class="tag" data-g="Sab-Dom">Sab&rarr;Dom</span>
+          <span class="tag" data-g="Dom-Lun">Dom&rarr;Lun</span>
         </div>
-        <label class="lbl" style="margin-top:14px">Orario inizio nottata <span>*</span></label>
+        <label class="lbl" style="margin-top:12px">Orario inizio nottata <span class="req">*</span></label>
         <div class="ora-notte-group">
-          <button class="ora-notte-btn" data-ora="21:00" onclick="setOraNotte('21:00')">Ore 21:00 (fine 06:00)</button>
-          <button class="ora-notte-btn" data-ora="22:00" onclick="setOraNotte('22:00')">Ore 22:00 (fine 07:00)</button>
+          <button class="ora-notte-btn" id="ora-21" type="button">Ore 21:00 (fine 06:00)</button>
+          <button class="ora-notte-btn" id="ora-22" type="button">Ore 22:00 (fine 07:00)</button>
         </div>
       </div>
 
-      <!-- ORE INTEGRATIVE (visibile se notturno o entrambi) -->
+      <!-- ORE INTEGRATIVE -->
       <div id="sezione-integrative" class="hidden" style="margin-top:16px;padding-top:14px;border-top:1px solid #eee">
-        <div class="toggle-row" onclick="toggleIntegrative()">
+        <div class="toggle-row" id="toggle-int-row">
           <div class="toggle-box" id="toggle-int"></div>
-          <span class="toggle-label">Aggiungere ore di assistenza diurna integrativa? (16€/h + IVA 5%)</span>
+          <span class="toggle-label">Aggiungere ore di assistenza diurna integrativa? (16&euro;/h + IVA 5%)</span>
         </div>
         <div id="dettaglio-integrative" class="hidden" style="margin-top:12px">
-          <label class="lbl">Giorni di assistenza integrativa</label>
-          <div class="tag-group" id="tags-giorni-integrative">
-            <span class="tag" data-g="Lunedì" onclick="toggleTag(this,'giorni_integrative')">Lunedì</span>
-            <span class="tag" data-g="Martedì" onclick="toggleTag(this,'giorni_integrative')">Martedì</span>
-            <span class="tag" data-g="Mercoledì" onclick="toggleTag(this,'giorni_integrative')">Mercoledì</span>
-            <span class="tag" data-g="Giovedì" onclick="toggleTag(this,'giorni_integrative')">Giovedì</span>
-            <span class="tag" data-g="Venerdì" onclick="toggleTag(this,'giorni_integrative')">Venerdì</span>
-            <span class="tag" data-g="Sabato" onclick="toggleTag(this,'giorni_integrative')">Sabato</span>
-            <span class="tag" data-g="Domenica" onclick="toggleTag(this,'giorni_integrative')">Domenica</span>
+          <label class="lbl">Giorni integrativi</label>
+          <div class="tag-group" id="tags-integrative">
+            <span class="tag" data-g="Lunedi">Luned&igrave;</span>
+            <span class="tag" data-g="Martedi">Marted&igrave;</span>
+            <span class="tag" data-g="Mercoledi">Mercoled&igrave;</span>
+            <span class="tag" data-g="Giovedi">Gioved&igrave;</span>
+            <span class="tag" data-g="Venerdi">Venerd&igrave;</span>
+            <span class="tag" data-g="Sabato">Sabato</span>
+            <span class="tag" data-g="Domenica">Domenica</span>
           </div>
           <label class="lbl">Ore per giorno</label>
           <input type="number" id="ore_integrative_num" placeholder="es. 3" style="width:110px">
@@ -180,199 +215,270 @@ select option:disabled{color:#aaa}
       </div>
     </div>
 
-    <!-- NOTE -->
+    <!-- 5. NOTE -->
     <div class="card">
-      <h2>📝 Note aggiuntive</h2>
-      <textarea id="note" placeholder="Informazioni aggiuntive sulla situazione dell'assistito, patologie, esigenze particolari..."></textarea>
+      <h2>&#128221; Note aggiuntive</h2>
+      <textarea id="note" placeholder="Patologie, esigenze particolari, altre informazioni utili..."></textarea>
     </div>
 
-    <button class="submit-btn" id="btn-invia" onclick="invia()">📤 Invia Richiesta</button>
+    <button class="submit-btn" id="btn-invia" type="button">&#128228; Invia Richiesta</button>
   </div>
 </div>
 
-<!-- GRAZIE -->
 <div id="app-grazie" class="grazie hidden">
   <div class="grazie-box">
-    <div class="ico">✅</div>
+    <div class="ico">&#9989;</div>
     <h2>Richiesta inviata!</h2>
-    <p>Abbiamo ricevuto la sua richiesta. La contatteremo al più presto per un preventivo personalizzato.</p>
-    <p class="tel">PrivatAssistenza — 0577 600904</p>
+    <p>Abbiamo ricevuto la sua richiesta.<br>La contatteremo al pi&ugrave; presto per un preventivo personalizzato.</p>
+    <p class="tel">PrivatAssistenza &mdash; 0577 600904</p>
   </div>
 </div>
 
 <script>
-const API = 'https://alessia-631113cd.base44.app/api/functions/salvaClienteAssistenza';
-const stato = {
-  tipo_servizio: '',
-  ora_inizio_notte: '',
-  vuole_integrative: false,
-  giorni_diurni: [],
-  giorni_notturni: [],
-  giorni_integrative: [],
-  accessi: [{id:1, ora:'', durata:''}]
-};
-let accessoId = 2;
+(function(){
+  var API = 'https://alessia-631113cd.base44.app/api/functions/salvaClienteAssistenza';
 
-function setTipo(val) {
-  stato.tipo_servizio = val;
-  document.querySelectorAll('.tipo-btn').forEach(b => {
-    b.classList.toggle('attivo', b.dataset.val === val);
-  });
-  document.getElementById('sezione-diurno').classList.toggle('hidden', val === 'notturno');
-  document.getElementById('sezione-notturno').classList.toggle('hidden', val === 'diurno');
-  document.getElementById('sezione-integrative').classList.toggle('hidden', val === 'diurno');
-  if (val === 'diurno') renderAccessi();
-}
+  // Stato
+  var tipoServizio = '';
+  var oraNotte = '';
+  var luogoTipo = '';
+  var assistitoUgualeRichiedente = null;
+  var stessoIndirizzoResidenza = false;
+  var vuoleIntegrative = false;
+  var giorniDiurni = [];
+  var giorniNotturni = [];
+  var giorniIntegrative = [];
+  var accessi = [{id:1, ora:'', durata:''}];
+  var nextId = 2;
 
-function setOraNotte(ora) {
-  stato.ora_inizio_notte = ora;
-  document.querySelectorAll('.ora-notte-btn').forEach(b => {
-    b.classList.toggle('attivo', b.dataset.ora === ora);
-  });
-}
-
-function toggleTag(el, key) {
-  const g = el.dataset.g;
-  const arr = stato[key];
-  const idx = arr.indexOf(g);
-  if (idx >= 0) { arr.splice(idx, 1); el.classList.remove('attivo'); }
-  else { arr.push(g); el.classList.add('attivo'); }
-}
-
-function toggleIntegrative() {
-  stato.vuole_integrative = !stato.vuole_integrative;
-  document.getElementById('toggle-int').classList.toggle('on', stato.vuole_integrative);
-  document.getElementById('dettaglio-integrative').classList.toggle('hidden', !stato.vuole_integrative);
-}
-
-function renderAccessi() {
-  const list = document.getElementById('accessi-list');
-  if (!list) return;
-  list.innerHTML = '';
-  stato.accessi.forEach(a => {
-    const row = document.createElement('div');
-    row.className = 'accesso-row';
-    row.innerHTML = `
-      <input type="time" placeholder="Ora" value="${a.ora}" onchange="aggiornaAccesso(${a.id},'ora',this.value)" style="flex:1;margin-top:0">
-      <input type="number" placeholder="Ore durata" value="${a.durata}" onchange="aggiornaAccesso(${a.id},'durata',this.value)" style="flex:1;margin-top:0;width:120px">
-      ${stato.accessi.length > 1 ? `<button onclick="rimuoviAccesso(${a.id})">×</button>` : '<div style="width:28px"></div>'}
-    `;
-    list.appendChild(row);
-  });
-}
-
-function aggiungiAccesso() {
-  stato.accessi.push({id: accessoId++, ora:'', durata:''});
-  renderAccessi();
-}
-
-function rimuoviAccesso(id) {
-  stato.accessi = stato.accessi.filter(a => a.id !== id);
-  renderAccessi();
-}
-
-function aggiornaAccesso(id, campo, val) {
-  const a = stato.accessi.find(x => x.id === id);
-  if (a) a[campo] = val;
-}
-
-function val(id) { return (document.getElementById(id)||{}).value || ''; }
-
-function mostraErrore(msg) {
-  const el = document.getElementById('errore-box');
-  el.textContent = '⚠️ ' + msg;
-  el.classList.remove('hidden');
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function nascondiErrore() {
-  document.getElementById('errore-box').classList.add('hidden');
-}
-
-async function invia() {
-  nascondiErrore();
-  const nome_referente = val('nome_referente').trim();
-  const cognome_referente = val('cognome_referente').trim();
-  const telefono_referente = val('telefono_referente').trim();
-  const email_referente = val('email_referente').trim();
-  const nome_assistito = val('nome_assistito').trim();
-  const cognome_assistito = val('cognome_assistito').trim();
-  const sede = val('sede');
-  const indirizzo_assistenza = val('indirizzo_assistenza').trim();
-  const comune_assistenza = val('comune_assistenza').trim();
-
-  if (!nome_referente || !cognome_referente || !telefono_referente || !email_referente ||
-      !nome_assistito || !cognome_assistito || !sede || !indirizzo_assistenza || !comune_assistenza) {
-    mostraErrore('Compila tutti i campi obbligatori.');
-    return;
-  }
-  if (!stato.tipo_servizio) {
-    mostraErrore('Seleziona il tipo di assistenza.');
-    return;
-  }
-  if ((stato.tipo_servizio === 'notturno' || stato.tipo_servizio === 'entrambi') && !stato.ora_inizio_notte) {
-    mostraErrore('Seleziona l\'orario di inizio nottata.');
-    return;
+  function getVal(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
+  function show(id){ document.getElementById(id).classList.remove('hidden'); }
+  function hide(id){ document.getElementById(id).classList.add('hidden'); }
+  function mostraErrore(msg){
+    var el=document.getElementById('errore-box');
+    el.textContent='⚠️ '+msg; el.classList.remove('hidden');
+    window.scrollTo({top:0,behavior:'smooth'});
   }
 
-  const fine_notte = stato.ora_inizio_notte === '21:00' ? '06:00' : stato.ora_inizio_notte === '22:00' ? '07:00' : '';
-  const str_accessi = stato.accessi.filter(a => a.ora || a.durata)
-    .map((a,i) => `Accesso ${i+1}: ${a.ora||'?'} (${a.durata||'?'}h)`).join(' | ');
-  const str_integrative = stato.vuole_integrative && val('ore_integrative_num')
-    ? `${val('ore_integrative_num')}h/giorno - giorni: ${stato.giorni_integrative.join(', ')} - orario: ${val('orario_integrative')} - tariffa: 16EUR/h + IVA 5%`
-    : '';
+  // --- Richiedente = Assistito? ---
+  document.getElementById('btn-stesso').addEventListener('click', function(){
+    assistitoUgualeRichiedente = true;
+    document.getElementById('btn-stesso').classList.add('attivo');
+    document.getElementById('btn-altro').classList.remove('attivo');
+    hide('sezione-assistito');
+  });
+  document.getElementById('btn-altro').addEventListener('click', function(){
+    assistitoUgualeRichiedente = false;
+    document.getElementById('btn-altro').classList.add('attivo');
+    document.getElementById('btn-stesso').classList.remove('attivo');
+    show('sezione-assistito');
+  });
 
-  const note_full = [
-    `SEDE: ${sede}`,
-    `INDIRIZZO: ${indirizzo_assistenza}`,
-    stato.giorni_diurni.length ? `GIORNI DIURNI: ${stato.giorni_diurni.join(', ')}` : '',
-    stato.giorni_notturni.length ? `NOTTI: ${stato.giorni_notturni.join(', ')}` : '',
-    stato.ora_inizio_notte ? `INIZIO NOTTE: ${stato.ora_inizio_notte} - FINE: ${fine_notte}` : '',
-    val('note') || ''
-  ].filter(Boolean).join('\n');
+  // --- Tipo luogo ---
+  ['domicilio','ospedale','rsa'].forEach(function(v){
+    document.getElementById('btn-'+v).addEventListener('click', function(){ setLuogo(v); });
+  });
+  function setLuogo(val){
+    luogoTipo = val;
+    ['domicilio','ospedale','rsa'].forEach(function(v){
+      document.getElementById('btn-'+v).classList.toggle('attivo', v===val);
+    });
+    if(val==='domicilio'){
+      hide('nome-struttura-box');
+      show('stesso-indirizzo-box');
+      // se toggle è ON, nascondi campo indirizzo
+      if(stessoIndirizzoResidenza){ hide('indirizzo-assistenza-box'); }
+      else{ show('indirizzo-assistenza-box'); }
+    } else {
+      hide('stesso-indirizzo-box');
+      show('nome-struttura-box');
+      show('indirizzo-assistenza-box');
+    }
+  }
 
-  const btn = document.getElementById('btn-invia');
-  btn.disabled = true;
-  btn.textContent = '⏳ Invio in corso...';
+  // --- Stesso indirizzo toggle ---
+  document.getElementById('toggle-stesso-ind-row').addEventListener('click', function(){
+    stessoIndirizzoResidenza = !stessoIndirizzoResidenza;
+    document.getElementById('toggle-stesso-ind').classList.toggle('on', stessoIndirizzoResidenza);
+    if(stessoIndirizzoResidenza){ hide('indirizzo-assistenza-box'); }
+    else{ show('indirizzo-assistenza-box'); }
+  });
 
-  try {
-    const res = await fetch(API, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        tipo_cliente: 'Persona Fisica',
-        nome: nome_referente,
-        cognome: cognome_referente,
-        telefono_cellulare: telefono_referente,
-        email: email_referente,
-        nome_assistito,
-        cognome_assistito,
-        eta_assistito: val('eta_assistito') || '',
-        assistito_uguale_cliente: false,
-        luogo_assistenza: comune_assistenza,
-        tipo_assistenza: stato.tipo_servizio,
-        orari_diurni: str_accessi,
-        inizio_nottata: stato.ora_inizio_notte,
-        ore_integrative: str_integrative,
-        note: note_full,
+  // --- Tipo servizio ---
+  document.getElementById('btn-diurno').addEventListener('click', function(){ setTipo('diurno'); });
+  document.getElementById('btn-notturno').addEventListener('click', function(){ setTipo('notturno'); });
+  document.getElementById('btn-entrambi').addEventListener('click', function(){ setTipo('entrambi'); });
+
+  function setTipo(val){
+    tipoServizio = val;
+    ['diurno','notturno','entrambi'].forEach(function(v){
+      document.getElementById('btn-'+v).classList.toggle('attivo', v===val);
+    });
+    document.getElementById('sezione-diurno').classList.toggle('hidden', val==='notturno');
+    document.getElementById('sezione-notturno').classList.toggle('hidden', val==='diurno');
+    document.getElementById('sezione-integrative').classList.toggle('hidden', val==='diurno');
+    if(val!=='notturno') renderAccessi();
+  }
+
+  // --- Ora notte ---
+  document.getElementById('ora-21').addEventListener('click', function(){ setOraNotte('21:00'); });
+  document.getElementById('ora-22').addEventListener('click', function(){ setOraNotte('22:00'); });
+  function setOraNotte(ora){
+    oraNotte=ora;
+    document.getElementById('ora-21').classList.toggle('attivo', ora==='21:00');
+    document.getElementById('ora-22').classList.toggle('attivo', ora==='22:00');
+  }
+
+  // --- Tag giorni ---
+  function bindTags(containerId, arr){
+    document.querySelectorAll('#'+containerId+' .tag').forEach(function(el){
+      el.addEventListener('click', function(){
+        var g=el.dataset.g, idx=arr.indexOf(g);
+        if(idx>=0){arr.splice(idx,1);el.classList.remove('attivo');}
+        else{arr.push(g);el.classList.add('attivo');}
+      });
+    });
+  }
+  bindTags('tags-diurni', giorniDiurni);
+  bindTags('tags-notturni', giorniNotturni);
+  bindTags('tags-integrative', giorniIntegrative);
+
+  // --- Integrative toggle ---
+  document.getElementById('toggle-int-row').addEventListener('click', function(){
+    vuoleIntegrative=!vuoleIntegrative;
+    document.getElementById('toggle-int').classList.toggle('on', vuoleIntegrative);
+    document.getElementById('dettaglio-integrative').classList.toggle('hidden', !vuoleIntegrative);
+  });
+
+  // --- Accessi ---
+  document.getElementById('add-accesso').addEventListener('click', function(){
+    accessi.push({id:nextId++, ora:'', durata:''});
+    renderAccessi();
+  });
+  function renderAccessi(){
+    var list=document.getElementById('accessi-list');
+    if(!list) return;
+    list.innerHTML='';
+    accessi.forEach(function(a){
+      var row=document.createElement('div'); row.className='accesso-row';
+      var inOra=document.createElement('input'); inOra.type='time'; inOra.value=a.ora;
+      inOra.addEventListener('change',function(){a.ora=this.value;});
+      var inDur=document.createElement('input'); inDur.type='number';
+      inDur.placeholder='Ore'; inDur.value=a.durata; inDur.style.width='90px';
+      inDur.addEventListener('change',function(){a.durata=this.value;});
+      row.appendChild(inOra); row.appendChild(inDur);
+      if(accessi.length>1){
+        var btn=document.createElement('button'); btn.className='del-btn'; btn.type='button'; btn.textContent='×';
+        btn.addEventListener('click',function(){ accessi=accessi.filter(function(x){return x.id!==a.id;}); renderAccessi(); });
+        row.appendChild(btn);
+      }
+      list.appendChild(row);
+    });
+  }
+
+  // --- Submit ---
+  document.getElementById('btn-invia').addEventListener('click', function(){
+    document.getElementById('errore-box').classList.add('hidden');
+
+    var nomeR=getVal('nome_richiedente'), cognomeR=getVal('cognome_richiedente');
+    var tel=getVal('telefono_richiedente'), email=getVal('email_richiedente');
+    var sede=getVal('sede');
+
+    if(!nomeR||!cognomeR||!tel||!email){ mostraErrore('Compila i dati del richiedente.'); return; }
+    if(assistitoUgualeRichiedente===null){ mostraErrore("Indica se l'assistenza è per te o per un'altra persona."); return; }
+    if(!luogoTipo){ mostraErrore('Seleziona il tipo di luogo di assistenza.'); return; }
+    if(!sede){ mostraErrore('Seleziona la sede PrivatAssistenza di riferimento.'); return; }
+    if(!tipoServizio){ mostraErrore('Seleziona il tipo di assistenza.'); return; }
+    if((tipoServizio==='notturno'||tipoServizio==='entrambi')&&!oraNotte){
+      mostraErrore("Seleziona l'orario di inizio nottata."); return;
+    }
+    if(!assistitoUgualeRichiedente){
+      if(!getVal('nome_assistito')||!getVal('cognome_assistito')){
+        mostraErrore("Inserisci nome e cognome dell'assistito."); return;
+      }
+    }
+    if((luogoTipo==='ospedale'||luogoTipo==='rsa')&&!getVal('nome_struttura')){
+      mostraErrore('Inserisci il nome della struttura.'); return;
+    }
+    if(!stessoIndirizzoResidenza && luogoTipo==='domicilio' && !getVal('indirizzo_assistenza')){
+      mostraErrore("Inserisci l'indirizzo di assistenza."); return;
+    }
+    if((luogoTipo==='ospedale'||luogoTipo==='rsa')&&!getVal('indirizzo_assistenza')){
+      mostraErrore("Inserisci l'indirizzo della struttura."); return;
+    }
+
+    // Costruisco indirizzo finale
+    var indirizzoFinale = '';
+    if(stessoIndirizzoResidenza && luogoTipo==='domicilio'){
+      indirizzoFinale = assistitoUgualeRichiedente ? getVal('residenza_richiedente') : getVal('residenza_assistito');
+    } else {
+      indirizzoFinale = getVal('indirizzo_assistenza');
+      if(luogoTipo!=='domicilio' && getVal('nome_struttura')){
+        indirizzoFinale = getVal('nome_struttura') + ' - ' + indirizzoFinale;
+      }
+    }
+
+    var nomeAss = assistitoUgualeRichiedente ? nomeR : getVal('nome_assistito');
+    var cognomeAss = assistitoUgualeRichiedente ? cognomeR : getVal('cognome_assistito');
+
+    var strAccessi = accessi.filter(function(a){return a.ora||a.durata;})
+      .map(function(a,i){ return 'Accesso '+(i+1)+': '+(a.ora||'?')+' ('+(a.durata||'?')+'h)'; }).join(' | ');
+    var strInt = '';
+    if(vuoleIntegrative&&getVal('ore_integrative_num')){
+      strInt=getVal('ore_integrative_num')+'h/giorno - giorni: '+giorniIntegrative.join(', ')+
+        ' - orario: '+getVal('orario_integrative')+' - tariffa: 16EUR/h+IVA5%';
+    }
+    var noteFull=[
+      'TIPO LUOGO: '+luogoTipo.toUpperCase(),
+      luogoTipo!=='domicilio'&&getVal('nome_struttura')?'STRUTTURA: '+getVal('nome_struttura'):'',
+      'SEDE: '+sede,
+      'INDIRIZZO ASSISTENZA: '+indirizzoFinale,
+      giorniDiurni.length?'GIORNI DIURNI: '+giorniDiurni.join(', '):'',
+      strAccessi?'ACCESSI: '+strAccessi:'',
+      giorniNotturni.length?'NOTTI: '+giorniNotturni.join(', '):'',
+      oraNotte?'INIZIO NOTTE: '+oraNotte+(oraNotte==='21:00'?' (fine 06:00)':' (fine 07:00)'):'',
+      strInt?'INTEGRATIVE: '+strInt:'',
+      getVal('note')?'NOTE: '+getVal('note'):''
+    ].filter(Boolean).join('\n');
+
+    var btn=document.getElementById('btn-invia');
+    btn.disabled=true; btn.textContent='Invio in corso...';
+
+    fetch(API,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        tipo_cliente: assistitoUgualeRichiedente ? 'Assistito' : 'Familiare',
+        nome: nomeR, cognome: cognomeR,
+        telefono_cellulare: tel, email: email,
+        codice_fiscale: getVal('cf_richiedente'),
+        via_residenza: getVal('residenza_richiedente'),
+        nome_assistito: nomeAss, cognome_assistito: cognomeAss,
+        codice_fiscale_assistito: assistitoUgualeRichiedente ? getVal('cf_richiedente') : getVal('cf_assistito'),
+        via_residenza_assistito: assistitoUgualeRichiedente ? getVal('residenza_richiedente') : getVal('residenza_assistito'),
+        eta_assistito: assistitoUgualeRichiedente ? '' : getVal('eta_assistito'),
+        assistito_uguale_cliente: assistitoUgualeRichiedente,
+        luogo_assistenza: indirizzoFinale,
+        tipo_assistenza: tipoServizio,
+        orari_diurni: strAccessi,
+        inizio_nottata: oraNotte,
+        ore_integrative: strInt,
+        note: noteFull,
         aliquota_iva: '5%',
         stato: 'Nuovo'
       })
+    }).then(function(res){
+      if(!res.ok) throw new Error('err');
+      document.getElementById('app-form').classList.add('hidden');
+      document.getElementById('app-grazie').classList.remove('hidden');
+    }).catch(function(){
+      mostraErrore("Errore durante l'invio. Riprova o chiama il 0577 600904.");
+      btn.disabled=false; btn.textContent='Invia Richiesta';
     });
+  });
 
-    if (!res.ok) throw new Error('Errore server');
-
-    document.getElementById('app-form').classList.add('hidden');
-    document.getElementById('app-grazie').classList.remove('hidden');
-  } catch(e) {
-    mostraErrore('Errore durante l\'invio. Riprova o chiama il 0577 600904.');
-    btn.disabled = false;
-    btn.textContent = '📤 Invia Richiesta';
-  }
-}
-
-// Init accessi
-renderAccessi();
+  renderAccessi();
+})();
 </script>
 </body>
 </html>
