@@ -119,15 +119,6 @@ document.getElementById('data').min = oggi;
 document.getElementById('data').max = maxData;
 
 // Leggi parametro sede dall'URL
-const params = new URLSearchParams(window.location.search);
-const sedeParam = params.get('sede');
-if (sedeParam === 'Siena' || sedeParam === 'Poggibonsi') {
-  sede = sedeParam;
-  document.querySelectorAll('.btn-sede').forEach(b => {
-    if (b.textContent.includes(sedeParam)) b.classList.add('active');
-  });
-  document.getElementById('sezione-data').style.display = 'block';
-}
 
 function selezionaSede(s, el) {
   sede = s;
