@@ -18,9 +18,9 @@ label{display:block;font-size:13px;font-weight:700;color:#555;margin-top:12px}
 input,select,textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:15px;background:#fafafa;margin-top:4px}
 textarea{min-height:80px;resize:vertical}
 .btn-gruppo{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.btn-scelta{padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;border:2px solid #ddd;background:white;color:#333}
+.btn-scelta{padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;border:2px solid #ddd;background:white;color:#333;transition:.2s}
 .btn-scelta.attivo{border-color:#1a5276;background:#1a5276;color:white;font-weight:700}
-.btn-tag{padding:7px 13px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid #c5d5f5;background:#f0f4ff;color:#333;margin:3px}
+.btn-tag{padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid #c5d5f5;background:#f0f4ff;color:#333;margin:3px;transition:.2s}
 .btn-tag.attivo{background:#1a5276;color:white;font-weight:700;border-color:#1a5276}
 .btn-invia{width:100%;padding:16px;background:#1a5276;color:white;border:none;border-radius:8px;font-size:17px;font-weight:700;cursor:pointer;margin-top:10px}
 .btn-invia:disabled{background:#aaa;cursor:not-allowed}
@@ -33,12 +33,15 @@ textarea{min-height:80px;resize:vertical}
 .sezione{display:none}
 .sezione.visibile{display:block}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fascia-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;background:#f8f9fa;border-radius:8px;padding:8px}
-.fascia-row input{margin-top:0}
-.btn-rm{background:#e74c3c;color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:16px;flex-shrink:0}
-.btn-add{background:#2980b9;color:white;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;margin-top:6px}
-.riepilogo-giorno{background:#eaf4fb;border-radius:8px;padding:10px 14px;margin-bottom:6px;font-size:13px}
-.pill{display:inline-block;background:#1a5276;color:white;border-radius:12px;padding:2px 10px;font-size:12px;margin:2px}
+.giorno-box{background:#f8f9fa;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #e0e0e0}
+.giorno-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.giorno-header strong{font-size:14px;color:#1a5276}
+.btn-rm-g{background:#e74c3c;color:white;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:15px}
+.accesso-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.accesso-row select,.accesso-row input{margin-top:0;flex:1}
+.btn-rm-a{background:#e74c3c;color:white;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:15px;flex-shrink:0}
+.btn-add-a{background:#2980b9;color:white;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;margin-top:4px}
+.btn-add-g{background:#2980b9;color:white;border:none;border-radius:8px;padding:9px 18px;cursor:pointer;font-size:14px;margin-top:6px;width:100%}
 </style>
 </head>
 <body>
@@ -54,7 +57,7 @@ textarea{min-height:80px;resize:vertical}
 
 <!-- REFERENTE -->
 <div class="card">
-  <h2>👤 Dati del Referente</h2>
+  <h2>👤 Dati del Richiedente</h2>
   <div class="grid2">
     <div><label>Nome <span class="req">*</span></label><input id="nome_referente" placeholder="Mario"></div>
     <div><label>Cognome <span class="req">*</span></label><input id="cognome_referente" placeholder="Rossi"></div>
@@ -63,14 +66,29 @@ textarea{min-height:80px;resize:vertical}
   <label>Email</label><input id="email_referente" type="email" placeholder="mario.rossi@email.it">
 </div>
 
-<!-- ASSISTITO -->
+<!-- ASSISTITO = STESSO CLIENTE? -->
 <div class="card">
-  <h2>🧓 Dati dell'Assistito</h2>
-  <div class="grid2">
-    <div><label>Nome <span class="req">*</span></label><input id="nome_assistito" placeholder="Giuseppe"></div>
-    <div><label>Cognome <span class="req">*</span></label><input id="cognome_assistito" placeholder="Rossi"></div>
+  <h2>🧓 Chi è l'assistito?</h2>
+  <p style="font-size:13px;color:#666;margin-bottom:10px">L'assistenza è per lei stesso o per un'altra persona?</p>
+  <div class="btn-gruppo">
+    <button class="btn-scelta" onclick="scegliAssistito('stesso')">👤 Per me stesso</button>
+    <button class="btn-scelta" onclick="scegliAssistito('altro')">👥 Per un'altra persona</button>
   </div>
-  <label>Età</label><input id="eta_assistito" type="number" placeholder="es. 82" min="0" max="120">
+  <!-- Dati assistito (solo se "altro") -->
+  <div id="sez-assistito" class="sezione" style="margin-top:16px">
+    <div style="border-top:1px solid #eee;padding-top:14px">
+      <p style="font-size:13px;font-weight:700;color:#1a5276;margin-bottom:8px">Dati dell'assistito:</p>
+      <div class="grid2">
+        <div><label>Nome <span class="req">*</span></label><input id="nome_assistito" placeholder="Giuseppe"></div>
+        <div><label>Cognome <span class="req">*</span></label><input id="cognome_assistito" placeholder="Bianchi"></div>
+      </div>
+      <label>Età</label><input id="eta_assistito" type="number" placeholder="es. 82" min="0" max="120">
+    </div>
+  </div>
+  <!-- Età se stesso -->
+  <div id="sez-eta-stesso" class="sezione" style="margin-top:12px">
+    <label>Età</label><input id="eta_stesso" type="number" placeholder="es. 75" min="0" max="120">
+  </div>
 </div>
 
 <!-- LUOGO -->
@@ -83,11 +101,11 @@ textarea{min-height:80px;resize:vertical}
     <option value="Poggibonsi">Poggibonsi</option>
     <option value="Follonica">Follonica</option>
   </select>
-  <label>Tipo di luogo <span class="req">*</span></label>
+  <label style="margin-top:14px">Tipo di luogo <span class="req">*</span></label>
   <div class="btn-gruppo">
-    <button class="btn-scelta" onclick="scegliLuogo('domicilio')">🏠 Domicilio</button>
-    <button class="btn-scelta" onclick="scegliLuogo('ospedale')">🏥 Ospedale</button>
-    <button class="btn-scelta" onclick="scegliLuogo('rsa')">🏨 RSA / Casa di Cura</button>
+    <button class="btn-scelta" id="btn-luogo-domicilio" onclick="scegliLuogo('domicilio')">🏠 Domicilio</button>
+    <button class="btn-scelta" id="btn-luogo-ospedale" onclick="scegliLuogo('ospedale')">🏥 Ospedale</button>
+    <button class="btn-scelta" id="btn-luogo-rsa" onclick="scegliLuogo('rsa')">🏨 RSA / Casa di Cura</button>
   </div>
 
   <!-- Domicilio -->
@@ -96,6 +114,14 @@ textarea{min-height:80px;resize:vertical}
     <input id="indirizzo_assistenza" placeholder="Via Roma 1, Siena">
     <label>Comune <span class="req">*</span></label>
     <input id="comune_assistenza" placeholder="es. Siena">
+    <label style="margin-top:14px">Ci sono animali in casa?</label>
+    <div class="btn-gruppo" style="margin-top:8px">
+      <button class="btn-scelta" id="btn-animali-si" onclick="scegliAnimali('si')">🐾 Sì</button>
+      <button class="btn-scelta" id="btn-animali-no" onclick="scegliAnimali('no')">❌ No</button>
+    </div>
+    <div id="sez-animali-dettaglio" class="sezione" style="margin-top:8px">
+      <input id="animali_dettaglio" placeholder="Che tipo di animale? (es. cane, gatto...)">
+    </div>
   </div>
 
   <!-- Ospedale -->
@@ -153,12 +179,12 @@ textarea{min-height:80px;resize:vertical}
   </div>
 </div>
 
-<!-- ORARI -->
+<!-- GIORNI E ORARI -->
 <div class="card">
   <h2>📅 Quando serve l'assistenza?</h2>
-  <p style="font-size:13px;color:#666;margin-bottom:10px">Aggiungi uno o più giorni con gli orari:</p>
-  <div id="fasce-list"></div>
-  <button class="btn-add" onclick="aggiungiFascia()">+ Aggiungi giorno</button>
+  <p style="font-size:13px;color:#666;margin-bottom:12px">Aggiungi i giorni e gli orari. Puoi indicare fino a 3 accessi per giornata.</p>
+  <div id="giorni-list"></div>
+  <button class="btn-add-g" onclick="aggiungiGiorno()">+ Aggiungi giorno</button>
 </div>
 
 <!-- URGENZA -->
@@ -182,9 +208,7 @@ textarea{min-height:80px;resize:vertical}
 <div class="card">
   <h2>🔒 Consenso al trattamento dei dati</h2>
   <p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:12px">
-    I dati raccolti saranno trattati da <strong>Cooperativa Il Sostegno</strong> (titolare del trattamento) 
-    esclusivamente per la gestione della richiesta di assistenza, nel rispetto del D.Lgs. 196/2003 e del GDPR (Reg. UE 2016/679). 
-    I dati non saranno ceduti a terzi senza consenso esplicito.
+    I dati raccolti saranno trattati da <strong>Cooperativa Il Sostegno</strong> esclusivamente per la gestione della richiesta di assistenza, nel rispetto del D.Lgs. 196/2003 e del GDPR (Reg. UE 2016/679). I dati non saranno ceduti a terzi senza consenso esplicito.
   </p>
   <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-weight:normal">
     <input type="checkbox" id="privacy_ok" style="width:20px;height:20px;margin-top:2px;flex-shrink:0">
@@ -210,20 +234,41 @@ textarea{min-height:80px;resize:vertical}
 <script>
 var luogoScelto = '';
 var urgenzaScelta = '';
-var fasceCnt = 0;
+var assistitoScelto = '';
+var animaliScelto = '';
+var giornoCnt = 0;
 
+// ---- ASSISTITO ----
+function scegliAssistito(val) {
+  assistitoScelto = val;
+  document.querySelectorAll('.btn-scelta').forEach(function(b){
+    if(b.getAttribute('onclick') === "scegliAssistito('"+val+"')") b.classList.add('attivo');
+    else if(b.getAttribute('onclick') && b.getAttribute('onclick').startsWith('scegliAssistito')) b.classList.remove('attivo');
+  });
+  document.getElementById('sez-assistito').classList.toggle('visibile', val==='altro');
+  document.getElementById('sez-eta-stesso').classList.toggle('visibile', val==='stesso');
+}
+
+// ---- LUOGO ----
 function scegliLuogo(tipo) {
   luogoScelto = tipo;
-  document.querySelectorAll('.btn-scelta').forEach(function(b){
-    if(b.getAttribute('onclick') === "scegliLuogo('"+tipo+"')") b.classList.add('attivo');
-    else if(b.getAttribute('onclick') && b.getAttribute('onclick').startsWith('scegliLuogo')) b.classList.remove('attivo');
-  });
   ['domicilio','ospedale','rsa'].forEach(function(t){
-    var el = document.getElementById('sez-'+t);
-    if(el) el.classList.toggle('visibile', t===tipo);
+    var btn = document.getElementById('btn-luogo-'+t);
+    if(btn) btn.classList.toggle('attivo', t===tipo);
+    var sez = document.getElementById('sez-'+t);
+    if(sez) sez.classList.toggle('visibile', t===tipo);
   });
 }
 
+// ---- ANIMALI ----
+function scegliAnimali(val) {
+  animaliScelto = val;
+  document.getElementById('btn-animali-si').classList.toggle('attivo', val==='si');
+  document.getElementById('btn-animali-no').classList.toggle('attivo', val==='no');
+  document.getElementById('sez-animali-dettaglio').classList.toggle('visibile', val==='si');
+}
+
+// ---- URGENZA ----
 function scegliUrgenza(btn, val) {
   urgenzaScelta = val;
   document.querySelectorAll('.btn-scelta').forEach(function(b){
@@ -232,57 +277,94 @@ function scegliUrgenza(btn, val) {
   btn.classList.add('attivo');
 }
 
-function toggliBisogno(btn) {
-  btn.classList.toggle('attivo');
-}
+// ---- BISOGNI ----
+function toggliBisogno(btn) { btn.classList.toggle('attivo'); }
 
-function aggiungiFascia() {
-  fasceCnt++;
-  var id = 'fascia_' + fasceCnt;
+// ---- GIORNI ----
+function prossimi30() {
   var oggi = new Date();
-  var opzioni = '';
-  for(var i=0; i<30; i++){
+  var opz = '';
+  var giorni = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+  for(var i=0;i<30;i++){
     var d = new Date(oggi); d.setDate(oggi.getDate()+i);
     var gg = String(d.getDate()).padStart(2,'0');
     var mm = String(d.getMonth()+1).padStart(2,'0');
     var yyyy = d.getFullYear();
-    var giorni = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
-    var label = i===0 ? 'Oggi '+gg+'/'+mm : i===1 ? 'Domani '+gg+'/'+mm : giorni[d.getDay()]+' '+gg+'/'+mm;
-    opzioni += '<option value="'+gg+'/'+mm+'/'+yyyy+'">'+label+'</option>';
+    var label = i===0?'Oggi '+gg+'/'+mm : i===1?'Domani '+gg+'/'+mm : giorni[d.getDay()]+' '+gg+'/'+mm;
+    opz += '<option value="'+gg+'/'+mm+'/'+yyyy+'">'+label+'</option>';
   }
-  var html = '<div class="fascia-row" id="'+id+'">' +
-    '<select style="flex:1;margin-top:0" onchange="">' + opzioni + '</select>' +
-    '<select style="flex:1;margin-top:0">' +
-      '<option value="">Tipo orario</option>' +
-      '<option>Ore diurne (scegli)</option>' +
-      '<option>Notte 21:00-06:00</option>' +
-      '<option>Notte 22:00-07:00</option>' +
-    '</select>' +
-    '<input placeholder="Ore (es. 2)" style="flex:0.5;margin-top:0" type="number" min="1" max="13">' +
-    '<button class="btn-rm" onclick="rimuoviFascia(\''+id+'\')">×</button>' +
-  '</div>';
-  document.getElementById('fasce-list').insertAdjacentHTML('beforeend', html);
+  return opz;
 }
 
-function rimuoviFascia(id) {
-  var el = document.getElementById(id);
-  if(el) el.remove();
+var tipiOrario = [
+  '07:00-08:00','08:00-09:00','09:00-10:00','10:00-11:00','11:00-12:00',
+  '12:00-13:00','13:00-14:00','14:00-15:00','15:00-16:00','16:00-17:00',
+  '17:00-18:00','18:00-19:00','19:00-20:00',
+  'Notte 21:00-06:00','Notte 22:00-07:00','Ore integrative'
+];
+
+function opzioniOrario() {
+  return tipiOrario.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('');
+}
+
+function aggiungiGiorno() {
+  giornoCnt++;
+  var gid = 'giorno_'+giornoCnt;
+  var html = '<div class="giorno-box" id="'+gid+'">'+
+    '<div class="giorno-header">'+
+      '<strong>📅 Giorno</strong>'+
+      '<button class="btn-rm-g" onclick="rimuoviGiorno(\''+gid+'\')">×</button>'+
+    '</div>'+
+    '<select style="margin-bottom:10px" onchange="">'+prossimi30()+'</select>'+
+    '<div class="accessi-list" id="acc_'+gid+'"></div>'+
+    '<button class="btn-add-a" onclick="aggiungiAccesso(\''+gid+'\')">+ Aggiungi accesso</button>'+
+  '</div>';
+  document.getElementById('giorni-list').insertAdjacentHTML('beforeend', html);
+  aggiungiAccesso(gid); // aggiungi subito il primo accesso
+}
+
+var accessoCnt = 0;
+function aggiungiAccesso(gid) {
+  var lista = document.getElementById('acc_'+gid);
+  var accessi = lista.querySelectorAll('.accesso-row').length;
+  if(accessi >= 3) { alert('Massimo 3 accessi per giornata.'); return; }
+  accessoCnt++;
+  var aid = 'acc_'+accessoCnt;
+  var html = '<div class="accesso-row" id="'+aid+'">'+
+    '<select>'+
+      '<option value="">Seleziona orario</option>'+
+      opzioniOrario()+
+    '</select>'+
+    '<input type="number" placeholder="Ore" min="1" max="13" style="max-width:70px">'+
+    '<button class="btn-rm-a" onclick="rimuoviAccesso(\''+aid+'\')">×</button>'+
+  '</div>';
+  lista.insertAdjacentHTML('beforeend', html);
+}
+
+function rimuoviGiorno(id) { var el=document.getElementById(id); if(el) el.remove(); }
+function rimuoviAccesso(id) { var el=document.getElementById(id); if(el) el.remove(); }
+
+// ---- DATI GIORNI ----
+function getGiorni() {
+  var risultato = [];
+  document.querySelectorAll('#giorni-list .giorno-box').forEach(function(box){
+    var sel = box.querySelector('select');
+    var giorno = sel ? sel.value : '';
+    var accessi = [];
+    box.querySelectorAll('.accesso-row').forEach(function(row){
+      var orSel = row.querySelector('select');
+      var orInp = row.querySelector('input[type=number]');
+      if(orSel && orSel.value) accessi.push({ orario: orSel.value, ore: orInp ? orInp.value : '' });
+    });
+    if(giorno) risultato.push({ giorno: giorno, accessi: accessi });
+  });
+  return risultato;
 }
 
 function getBisogni() {
   var sel = [];
-  document.querySelectorAll('#bisogni-wrap .btn-tag.attivo').forEach(function(b){ sel.push(b.textContent); });
+  document.querySelectorAll('#bisogni-wrap .btn-tag.attivo').forEach(function(b){ sel.push(b.textContent.trim()); });
   return sel;
-}
-
-function getFasce() {
-  var fasce = [];
-  document.querySelectorAll('#fasce-list .fascia-row').forEach(function(row){
-    var sels = row.querySelectorAll('select');
-    var inp = row.querySelector('input[type=number]');
-    if(sels.length>=2) fasce.push({ giorno: sels[0].value, tipo: sels[1].value, ore: inp ? inp.value : '' });
-  });
-  return fasce;
 }
 
 function mostraErrore(msg) {
@@ -296,32 +378,43 @@ function invia() {
   document.getElementById('errore').style.display = 'none';
 
   var nome_ref = document.getElementById('nome_referente').value.trim();
-  var cog_ref = document.getElementById('cognome_referente').value.trim();
-  var tel = document.getElementById('telefono_referente').value.trim();
-  var email = document.getElementById('email_referente').value.trim();
-  var nome_ass = document.getElementById('nome_assistito').value.trim();
-  var cog_ass = document.getElementById('cognome_assistito').value.trim();
-  var sede = document.getElementById('sede').value;
-  var privacy = document.getElementById('privacy_ok').checked;
+  var cog_ref  = document.getElementById('cognome_referente').value.trim();
+  var tel      = document.getElementById('telefono_referente').value.trim();
+  var email    = document.getElementById('email_referente').value.trim();
+  var sede     = document.getElementById('sede').value;
+  var privacy  = document.getElementById('privacy_ok').checked;
 
-  if(!nome_ref || !cog_ref) return mostraErrore('Inserisci nome e cognome del referente.');
+  if(!nome_ref||!cog_ref) return mostraErrore('Inserisci nome e cognome del richiedente.');
   if(!tel) return mostraErrore('Inserisci il numero di telefono.');
-  if(!nome_ass || !cog_ass) return mostraErrore('Inserisci nome e cognome dell\'assistito.');
+  if(!assistitoScelto) return mostraErrore('Indica se l\'assistenza è per te stesso o per un\'altra persona.');
   if(!sede) return mostraErrore('Seleziona la sede di riferimento.');
   if(!luogoScelto) return mostraErrore('Seleziona il tipo di luogo dell\'assistenza.');
   if(!privacy) return mostraErrore('Devi accettare il consenso al trattamento dei dati.');
 
-  var indirizzo = '';
-  var comune = '';
-  if(luogoScelto === 'domicilio') {
+  var nome_ass = nome_ref, cog_ass = cog_ref, eta_ass = '';
+  if(assistitoScelto === 'stesso') {
+    eta_ass = document.getElementById('eta_stesso').value || '';
+  } else {
+    nome_ass = document.getElementById('nome_assistito').value.trim();
+    cog_ass  = document.getElementById('cognome_assistito').value.trim();
+    eta_ass  = document.getElementById('eta_assistito').value || '';
+    if(!nome_ass||!cog_ass) return mostraErrore('Inserisci nome e cognome dell\'assistito.');
+  }
+
+  var indirizzo='', comune='', animali='';
+  if(luogoScelto==='domicilio'){
     indirizzo = document.getElementById('indirizzo_assistenza').value.trim();
-    comune = document.getElementById('comune_assistenza').value.trim();
-  } else if(luogoScelto === 'ospedale') {
-    indirizzo = document.getElementById('ospedale_sel').value + ' — ' + (document.getElementById('reparto').value.trim() || '');
-    comune = '';
-  } else if(luogoScelto === 'rsa') {
+    comune    = document.getElementById('comune_assistenza').value.trim();
+    if(animaliScelto==='si'){
+      animali = 'Sì — '+(document.getElementById('animali_dettaglio').value.trim()||'non specificato');
+    } else { animali = animaliScelto==='no'?'No':''; }
+  } else if(luogoScelto==='ospedale'){
+    var osp = document.getElementById('ospedale_sel').value;
+    var rep = document.getElementById('reparto').value.trim();
+    indirizzo = osp + (rep?' — '+rep:'');
+  } else if(luogoScelto==='rsa'){
     indirizzo = document.getElementById('rsa_nome').value.trim();
-    comune = document.getElementById('rsa_comune').value.trim();
+    comune    = document.getElementById('rsa_comune').value.trim();
   }
 
   var dati = {
@@ -330,16 +423,17 @@ function invia() {
     cognome: cog_ref,
     telefono_cellulare: tel,
     email: email,
+    assistito_uguale_cliente: assistitoScelto==='stesso',
     nome_assistito: nome_ass,
     cognome_assistito: cog_ass,
-    eta_assistito: document.getElementById('eta_assistito').value || '',
-    assistito_uguale_cliente: false,
+    eta_assistito: eta_ass ? String(eta_ass) : '',
     luogo_assistenza: luogoScelto,
     indirizzo_assistenza: indirizzo,
     comune_assistenza: comune,
     sede: sede,
+    animali_in_casa: animali,
     bisogni: getBisogni(),
-    orari_diurni: JSON.stringify(getFasce()),
+    orari_diurni: JSON.stringify(getGiorni()),
     urgenza: urgenzaScelta,
     note: document.getElementById('note').value.trim(),
     stato: 'Nuovo'
@@ -349,26 +443,24 @@ function invia() {
   btn.disabled = true;
   btn.textContent = 'Invio in corso...';
 
-  fetch('https://alessia-631113cd.base44.app/api/functions/salvaClienteAssistenza', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  fetch('https://alessia-631113cd.base44.app/api/functions/salvaClienteAssistenza',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
     body: JSON.stringify(dati)
   })
   .then(function(r){ return r.json(); })
   .then(function(res){
-    if(res.ok) {
-      document.getElementById('formPage').style.display = 'none';
-      document.getElementById('graziePage').style.display = 'flex';
+    if(res.ok){
+      document.getElementById('formPage').style.display='none';
+      document.getElementById('graziePage').style.display='flex';
     } else {
       mostraErrore('Errore durante l\'invio. Riprova o chiama lo 0577 600904.');
-      btn.disabled = false;
-      btn.textContent = '📤 Invia Richiesta';
+      btn.disabled=false; btn.textContent='📤 Invia Richiesta';
     }
   })
   .catch(function(){
     mostraErrore('Errore di connessione. Riprova o chiama lo 0577 600904.');
-    btn.disabled = false;
-    btn.textContent = '📤 Invia Richiesta';
+    btn.disabled=false; btn.textContent='📤 Invia Richiesta';
   });
 }
 </script>
