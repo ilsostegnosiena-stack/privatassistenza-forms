@@ -275,18 +275,15 @@ function scegliAnimali(val) {
 function scegliDurata(val) {
   document.getElementById('btn-durata-revoca').classList.remove('attivo');
   document.getElementById('btn-durata-data').classList.remove('attivo');
-  if (val==='revoca') {
+  if (val === 'revoca') {
     document.getElementById('btn-durata-revoca').classList.add('attivo');
     document.getElementById('sez-data-fine').classList.remove('visibile');
   } else {
     document.getElementById('btn-durata-data').classList.add('attivo');
     document.getElementById('sez-data-fine').classList.add('visibile');
-    // imposta min = oggi
     document.getElementById('data_fine_servizio').min = new Date().toISOString().split('T')[0];
   }
   durataScelta = val;
-});
-  btn.classList.add('attivo');
 }
 
 // ---- BISOGNI ----
