@@ -452,6 +452,7 @@ function invia() {
   btn.disabled = true;
   btn.textContent = 'Invio in corso...';
 
+  // Step 1: salva cliente
   fetch('https://alessia-631113cd.base44.app/api/functions/salvaClienteAssistenza',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -459,9 +460,20 @@ function invia() {
   })
   .then(function(r){ return r.json(); })
   .then(function(res){
-    if(res.ok){
-      document.getElementById('formPage').style.display='none';
-      document.getElementById('graziePage').style.display='flex';
+    if(res.ok || res.id){
+      var clienteId = res.id || res.cliente_id;
+      // Step 2: calcola preventivo e invia email via Gmail
+      fetch('https://alessia-631113cd.base44.app/api/functions/calcolaEInviaPreventivo',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ cliente_id: clienteId })
+      }).then(function(r2){ return r2.json(); }).then(function(res2){
+        document.getElementById('formPage').style.display='none';
+        document.getElementById('graziePage').style.display='flex';
+      }).catch(function(){
+        document.getElementById('formPage').style.display='none';
+        document.getElementById('graziePage').style.display='flex';
+      });
     } else {
       mostraErrore('Errore durante l\'invio. Riprova o chiama lo 0577 600904.');
       btn.disabled=false; btn.textContent='📤 Invia Richiesta';
