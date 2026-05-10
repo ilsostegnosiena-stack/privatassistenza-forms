@@ -187,14 +187,17 @@ textarea{min-height:80px;resize:vertical}
   <button class="btn-add-g" onclick="aggiungiGiorno()">+ Aggiungi giorno</button>
 </div>
 
-<!-- URGENZA -->
+<!-- DURATA SERVIZIO -->
 <div class="card">
-  <h2>⚡ Urgenza</h2>
+  <h2>📆 Durata del servizio</h2>
+  <p style="font-size:13px;color:#666;margin-bottom:10px">Fino a quando è previsto il servizio?</p>
   <div class="btn-gruppo">
-    <button class="btn-scelta" onclick="scegliUrgenza(this,'Entro oggi')">Entro oggi</button>
-    <button class="btn-scelta" onclick="scegliUrgenza(this,'Entro questa settimana')">Entro questa settimana</button>
-    <button class="btn-scelta" onclick="scegliUrgenza(this,'Entro il mese')">Entro il mese</button>
-    <button class="btn-scelta" onclick="scegliUrgenza(this,'Nessuna urgenza')">Nessuna urgenza</button>
+    <button class="btn-scelta" id="btn-durata-revoca" onclick="scegliDurata('revoca')">🔄 Fino a revoca</button>
+    <button class="btn-scelta" id="btn-durata-data" onclick="scegliDurata('data')">📅 Fino a una data precisa</button>
+  </div>
+  <div id="sez-data-fine" class="sezione" style="margin-top:12px">
+    <label>Data fine servizio <span class="req">*</span></label>
+    <input type="date" id="data_fine_servizio" min="">
   </div>
 </div>
 
@@ -233,7 +236,7 @@ textarea{min-height:80px;resize:vertical}
 
 <script>
 var luogoScelto = '';
-var urgenzaScelta = '';
+var durataScelta = ''; // 'revoca' o data fine
 var assistitoScelto = '';
 var animaliScelto = '';
 var giornoCnt = 0;
@@ -269,11 +272,20 @@ function scegliAnimali(val) {
 }
 
 // ---- URGENZA ----
-function scegliUrgenza(btn, val) {
-  urgenzaScelta = val;
-  document.querySelectorAll('.btn-scelta').forEach(function(b){
-    if(b.getAttribute('onclick') && b.getAttribute('onclick').startsWith('scegliUrgenza')) b.classList.remove('attivo');
-  });
+function scegliDurata(val) {
+  document.getElementById('btn-durata-revoca').classList.remove('attivo');
+  document.getElementById('btn-durata-data').classList.remove('attivo');
+  if (val==='revoca') {
+    document.getElementById('btn-durata-revoca').classList.add('attivo');
+    document.getElementById('sez-data-fine').classList.remove('visibile');
+  } else {
+    document.getElementById('btn-durata-data').classList.add('attivo');
+    document.getElementById('sez-data-fine').classList.add('visibile');
+    // imposta min = oggi
+    document.getElementById('data_fine_servizio').min = new Date().toISOString().split('T')[0];
+  }
+  durataScelta = val;
+});
   btn.classList.add('attivo');
 }
 
@@ -434,7 +446,7 @@ function invia() {
     animali_in_casa: animali,
     bisogni: getBisogni(),
     orari_diurni: JSON.stringify(getGiorni()),
-    urgenza: urgenzaScelta,
+    durata_servizio: durataScelta === 'revoca' ? 'Fino a revoca' : (document.getElementById('data_fine_servizio').value || 'Fino a revoca'),
     note: document.getElementById('note').value.trim(),
     stato: 'Nuovo'
   };
