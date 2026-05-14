@@ -505,8 +505,13 @@ function chk(el,campo,val){
   if(e&&C[campo].length>0)e.classList.remove('vis');
 }
 function toggleConsenso(){
-  var cb=document.getElementById('cCheck');cb.checked=!cb.checked;
+  var cb=document.getElementById('cCheck');
+  cb.checked=!cb.checked;
+  cb.setAttribute('data-checked',cb.checked?'1':'0');
   document.getElementById('cRow').classList.toggle('sel',cb.checked);
+  var r=document.getElementById('cRow');
+  r.style.borderColor=cb.checked?'#27ae60':'#ddd';
+  r.style.background=cb.checked?'#eafaf1':'white';
   if(cb.checked)document.getElementById('eConsenso').classList.remove('vis');
 }
 function mostra(id,show){var el=document.getElementById(id);if(el)el.style.display=show?'block':'none';}
@@ -521,6 +526,14 @@ function showSez(n){
 }
 function in_(n){showSez(n-1);}
 function av(n){
+  // Fix mobile: forza lettura stato checkbox da DOM
+  if(n===1){
+    var cb=document.getElementById('cCheck');
+    var checked=cb.checked||cb.getAttribute('data-checked')==='1';
+    if(!checked){document.getElementById('eConsenso').classList.add('vis');window.scrollTo({top:0,behavior:'smooth'});return;}
+    document.getElementById('eConsenso').classList.remove('vis');
+    showSez(2);return;
+  }
   if(!valida(n))return;
   if(n===2&&V['rapporto']==='assistito'){
     document.getElementById('asSame').style.display='block';
