@@ -75,20 +75,19 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f7fa;color:#333;min-h
       La Cooperativa Sociale Il Sostegno (Viale Goffredo Mameli 100, Siena) tratta i Suoi dati per: valutazione della richiesta di assistenza e ricerca di personale qualificato.<br><br>
       <strong>Base giuridica:</strong> consenso esplicito (art. 6 par. 1 lett. a GDPR) e misure precontrattuali (art. 6 par. 1 lett. b).<br><br>
       <strong>Dati trattati:</strong> dati anagrafici, contatti, informazioni sulle condizioni di salute dell'assistito (dati sensibili art. 9 GDPR).<br><br>
-      <strong>Conservazione:</strong> non oltre 5 anni dalla cessazione del rapporto.<br><br>
-      <strong>Diritti:</strong> accesso, rettifica, cancellazione, opposizione. Contatto: centro@siena.privatassistenza.it
+      <strong>Conservazione:</strong> per il tempo necessario all'erogazione del servizio e agli obblighi di legge.<br><br>
+      <strong>Diritti:</strong> accesso, rettifica, cancellazione, portabilità, opposizione (art. 15-21 GDPR) scrivendo a privacyilsostegno@gmail.com.
     </div>
     <div class="campo">
-      <label for="cCheck" class="consenso-row" id="cRow" style="cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:56px;align-items:center;display:flex;gap:12px;padding:14px;border:1.5px solid #ddd;border-radius:8px;background:white;">
-        <input type="checkbox" id="cCheck" onchange="var r=document.getElementById('cRow');r.style.borderColor=this.checked?'#27ae60':'#ddd';r.style.background=this.checked?'#eafaf1':'white';if(this.checked)document.getElementById('eConsenso').classList.remove('vis');" style="width:26px;height:26px;margin:0;flex-shrink:0;cursor:pointer;accent-color:#27ae60;">
-        <span style="font-size:14px;color:#444;line-height:1.5;">Ho letto l'informativa e <strong>acconsento al trattamento dei miei dati personali</strong> per le finalità indicate.</span>
-      </label>
-      <div class="msg-err" id="eConsenso">È necessario accettare per procedere.</div>
+      <div class="msg-err" id="eConsenso" style="display:none;color:#e74c3c;font-size:13px;margin-bottom:8px;">È necessario accettare per procedere.</div>
+      <button id="btnAccetta" onclick="accettaPrivacy()" style="width:100%;padding:16px;font-size:15px;font-weight:600;border:2px solid #27ae60;border-radius:10px;background:white;color:#27ae60;cursor:pointer;">
+        ☐ Accetto il trattamento dei miei dati personali
+      </button>
     </div>
     <div class="nav"><button class="btn-av" onclick="av(1)">Avanti →</button></div>
   </div>
 
-  <!-- SEZ 2: REFERENTE -->
+<!-- SEZ 2: REFERENTE -->
   <div class="sezione" id="s2">
     <div class="tit">👤 Chi compila questo modulo?</div>
     <div class="campo">
@@ -504,15 +503,23 @@ function chk(el,campo,val){
   var e=document.getElementById('e'+campo[0].toUpperCase()+campo.slice(1));
   if(e&&C[campo].length>0)e.classList.remove('vis');
 }
-function toggleConsenso(){
-  var cb=document.getElementById('cCheck');
-  cb.checked=!cb.checked;
-  cb.setAttribute('data-checked',cb.checked?'1':'0');
-  document.getElementById('cRow').classList.toggle('sel',cb.checked);
-  var r=document.getElementById('cRow');
-  r.style.borderColor=cb.checked?'#27ae60':'#ddd';
-  r.style.background=cb.checked?'#eafaf1':'white';
-  if(cb.checked)document.getElementById('eConsenso').classList.remove('vis');
+function toggleConsenso(){}
+var _privacyAccettata = false;
+function accettaPrivacy(){
+  _privacyAccettata = !_privacyAccettata;
+  var btn = document.getElementById('btnAccetta');
+  if(_privacyAccettata){
+    btn.innerHTML = '☑ Accetto il trattamento dei miei dati personali';
+    btn.style.background = '#eafaf1';
+    btn.style.borderColor = '#27ae60';
+    btn.style.color = '#1a8a4a';
+    document.getElementById('eConsenso').style.display='none';
+  } else {
+    btn.innerHTML = '☐ Accetto il trattamento dei miei dati personali';
+    btn.style.background = 'white';
+    btn.style.borderColor = '#27ae60';
+    btn.style.color = '#27ae60';
+  }
 }
 function mostra(id,show){var el=document.getElementById(id);if(el)el.style.display=show?'block':'none';}
 function updProg(){
@@ -526,12 +533,8 @@ function showSez(n){
 }
 function in_(n){showSez(n-1);}
 function av(n){
-  // Fix mobile: forza lettura stato checkbox da DOM
   if(n===1){
-    var cb=document.getElementById('cCheck');
-    var checked=cb.checked||cb.getAttribute('data-checked')==='1';
-    if(!checked){document.getElementById('eConsenso').classList.add('vis');window.scrollTo({top:0,behavior:'smooth'});return;}
-    document.getElementById('eConsenso').classList.remove('vis');
+    if(!_privacyAccettata){document.getElementById('eConsenso').style.display='block';window.scrollTo({top:0,behavior:'smooth'});return;}
     showSez(2);return;
   }
   if(!valida(n))return;
