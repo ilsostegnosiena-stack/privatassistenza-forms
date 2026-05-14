@@ -79,10 +79,10 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f7fa;color:#333;min-h
       <strong>Diritti:</strong> accesso, rettifica, cancellazione, opposizione. Contatto: centro@siena.privatassistenza.it
     </div>
     <div class="campo">
-      <label class="consenso-row" id="cRow" for="cCheck" onclick="setTimeout(function(){var cb=document.getElementById('cCheck');document.getElementById('cRow').classList.toggle('sel',cb.checked);if(cb.checked)document.getElementById('eConsenso').classList.remove('vis');},10)">
-        <input type="checkbox" id="cCheck">
-        <span>Ho letto l'informativa e <strong>acconsento al trattamento dei miei dati personali</strong> per le finalità indicate.</span>
-      </label>
+      <div class="consenso-row" id="cRow" onclick="toggleConsenso()" style="cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:48px;align-items:center;">
+        <input type="checkbox" id="cCheck" onclick="event.stopPropagation()" onchange="toggleConsenso()" style="width:24px;height:24px;margin-top:0;flex-shrink:0;cursor:pointer;">
+        <span style="padding:4px 0;">Ho letto l'informativa e <strong>acconsento al trattamento dei miei dati personali</strong> per le finalità indicate.</span>
+      </div>
       <div class="msg-err" id="eConsenso">È necessario accettare per procedere.</div>
     </div>
     <div class="nav"><button class="btn-av" onclick="av(1)">Avanti →</button></div>
