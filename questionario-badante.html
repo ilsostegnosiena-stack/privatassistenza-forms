@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrivatAssistenza Siena — Richiesta Badante</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f7fa;color:#333;min-height:100vh}
+.header{background:#1a5276;color:white;padding:20px;text-align:center}
+.header h1{font-size:20px;font-weight:600}
+.header p{font-size:13px;opacity:.85;margin-top:4px}
+.container{max-width:680px;margin:0 auto;padding:20px 16px 60px}
+.progress-bar{background:#dde;border-radius:10px;height:6px;margin:16px 0}
+.progress-fill{background:#1a5276;height:6px;border-radius:10px;transition:width .4s}
+.progress-label{font-size:12px;color:#777;margin-bottom:12px;text-align:right}
+.sezione{background:white;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.07);display:none}
+.sezione.attiva{display:block}
+.tit{font-size:16px;font-weight:700;color:#1a5276;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #edf2f7}
+.campo{margin-bottom:18px}
+.campo label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px}
+.req{color:#e74c3c;margin-left:2px}
+.campo input,.campo select,.campo textarea{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;color:#333;background:#fafafa;-webkit-appearance:none}
+.campo input:focus,.campo select:focus,.campo textarea:focus{outline:none;border-color:#1a5276;background:white}
+.msg-err{color:#e74c3c;font-size:12px;margin-top:4px;display:none}
+.msg-err.vis{display:block}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:500px){.row2{grid-template-columns:1fr}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:500px){.grid2,.grid3{grid-template-columns:1fr}}
+.btn-op{border:1.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:13px;cursor:pointer;background:white;text-align:center;transition:all .15s;color:#444;user-select:none}
+.btn-op:hover{border-color:#1a5276;color:#1a5276}
+.btn-op.sel{border-color:#1a5276;background:#1a5276;color:white;font-weight:600}
+.chk-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;transition:all .15s;background:white}
+.chk-item:hover{border-color:#1a5276}
+.chk-item.sel{border-color:#1a5276;background:#eaf2fb}
+.chk-item input{width:16px;height:16px;cursor:pointer;accent-color:#1a5276;flex-shrink:0}
+.chk-item span{font-size:13px;color:#444}
+.privacy-box{background:#f8f9fa;border:1.5px solid #ddd;border-radius:10px;padding:16px;font-size:12px;color:#555;line-height:1.7;max-height:200px;overflow-y:auto;margin-bottom:14px}
+.consenso-row{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;background:white}
+.consenso-row.sel{border-color:#27ae60;background:#eafaf1}
+.consenso-row input{width:18px;height:18px;margin-top:2px;accent-color:#27ae60;flex-shrink:0}
+.consenso-row span{font-size:13px;color:#444;line-height:1.5}
+.nav{display:flex;gap:12px;margin-top:24px}
+.btn-av{flex:1;background:#1a5276;color:white;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:600;cursor:pointer}
+.btn-av:hover{background:#154360}
+.btn-ind{background:white;color:#666;border:1.5px solid #ddd;border-radius:8px;padding:14px 20px;font-size:14px;cursor:pointer}
+.divider{border:none;border-top:1px dashed #ddd;margin:16px 0}
+.alert-info{background:#eaf4fb;border-left:4px solid #1a5276;color:#1a5276;padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px}
+.spinner{display:none;text-align:center;padding:40px}
+.spinner.vis{display:block}
+.spin{display:inline-block;width:40px;height:40px;border:4px solid #ddd;border-top-color:#1a5276;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.grazie{text-align:center;padding:40px 20px}
+.grazie .ok{font-size:60px;margin-bottom:16px}
+.grazie h2{color:#1a5276;margin-bottom:12px}
+.grazie p{color:#666;font-size:14px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>PrivatAssistenza Siena</h1>
+  <p>Modulo richiesta badante convivente (54 ore settimanali)</p>
+</div>
+<div class="container">
+  <div class="progress-bar"><div class="progress-fill" id="pf" style="width:0%"></div></div>
+  <div class="progress-label" id="pl">Passo 1 di 8</div>
+
+  <!-- SEZ 1: PRIVACY -->
+  <div class="sezione attiva" id="s1">
+    <div class="tit">🔒 Consenso al trattamento dei dati</div>
+    <div class="privacy-box">
+      <strong>Informativa Privacy — GDPR (Reg. UE 2016/679)</strong><br><br>
+      La Cooperativa Sociale Il Sostegno (Viale Goffredo Mameli 100, Siena) tratta i Suoi dati per: valutazione della richiesta di assistenza e ricerca di personale qualificato.<br><br>
+      <strong>Base giuridica:</strong> consenso esplicito (art. 6 par. 1 lett. a GDPR) e misure precontrattuali (art. 6 par. 1 lett. b).<br><br>
+      <strong>Dati trattati:</strong> dati anagrafici, contatti, informazioni sulle condizioni di salute dell'assistito (dati sensibili art. 9 GDPR).<br><br>
+      <strong>Conservazione:</strong> non oltre 5 anni dalla cessazione del rapporto.<br><br>
+      <strong>Diritti:</strong> accesso, rettifica, cancellazione, opposizione. Contatto: centro@siena.privatassistenza.it
+    </div>
+    <div class="campo">
+      <div class="consenso-row" id="cRow" onclick="toggleConsenso()">
+        <input type="checkbox" id="cCheck">
+        <span>Ho letto l'informativa e <strong>acconsento al trattamento dei miei dati personali</strong> per le finalità indicate.</span>
+      </div>
+      <div class="msg-err" id="eConsenso">È necessario accettare per procedere.</div>
+    </div>
+    <div class="nav"><button class="btn-av" onclick="av(1)">Avanti →</button></div>
+  </div>
+
+  <!-- SEZ 2: REFERENTE -->
+  <div class="sezione" id="s2">
+    <div class="tit">👤 Chi compila questo modulo?</div>
+    <div class="campo">
+      <label>Rapporto con l'assistito <span class="req">*</span></label>
+      <div class="grid2" id="gRapporto">
+        <div class="btn-op" onclick="sel('rapporto','familiare',this);mostra('bLegame',true)">👨‍👩‍👧 Familiare</div>
+        <div class="btn-op" onclick="sel('rapporto','assistito',this);mostra('bLegame',false)">🧓 Sono l'assistito</div>
+        <div class="btn-op" onclick="sel('rapporto','altra',this);mostra('bLegame',false)">🤝 Altra persona</div>
+      </div>
+      <div class="msg-err" id="eRapporto">Seleziona il rapporto.</div>
+    </div>
+    <div id="bLegame" style="display:none">
+      <div class="campo">
+        <label>Legame familiare <span class="req">*</span></label>
+        <div class="grid2" id="gLegame">
+          <div class="btn-op" onclick="sel('legame','figlio_figlia',this)">Figlio/Figlia</div>
+          <div class="btn-op" onclick="sel('legame','coniuge',this)">Coniuge/Convivente</div>
+          <div class="btn-op" onclick="sel('legame','fratello_sorella',this)">Fratello/Sorella</div>
+          <div class="btn-op" onclick="sel('legame','nipote',this)">Nipote</div>
+          <div class="btn-op" onclick="sel('legame','altro',this)">Altro familiare</div>
+        </div>
+        <div class="msg-err" id="eLegame">Specifica il legame.</div>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="row2">
+      <div class="campo"><label>Nome <span class="req">*</span></label><input type="text" id="rNome" placeholder="Mario"><div class="msg-err" id="eRNome">Campo obbligatorio.</div></div>
+      <div class="campo"><label>Cognome <span class="req">*</span></label><input type="text" id="rCognome" placeholder="Rossi"><div class="msg-err" id="eRCognome">Campo obbligatorio.</div></div>
+    </div>
+    <div class="campo"><label>Data di nascita <span class="req">*</span></label><input type="date" id="rDN"><div class="msg-err" id="eRDN">Campo obbligatorio.</div></div>
+    <div class="campo">
+      <label>Luogo di nascita <span class="req">*</span></label>
+      <div class="row2">
+        <select id="rNP" onchange="updProv('rN')"><option value="">— Provincia —</option></select>
+        <input type="text" id="rNC" placeholder="Comune (o nazione estera)">
+      </div>
+      <div class="msg-err" id="eRN">Seleziona provincia e inserisci comune.</div>
+    </div>
+    <div class="campo">
+      <label>Residenza <span class="req">*</span></label>
+      <input type="text" id="rVia" placeholder="Via/Piazza e numero civico" style="margin-bottom:8px">
+      <div class="row2" style="margin-bottom:6px">
+        <select id="rRP" onchange="updProv('rR')"><option value="">— Provincia —</option></select>
+        <input type="text" id="rRC" placeholder="Comune">
+      </div>
+      <div class="msg-err" id="eRR">Seleziona provincia e inserisci comune.</div>
+    </div>
+    <div class="campo"><label>Telefono <span class="req">*</span></label><input type="tel" id="rTel" placeholder="3201234567"><div class="msg-err" id="eRTel">Telefono obbligatorio.</div></div>
+    <div class="campo"><label>Email <span class="req">*</span></label><input type="email" id="rEmail" placeholder="mario@email.it"><div class="msg-err" id="eREmail">Email non valida.</div></div>
+    <div class="nav"><button class="btn-ind" onclick="in_(2)">← Indietro</button><button class="btn-av" onclick="av(2)">Avanti →</button></div>
+  </div>
+
+  <!-- SEZ 3: ASSISTITO -->
+  <div class="sezione" id="s3">
+    <div class="tit">🧓 Dati dell'assistito</div>
+    <div class="alert-info" id="asSame" style="display:none">I dati coincidono con quelli del compilatore.</div>
+    <div id="fAssistito">
+      <div class="row2">
+        <div class="campo"><label>Nome <span class="req">*</span></label><input type="text" id="aNome" placeholder="Giuseppe"><div class="msg-err" id="eANome">Campo obbligatorio.</div></div>
+        <div class="campo"><label>Cognome <span class="req">*</span></label><input type="text" id="aCognome" placeholder="Bianchi"><div class="msg-err" id="eACognome">Campo obbligatorio.</div></div>
+      </div>
+      <div class="campo"><label>Data di nascita <span class="req">*</span></label><input type="date" id="aDN"><div class="msg-err" id="eADN">Campo obbligatorio.</div></div>
+      <div class="campo">
+        <label>Luogo di nascita <span class="req">*</span></label>
+        <div class="row2">
+          <select id="aNP" onchange="updProv('aN')"><option value="">— Provincia —</option></select>
+          <input type="text" id="aNC" placeholder="Comune (o nazione estera)">
+        </div>
+        <div class="msg-err" id="eAN">Seleziona provincia e inserisci comune.</div>
+      </div>
+      <div class="campo">
+        <label>Residenza <span class="req">*</span></label>
+        <input type="text" id="aVia" placeholder="Via/Piazza e numero civico" style="margin-bottom:8px">
+        <div class="row2">
+          <select id="aRP" onchange="updProv('aR')"><option value="">— Provincia —</option></select>
+          <input type="text" id="aRC" placeholder="Comune">
+        </div>
+        <div class="msg-err" id="eAR">Seleziona provincia e inserisci comune.</div>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="campo">
+      <label>L'assistenza si svolge presso la residenza dell'assistito? <span class="req">*</span></label>
+      <div class="grid2" id="gIndAss">
+        <div class="btn-op" onclick="sel('indAss','si',this);mostra('bIndAss',false)">✅ Sì, stessa residenza</div>
+        <div class="btn-op" onclick="sel('indAss','no',this);mostra('bIndAss',true)">📍 No, indirizzo diverso</div>
+      </div>
+      <div class="msg-err" id="eIndAss">Seleziona una opzione.</div>
+    </div>
+    <div id="bIndAss" style="display:none">
+      <div class="campo">
+        <label>Indirizzo di assistenza <span class="req">*</span></label>
+        <input type="text" id="assVia" placeholder="Via/Piazza e numero civico" style="margin-bottom:8px">
+        <div class="row2">
+          <select id="assP" onchange="updProv('ass')"><option value="">— Provincia —</option></select>
+          <input type="text" id="assC" placeholder="Comune">
+        </div>
+        <div class="msg-err" id="eAss">Campo obbligatorio.</div>
+      </div>
+    </div>
+    <div class="nav"><button class="btn-ind" onclick="in_(3)">← Indietro</button><button class="btn-av" onclick="av(3)">Avanti →</button></div>
+  </div>
+
+  <!-- SEZ 4: CASA -->
+  <div class="sezione" id="s4">
+    <div class="tit">🏠 Situazione familiare e casa</div>
+    <div class="campo">
+      <label>Con chi vive l'assistito? <span class="req">*</span></label>
+      <div class="grid2" id="gConv">
+        <div class="chk-item" onclick="chk(this,'conv','solo')"><input type="checkbox"><span>🚶 Vive da solo</span></div>
+        <div class="chk-item" onclick="chk(this,'conv','coniuge')"><input type="checkbox"><span>💑 Coniuge/convivente</span></div>
+        <div class="chk-item" onclick="chk(this,'conv','figli')"><input type="checkbox"><span>👨‍👩‍👧 Con figli</span></div>
+        <div class="chk-item" onclick="chk(this,'conv','altri_fam')"><input type="checkbox"><span>👨‍👩‍👦‍👦 Altri familiari</span></div>
+        <div class="chk-item" onclick="chk(this,'conv','badante_pres')"><input type="checkbox"><span>👩‍⚕️ Badante già presente</span></div>
+      </div>
+      <div class="msg-err" id="eConv">Seleziona almeno una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Barriere architettoniche <span class="req">*</span></label>
+      <div class="grid2" id="gBarr">
+        <div class="chk-item" onclick="chk(this,'barr','nessuna')"><input type="checkbox"><span>✅ Nessuna</span></div>
+        <div class="chk-item" onclick="chk(this,'barr','scale_int')"><input type="checkbox"><span>🪜 Scale interne</span></div>
+        <div class="chk-item" onclick="chk(this,'barr','scale_est')"><input type="checkbox"><span>🏗️ Scale esterne</span></div>
+        <div class="chk-item" onclick="chk(this,'barr','bagno')"><input type="checkbox"><span>🚿 Bagno non accessibile</span></div>
+        <div class="chk-item" onclick="chk(this,'barr','porte')"><input type="checkbox"><span>🚪 Porte strette</span></div>
+        <div class="chk-item" onclick="chk(this,'barr','altro')"><input type="checkbox"><span>❓ Altro</span></div>
+      </div>
+      <div class="msg-err" id="eBarr">Seleziona almeno una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Stanza per la badante <span class="req">*</span></label>
+      <div class="grid2" id="gStanza">
+        <div class="btn-op" onclick="sel('stanza','singola',this)">🛏️ Stanza singola</div>
+        <div class="btn-op" onclick="sel('stanza','condivisa',this)">🛏️ Stanza condivisa</div>
+        <div class="btn-op" onclick="sel('stanza','soggiorno',this)">🛋️ Zona notte soggiorno</div>
+        <div class="btn-op" onclick="sel('stanza','non_disp',this)">❌ Non disponibile</div>
+        <div class="btn-op" onclick="sel('stanza','da_val',this)">🤔 Da valutare</div>
+      </div>
+      <div class="msg-err" id="eStanza">Seleziona una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Animali in casa <span class="req">*</span></label>
+      <div class="grid2" id="gAnim">
+        <div class="chk-item" onclick="chk(this,'anim','nessuno')"><input type="checkbox"><span>✅ Nessuno</span></div>
+        <div class="chk-item" onclick="chk(this,'anim','cane')"><input type="checkbox"><span>🐕 Cane</span></div>
+        <div class="chk-item" onclick="chk(this,'anim','gatto')"><input type="checkbox"><span>🐈 Gatto</span></div>
+        <div class="chk-item" onclick="chk(this,'anim','altro')"><input type="checkbox"><span>🐾 Altro</span></div>
+      </div>
+      <div class="msg-err" id="eAnim">Seleziona almeno una opzione.</div>
+    </div>
+    <div class="nav"><button class="btn-ind" onclick="in_(4)">← Indietro</button><button class="btn-av" onclick="av(4)">Avanti →</button></div>
+  </div>
+
+  <!-- SEZ 5: CONDIZIONI -->
+  <div class="sezione" id="s5">
+    <div class="tit">🏥 Condizioni dell'assistito</div>
+    <div class="campo">
+      <label>Patologie <span class="req">*</span></label>
+      <div class="grid2" id="gPat">
+        <div class="chk-item" onclick="chk(this,'pat','nessuna')"><input type="checkbox"><span>✅ Nessuna</span></div>
+        <div class="chk-item" onclick="chk(this,'pat','alzheimer')"><input type="checkbox"><span>🧠 Alzheimer</span></div>
+        <div class="chk-item" onclick="chk(this,'pat','parkinson')"><input type="checkbox"><span>🤲 Parkinson</span></div>
+        <div class="chk-item" onclick="chk(this,'pat','demenza')"><input type="checkbox"><span>🧠 Demenza senile</span></div>
+        <div class="chk-item" onclick="chk(this,'pat','diabete')"><input type="checkbox"><span>💉 Diabete</span></div>
+        <div class="chk-item" onclick="chk(this,'pat','cardiopatia')"><input type="checkbox"><span>❤️ Cardiopatia</span></div>
+        <div class="chk-item" onclick="chk(this,'pat','ictus')"><input type="checkbox"><span>🩺 Ictus/Stroke</span></div>
+        <div class="chk-item" onclick="chk(this,'pat','tumore')"><input type="checkbox"><span>🎗️ Tumore</span></div>
+        <div class="chk-item" onclick="chk(this,'pat','depressione')"><input type="checkbox"><span>😔 Depressione</span></div>
+        <div class="chk-item" onclick="chk(this,'pat','altra')"><input type="checkbox"><span>❓ Altra patologia</span></div>
+      </div>
+      <div class="msg-err" id="ePat">Seleziona almeno una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Deambulazione <span class="req">*</span></label>
+      <div class="grid2" id="gDeamb">
+        <div class="btn-op" onclick="sel('deamb','autonoma',this)">🚶 Autonoma</div>
+        <div class="btn-op" onclick="sel('deamb','con_supporto',this)">🤝 Con supporto</div>
+        <div class="btn-op" onclick="sel('deamb','deambulatore',this)">🦯 Deambulatore</div>
+        <div class="btn-op" onclick="sel('deamb','sedia_rotelle',this)">♿ Sedia a rotelle</div>
+        <div class="btn-op" onclick="sel('deamb','allettato',this)">🛏️ Allettato</div>
+      </div>
+      <div class="msg-err" id="eDeamb">Seleziona una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Farmaci <span class="req">*</span></label>
+      <div class="grid2" id="gFarm">
+        <div class="btn-op" onclick="sel('farm','si',this);mostra('bFarm',true)">💊 Sì</div>
+        <div class="btn-op" onclick="sel('farm','no',this);mostra('bFarm',false)">❌ No</div>
+      </div>
+      <div class="msg-err" id="eFarm">Seleziona una opzione.</div>
+    </div>
+    <div id="bFarm" style="display:none">
+      <div class="campo"><label>Quali farmaci?</label><textarea id="farmDet" rows="2" placeholder="Elencare i farmaci principali..." style="resize:vertical"></textarea></div>
+    </div>
+    <div class="campo">
+      <label>Incontinenza <span class="req">*</span></label>
+      <div class="grid3" id="gInco">
+        <div class="btn-op" onclick="sel('inco','no',this)">✅ No</div>
+        <div class="btn-op" onclick="sel('inco','parziale',this)">⚠️ Parziale</div>
+        <div class="btn-op" onclick="sel('inco','totale',this)">🚨 Totale</div>
+      </div>
+      <div class="msg-err" id="eInco">Seleziona una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Ausili <span class="req">*</span></label>
+      <div class="grid2" id="gAus">
+        <div class="chk-item" onclick="chk(this,'aus','nessuno')"><input type="checkbox"><span>✅ Nessuno</span></div>
+        <div class="chk-item" onclick="chk(this,'aus','pannoloni')"><input type="checkbox"><span>🩱 Pannoloni</span></div>
+        <div class="chk-item" onclick="chk(this,'aus','catetere')"><input type="checkbox"><span>🩺 Catetere</span></div>
+        <div class="chk-item" onclick="chk(this,'aus','ossigeno')"><input type="checkbox"><span>💨 Ossigeno</span></div>
+        <div class="chk-item" onclick="chk(this,'aus','altro')"><input type="checkbox"><span>❓ Altro</span></div>
+      </div>
+      <div class="msg-err" id="eAus">Seleziona almeno una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Disturbi comportamentali <span class="req">*</span></label>
+      <div class="grid2" id="gDisturbi">
+        <div class="btn-op" onclick="sel('disturbi','si',this);mostra('bDisturbi',true)">⚠️ Sì</div>
+        <div class="btn-op" onclick="sel('disturbi','no',this);mostra('bDisturbi',false)">✅ No</div>
+      </div>
+      <div class="msg-err" id="eDisturbi">Seleziona una opzione.</div>
+    </div>
+    <div id="bDisturbi" style="display:none">
+      <div class="campo"><label>Quali disturbi?</label>
+        <div class="grid2">
+          <div class="chk-item" onclick="chk(this,'distTipo','aggressivita')"><input type="checkbox"><span>😠 Aggressività</span></div>
+          <div class="chk-item" onclick="chk(this,'distTipo','wandering')"><input type="checkbox"><span>🚶 Wandering</span></div>
+          <div class="chk-item" onclick="chk(this,'distTipo','confusione')"><input type="checkbox"><span>😵 Confusione</span></div>
+          <div class="chk-item" onclick="chk(this,'distTipo','insonnia')"><input type="checkbox"><span>😴 Insonnia notturna</span></div>
+          <div class="chk-item" onclick="chk(this,'distTipo','altro')"><input type="checkbox"><span>❓ Altro</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="campo">
+      <label>Alimentazione <span class="req">*</span></label>
+      <div class="grid2" id="gAlim">
+        <div class="btn-op" onclick="sel('alim','autonoma',this)">🍽️ Autonoma</div>
+        <div class="btn-op" onclick="sel('alim','assistita',this)">🤝 Assistita</div>
+        <div class="btn-op" onclick="sel('alim','dieta_spec',this)">🥗 Dieta speciale</div>
+        <div class="btn-op" onclick="sel('alim','sondino',this)">🩺 Sondino</div>
+      </div>
+      <div class="msg-err" id="eAlim">Seleziona una opzione.</div>
+    </div>
+    <div class="nav"><button class="btn-ind" onclick="in_(5)">← Indietro</button><button class="btn-av" onclick="av(5)">Avanti →</button></div>
+  </div>
+
+  <!-- SEZ 6: SECONDO ASSISTITO -->
+  <div class="sezione" id="s6">
+    <div class="tit">👥 Secondo assistito</div>
+    <div class="campo">
+      <label>C'è un secondo assistito? <span class="req">*</span></label>
+      <div class="grid2" id="gSec">
+        <div class="btn-op" onclick="sel('sec','si',this);mostra('bSec',true)">✅ Sì</div>
+        <div class="btn-op" onclick="sel('sec','no',this);mostra('bSec',false)">❌ No</div>
+      </div>
+      <div class="msg-err" id="eSec">Seleziona una opzione.</div>
+    </div>
+    <div id="bSec" style="display:none">
+      <hr class="divider">
+      <div class="row2">
+        <div class="campo"><label>Nome <span class="req">*</span></label><input type="text" id="s2Nome"><div class="msg-err" id="eS2Nome">Obbligatorio.</div></div>
+        <div class="campo"><label>Cognome <span class="req">*</span></label><input type="text" id="s2Cog"><div class="msg-err" id="eS2Cog">Obbligatorio.</div></div>
+      </div>
+      <div class="campo"><label>Data di nascita</label><input type="date" id="s2DN"></div>
+      <div class="campo">
+        <label>Luogo di nascita</label>
+        <div class="row2">
+          <select id="s2NP" onchange="updProv('s2N')"><option value="">— Provincia —</option></select>
+          <input type="text" id="s2NC" placeholder="Comune">
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="campo">
+        <label>Deambulazione</label>
+        <div class="grid2" id="gDeamb2">
+          <div class="btn-op" onclick="sel('deamb2','autonoma',this)">🚶 Autonoma</div>
+          <div class="btn-op" onclick="sel('deamb2','con_supporto',this)">🤝 Con supporto</div>
+          <div class="btn-op" onclick="sel('deamb2','deambulatore',this)">🦯 Deambulatore</div>
+          <div class="btn-op" onclick="sel('deamb2','sedia_rotelle',this)">♿ Sedia a rotelle</div>
+          <div class="btn-op" onclick="sel('deamb2','allettato',this)">🛏️ Allettato</div>
+        </div>
+      </div>
+      <div class="campo">
+        <label>Patologie</label>
+        <div class="grid2">
+          <div class="chk-item" onclick="chk(this,'pat2','nessuna')"><input type="checkbox"><span>✅ Nessuna</span></div>
+          <div class="chk-item" onclick="chk(this,'pat2','alzheimer')"><input type="checkbox"><span>🧠 Alzheimer</span></div>
+          <div class="chk-item" onclick="chk(this,'pat2','parkinson')"><input type="checkbox"><span>🤲 Parkinson</span></div>
+          <div class="chk-item" onclick="chk(this,'pat2','diabete')"><input type="checkbox"><span>💉 Diabete</span></div>
+          <div class="chk-item" onclick="chk(this,'pat2','cardiopatia')"><input type="checkbox"><span>❤️ Cardiopatia</span></div>
+          <div class="chk-item" onclick="chk(this,'pat2','altra')"><input type="checkbox"><span>❓ Altra</span></div>
+        </div>
+      </div>
+      <div class="campo">
+        <label>Incontinenza</label>
+        <div class="grid3" id="gInco2">
+          <div class="btn-op" onclick="sel('inco2','no',this)">✅ No</div>
+          <div class="btn-op" onclick="sel('inco2','parziale',this)">⚠️ Parziale</div>
+          <div class="btn-op" onclick="sel('inco2','totale',this)">🚨 Totale</div>
+        </div>
+      </div>
+    </div>
+    <div class="nav"><button class="btn-ind" onclick="in_(6)">← Indietro</button><button class="btn-av" onclick="av(6)">Avanti →</button></div>
+  </div>
+
+  <!-- SEZ 7: PREFERENZE -->
+  <div class="sezione" id="s7">
+    <div class="tit">👩‍⚕️ Preferenze per la badante</div>
+    <div class="alert-info">Servizio: <strong>Badante convivente – 54 ore settimanali</strong></div>
+    <div class="campo">
+      <label>Sesso preferito <span class="req">*</span></label>
+      <div class="grid3" id="gSesso">
+        <div class="btn-op" onclick="sel('sesso','donna',this)">👩 Donna</div>
+        <div class="btn-op" onclick="sel('sesso','uomo',this)">👨 Uomo</div>
+        <div class="btn-op" onclick="sel('sesso','indiff',this)">🤷 Indifferente</div>
+      </div>
+      <div class="msg-err" id="eSesso">Seleziona una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Patente di guida <span class="req">*</span></label>
+      <div class="grid3" id="gPatente">
+        <div class="btn-op" onclick="sel('patente','indispensabile',this)">🚗 Indispensabile</div>
+        <div class="btn-op" onclick="sel('patente','gradita',this)">👍 Gradita</div>
+        <div class="btn-op" onclick="sel('patente','non_importa',this)">🤷 Non importa</div>
+      </div>
+      <div class="msg-err" id="ePatente">Seleziona una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Urgenza <span class="req">*</span></label>
+      <div class="grid2" id="gUrg">
+        <div class="btn-op" onclick="sel('urg','immediata',this)">🚨 Immediata (questa settimana)</div>
+        <div class="btn-op" onclick="sel('urg','breve',this)">📅 Breve termine (entro il mese)</div>
+        <div class="btn-op" onclick="sel('urg','medio',this)">🗓️ Medio termine (1-3 mesi)</div>
+        <div class="btn-op" onclick="sel('urg','indefinita',this)">❓ Non ancora definita</div>
+      </div>
+      <div class="msg-err" id="eUrg">Seleziona una opzione.</div>
+    </div>
+    <div class="nav"><button class="btn-ind" onclick="in_(7)">← Indietro</button><button class="btn-av" onclick="av(7)">Avanti →</button></div>
+  </div>
+
+  <!-- SEZ 8: NOTE -->
+  <div class="sezione" id="s8">
+    <div class="tit">📝 Informazioni finali</div>
+    <div class="campo">
+      <label>Esperienza precedente con badanti <span class="req">*</span></label>
+      <div class="grid2" id="gEsp">
+        <div class="btn-op" onclick="sel('esp','prima_volta',this)">🆕 Prima volta</div>
+        <div class="btn-op" onclick="sel('esp','positiva',this)">😊 Esperienza positiva</div>
+        <div class="btn-op" onclick="sel('esp','negativa',this)">😟 Esperienza negativa</div>
+        <div class="btn-op" onclick="sel('esp','mista',this)">😐 Esperienza mista</div>
+      </div>
+      <div class="msg-err" id="eEsp">Seleziona una opzione.</div>
+    </div>
+    <div class="campo">
+      <label>Come ha conosciuto PrivatAssistenza? <span class="req">*</span></label>
+      <div class="grid2" id="gConosc">
+        <div class="btn-op" onclick="sel('conosc','passaparola',this)">🗣️ Passaparola</div>
+        <div class="btn-op" onclick="sel('conosc','internet',this)">🌐 Internet/Google</div>
+        <div class="btn-op" onclick="sel('conosc','social',this)">📱 Social media</div>
+        <div class="btn-op" onclick="sel('conosc','volantino',this)">📄 Volantino/Pubblicità</div>
+        <div class="btn-op" onclick="sel('conosc','medico',this)">🏥 Medico/Ospedale</div>
+        <div class="btn-op" onclick="sel('conosc','altro',this)">❓ Altro</div>
+      </div>
+      <div class="msg-err" id="eConosc">Seleziona una opzione.</div>
+    </div>
+    <div class="campo"><label>Note aggiuntive</label><textarea id="note" rows="3" placeholder="Qualsiasi informazione aggiuntiva..." style="resize:vertical"></textarea></div>
+    <div class="nav"><button class="btn-ind" onclick="in_(8)">← Indietro</button><button class="btn-av" onclick="invia()">✅ Invia richiesta</button></div>
+  </div>
+
+  <div class="spinner" id="spinner"><div class="spin"></div><p style="margin-top:16px;color:#666">Salvataggio in corso...</p></div>
+
+  <div class="sezione" id="sGraz">
+    <div class="grazie">
+      <div class="ok">✅</div>
+      <h2>Richiesta inviata!</h2>
+      <p>Grazie per aver compilato il modulo.<br>Il nostro team la contatterà entro <strong>24/48 ore lavorative</strong>.</p>
+      <br><p style="font-size:13px;color:#999">Per urgenze: <strong>0577 600904</strong></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const REG={"Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio nell'Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige/Südtirol": ["Bolzano/Bozen", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta/Vallée d'Aoste": ["Valle d'Aosta/Vallée d'Aoste"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"]};
+const PROVINCE=Object.values(REG).flat().sort();
+var V={},C={},sez=1,TOT=8;
+
+window.onload=function(){
+  var oggi=new Date().toISOString().split('T')[0];
+  ['rDN','aDN','s2DN'].forEach(function(id){var e=document.getElementById(id);if(e)e.max=oggi;});
+  var provSels=['rNP','rRP','aNP','aRP','assP','s2NP'];
+  provSels.forEach(function(id){
+    var sel=document.getElementById(id);
+    if(!sel)return;
+    PROVINCE.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
+  });
+};
+
+function updProv(p){}
+
+function sel(campo,val,el){
+  var grid=el.closest('[id^="g"]')||el.parentElement;
+  grid.querySelectorAll('.btn-op').forEach(function(b){b.classList.remove('sel');});
+  el.classList.add('sel');V[campo]=val;
+  var e=document.getElementById('e'+campo[0].toUpperCase()+campo.slice(1));
+  if(e)e.classList.remove('vis');
+}
+function chk(el,campo,val){
+  var cb=el.querySelector('input[type=checkbox]');cb.checked=!cb.checked;
+  el.classList.toggle('sel',cb.checked);
+  if(!C[campo])C[campo]=[];
+  if(cb.checked){if(!C[campo].includes(val))C[campo].push(val);}
+  else{C[campo]=C[campo].filter(function(v){return v!==val;});}
+  var e=document.getElementById('e'+campo[0].toUpperCase()+campo.slice(1));
+  if(e&&C[campo].length>0)e.classList.remove('vis');
+}
+function toggleConsenso(){
+  var cb=document.getElementById('cCheck');cb.checked=!cb.checked;
+  document.getElementById('cRow').classList.toggle('sel',cb.checked);
+  if(cb.checked)document.getElementById('eConsenso').classList.remove('vis');
+}
+function mostra(id,show){var el=document.getElementById(id);if(el)el.style.display=show?'block':'none';}
+function updProg(){
+  document.getElementById('pf').style.width=(((sez-1)/TOT)*100)+'%';
+  document.getElementById('pl').textContent='Passo '+sez+' di '+TOT;
+}
+function showSez(n){
+  document.querySelectorAll('.sezione').forEach(function(s){s.classList.remove('attiva');});
+  var s=document.getElementById('s'+n);if(s){s.classList.add('attiva');window.scrollTo({top:0,behavior:'smooth'});}
+  sez=n;updProg();
+}
+function in_(n){showSez(n-1);}
+function av(n){
+  if(!valida(n))return;
+  if(n===2&&V['rapporto']==='assistito'){
+    document.getElementById('asSame').style.display='block';
+    document.getElementById('fAssistito').style.display='none';
+    showSez(3);return;
+  }
+  if(n===2){document.getElementById('fAssistito').style.display='block';document.getElementById('asSame').style.display='none';}
+  showSez(n+1);
+}
+function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function req(id){
+  var el=document.getElementById(id);if(!el)return true;
+  var ok=el.value.trim()!=='';el.style.borderColor=ok?'':'#e74c3c';
+  var e=document.getElementById('e'+id[0].toUpperCase()+id.slice(1));if(e){if(ok)e.classList.remove('vis');else e.classList.add('vis');}
+  return ok;
+}
+function reqEmail(id){
+  var el=document.getElementById(id);if(!el)return true;
+  var ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());el.style.borderColor=ok?'':'#e74c3c';
+  document.getElementById('eREmail').classList.toggle('vis',!ok);return ok;
+}
+function reqTel(id){
+  var el=document.getElementById(id);if(!el)return true;
+  var ok=el.value.trim().replace(/\D/g,'').length>=8;el.style.borderColor=ok?'':'#e74c3c';
+  document.getElementById('eRTel').classList.toggle('vis',!ok);return ok;
+}
+function reqChk(campo){
+  var ok=C[campo]&&C[campo].length>0;
+  var e=document.getElementById('e'+campo[0].toUpperCase()+campo.slice(1));if(e)e.classList.toggle('vis',!ok);return ok;
+}
+function reqSel(campo){
+  var ok=!!V[campo];
+  var e=document.getElementById('e'+campo[0].toUpperCase()+campo.slice(1));if(e)e.classList.toggle('vis',!ok);return ok;
+}
+function valida(n){
+  var ok=true;
+  if(n===1){if(!document.getElementById('cCheck').checked){document.getElementById('eConsenso').classList.add('vis');ok=false;}}
+  if(n===2){
+    if(!reqSel('rapporto'))ok=false;
+    if(V['rapporto']==='familiare'&&!V['legame']){document.getElementById('eLegame').classList.add('vis');ok=false;}
+    if(!req('rNome'))ok=false;if(!req('rCognome'))ok=false;if(!req('rDN'))ok=false;
+    if(!reqTel('rTel'))ok=false;if(!reqEmail('rEmail'))ok=false;
+  }
+  if(n===3){
+    if(V['rapporto']!=='assistito'){if(!req('aNome'))ok=false;if(!req('aCognome'))ok=false;if(!req('aDN'))ok=false;}
+    if(!reqSel('indAss'))ok=false;
+  }
+  if(n===4){if(!reqChk('conv'))ok=false;if(!reqChk('barr'))ok=false;if(!reqSel('stanza'))ok=false;if(!reqChk('anim'))ok=false;}
+  if(n===5){if(!reqChk('pat'))ok=false;if(!reqSel('deamb'))ok=false;if(!reqSel('farm'))ok=false;if(!reqSel('inco'))ok=false;if(!reqChk('aus'))ok=false;if(!reqSel('disturbi'))ok=false;if(!reqSel('alim'))ok=false;}
+  if(n===6){if(!reqSel('sec'))ok=false;if(V['sec']==='si'){if(!req('s2Nome'))ok=false;if(!req('s2Cog'))ok=false;}}
+  if(n===7){if(!reqSel('sesso'))ok=false;if(!reqSel('patente'))ok=false;if(!reqSel('urg'))ok=false;}
+  if(n===8){if(!reqSel('esp'))ok=false;if(!reqSel('conosc'))ok=false;}
+  if(!ok)window.scrollTo({top:0,behavior:'smooth'});
+  return ok;
+}
+function getLuogo(p){
+  var pv=gv(p+'P'),c=gv(p+'C');return [c,pv].filter(Boolean).join(', ');
+}
+function invia(){
+  if(!valida(8))return;
+  document.getElementById('s8').classList.remove('attiva');
+  document.getElementById('spinner').classList.add('vis');
+  var isAss=V['rapporto']==='assistito';
+  var payload={
+    nome_referente:gv('rNome'),cognome_referente:gv('rCognome'),
+    data_nascita_referente:gv('rDN'),luogo_nascita_referente:getLuogo('rN'),
+    residenza_referente:gv('rVia')+', '+getLuogo('rR'),
+    telefono_referente:gv('rTel'),email_referente:gv('rEmail'),
+    rapporto_assistito:V['rapporto']||'',legame_familiare:V['legame']||'',
+    nome_assistito:isAss?gv('rNome'):gv('aNome'),
+    cognome_assistito:isAss?gv('rCognome'):gv('aCognome'),
+    data_nascita_assistito:isAss?gv('rDN'):gv('aDN'),
+    luogo_nascita_assistito:isAss?getLuogo('rN'):getLuogo('aN'),
+    residenza_assistito:isAss?(gv('rVia')+', '+getLuogo('rR')):(gv('aVia')+', '+getLuogo('aR')),
+    indirizzo_assistenza:V['indAss']==='si'?'Stessa residenza assistito':(gv('assVia')+', '+getLuogo('ass')),
+    convivenza:(C['conv']||[]).join(', '),barriere_architettoniche:(C['barr']||[]).join(', '),
+    stanza_badante:V['stanza']||'',animali:(C['anim']||[]).join(', '),
+    patologie:(C['pat']||[]).join(', '),mobilita:V['deamb']||'',
+    farmaci:V['farm']==='si'?('Si'+(gv('farmDet')?' - '+gv('farmDet'):'')):'No',
+    incontinenza:V['inco']||'',ausili:(C['aus']||[]).join(', '),
+    disturbi_comportamento:V['disturbi']==='si'?('Si - '+(C['distTipo']||[]).join(', ')):'No',
+    alimentazione:V['alim']||'',
+    secondo_assistito:V['sec']==='si'?JSON.stringify({nome:gv('s2Nome'),cognome:gv('s2Cog'),data_nascita:gv('s2DN'),luogo_nascita:getLuogo('s2N'),patologie:(C['pat2']||[]).join(', '),deambulazione:V['deamb2']||'',incontinenza:V['inco2']||''}):'No',
+    nazionalita_badante:V['sesso']||'',patente_badante:V['patente']||'',urgenza:V['urg']||'',
+    esperienza_precedente:V['esp']||'',come_conosciuto:V['conosc']||'',
+    note:gv('note'),stato:'nuovo'
+  };
+  fetch('https://alessia-631113cd.base44.app/api/functions/salvaQuestionarioV2',{
+    method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+  }).then(function(r){return r.json();}).then(function(data){
+    document.getElementById('spinner').classList.remove('vis');
+    if(data.success){
+      document.getElementById('sGraz').classList.add('attiva');
+      document.getElementById('pf').style.width='100%';
+      document.getElementById('pl').textContent='Completato ✅';
+    } else {throw new Error(data.error||'Errore server');}
+  }).catch(function(e){
+    document.getElementById('spinner').classList.remove('vis');
+    document.getElementById('s8').classList.add('attiva');
+    alert('Errore durante l'invio. Riprovare.\n'+e.message);
+  });
+}
+</script>
+</body>
+</html>
