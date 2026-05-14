@@ -624,11 +624,11 @@ function invia(){
     esperienza_precedente:V['esp']||'',come_conosciuto:V['conosc']||'',
     note:gv('note'),stato:'nuovo'
   };
-  fetch('https://alessia-631113cd.base44.app/api/functions/salvaQuestionarioV2',{
+  fetch('https://alessia-631113cd.base44.app/api/functions/salvaQuestionario',{
     method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
   }).then(function(r){return r.json();}).then(function(data){
     document.getElementById('spinner').classList.remove('vis');
-    if(data.success){
+    if(data.success||data.ok){
       document.getElementById('sGraz').classList.add('attiva');
       document.getElementById('pf').style.width='100%';
       document.getElementById('pl').textContent='Completato ✅';
