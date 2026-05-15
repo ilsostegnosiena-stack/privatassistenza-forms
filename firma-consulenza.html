@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firma Lettera di Consulenza</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f0f4ff;font-family:Arial,sans-serif;padding:14px;max-width:600px;margin:0 auto}
+.box{background:white;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h3{color:#1565C0;font-size:13px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e8eeff}
+.row{display:flex;gap:8px;margin-bottom:6px;font-size:13px;flex-wrap:wrap}
+.lbl{font-weight:700;color:#1565C0;min-width:120px;flex-shrink:0}
+.totale-box{background:#eaf4fb;border:2px solid #1565C0;border-radius:10px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin:12px 0;flex-wrap:wrap;gap:8px}
+.chk-area{background:#f5f7ff;border:1px solid #dde;border-radius:10px;padding:14px;margin:12px 0}
+.chk-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.chk-row:last-child{margin-bottom:0}
+.chk-row input[type=checkbox]{width:24px;height:24px;flex-shrink:0;accent-color:#1565C0;cursor:pointer}
+.chk-row label{font-size:13px;line-height:1.5;cursor:pointer}
+.btn-primary{display:block;width:100%;padding:18px;border-radius:12px;font-size:17px;font-weight:700;border:none;background:#1565C0;color:white;cursor:pointer;margin-top:12px}
+.btn-primary:disabled{background:#aaa;cursor:not-allowed}
+.btn-danger{display:block;width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;background:white;color:#e53935;border:3px solid #e53935;cursor:pointer;margin-top:10px}
+.otp-box{background:#fff8e1;border:2px solid #f57f17;border-radius:12px;padding:18px;margin:14px 0;text-align:center}
+.otp-input{font-size:32px;font-weight:700;letter-spacing:12px;width:200px;text-align:center;border:3px solid #1565C0;border-radius:10px;padding:12px;margin:12px auto;display:block;color:#1565C0}
+.overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:100;padding:20px;overflow-y:auto}
+.modal{background:white;border-radius:14px;padding:22px;max-width:480px;margin:40px auto;text-align:center}
+textarea{width:100%;padding:10px;border:2px solid #1565C0;border-radius:8px;font-size:14px;min-height:80px;margin:10px 0}
+#step-otp{display:none}
+#step-accetta{display:none}
+#loading{text-align:center;padding:60px 20px;color:#1565C0;font-size:16px}
+#errore{display:none;text-align:center;padding:40px;color:#e53935}
+</style>
+</head>
+<body>
+
+<div id="loading">⏳ Caricamento documento...</div>
+<div id="errore" class="box"><h2>Documento non trovato</h2><p style="margin-top:10px">Per assistenza: <b>0577 600904</b></p></div>
+
+<div id="doc-approvato" style="display:none" class="box" style="border-top:4px solid #2e7d32;text-align:center;padding:32px">
+  <div style="font-size:60px">✅</div>
+  <div style="font-size:22px;font-weight:700;color:#2e7d32;margin-top:10px">Lettera firmata con successo!</div>
+  <div style="font-size:13px;color:#555;margin-top:10px">Firmata il: <b id="ts-firma"></b></div>
+  <div id="pdf-link" style="margin-top:20px"></div>
+</div>
+
+<div id="doc-rifiutato" style="display:none" class="box" style="border-top:4px solid #e53935;text-align:center;padding:32px">
+  <div style="font-size:60px">✗</div>
+  <div style="font-size:20px;font-weight:700;color:#c62828;margin-top:10px">Lettera non accettata</div>
+  <div style="font-size:13px;color:#555;margin-top:8px">Per assistenza: <b>0577 600904</b></div>
+</div>
+
+<!-- contenuto documento dinamico -->
+<div id="doc-contenuto" style="display:none">
+  <div class="box" style="border-top:4px solid #1565C0">
+    <div style="font-size:11px;color:#aaa">PrivatAssistenza — Il Sostegno</div>
+    <div id="d-numero" style="font-size:22px;font-weight:700;color:#1565C0;margin-top:4px"></div>
+    <div id="d-data" style="font-size:12px;color:#777"></div>
+    <div id="d-cliente-nome" style="font-size:15px;margin-top:8px"></div>
+  </div>
+  <div class="box"><h3>👤 Cliente</h3>
+    <div class="row"><span class="lbl">Nome:</span><span id="f-nome"></span></div>
+    <div class="row"><span class="lbl">Residenza:</span><span id="f-res"></span></div>
+    <div class="row"><span class="lbl">Telefono:</span><span id="f-tel"></span></div>
+    <div class="row"><span class="lbl">Email:</span><span id="f-email"></span></div>
+  </div>
+  <div class="box"><h3>🏠 Assistiti</h3>
+    <div class="row"><span class="lbl">Assistito 1:</span><span id="f-ass1"></span></div>
+    <div class="row"><span class="lbl">Residenza:</span><span id="f-ass1res"></span></div>
+    <div class="row"><span class="lbl">Assistito 2:</span><span id="f-ass2"></span></div>
+  </div>
+  <div class="box"><h3>📋 Servizio</h3>
+    <div class="row"><span class="lbl">Tipo:</span><span id="f-tipo"></span></div>
+    <div class="row"><span class="lbl">Impegno:</span><span id="f-imp"></span></div>
+    <div class="row"><span class="lbl">Descrizione:</span><span id="f-desc" style="font-size:12px"></span></div>
+  </div>
+  <div class="box"><h3>💶 Corrispettivo</h3>
+    <div class="row"><span class="lbl">Imponibile:</span><span id="f-imp2"></span></div>
+    <div class="row"><span class="lbl">IVA (5%):</span><span id="f-iva"></span></div>
+    <div class="totale-box">
+      <span style="font-weight:700;color:#1565C0;font-size:15px">TOTALE DOVUTO:</span>
+      <span id="f-tot" style="font-weight:700;color:#1565C0;font-size:26px"></span>
+    </div>
+    <div style="font-size:11px;color:#888">Pagamento entro 7 giorni dalla candidatura accettata.</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="box" id="step-accetta">
+    <h3>✅ Accettazione e Firma</h3>
+    <p style="font-size:13px;color:#555;margin-bottom:12px">Spunti tutte le caselle e prema il bottone per ricevere il codice di firma.</p>
+    <div class="chk-area">
+      <div class="chk-row"><input type="checkbox" id="chk1"><label for="chk1">Ho letto e compreso la presente lettera di incarico in ogni sua parte.</label></div>
+      <div class="chk-row"><input type="checkbox" id="chk2"><label for="chk2">Accetto il corrispettivo indicato per il servizio di consulenza descritto.</label></div>
+      <div class="chk-row"><input type="checkbox" id="chk3"><label for="chk3">Autorizzo il trattamento dei miei dati personali ai sensi del GDPR 679/2016.</label></div>
+    </div>
+    <button class="btn-primary" id="btnFirma" disabled>✉️ Ricevi codice di firma via email</button>
+    <button class="btn-danger" id="btnRifiuta">✗ Non accetto</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="box" id="step-otp">
+    <h3>🔐 Inserisci il codice di firma</h3>
+    <div class="otp-box">
+      <div style="font-size:14px;color:#555;margin-bottom:6px">Abbiamo inviato un codice a 6 cifre a:</div>
+      <div id="f-email-otp" style="font-size:16px;font-weight:700;color:#1565C0"></div>
+      <div style="font-size:12px;color:#888;margin-top:6px">Controlla anche la cartella spam. Valido 10 minuti.</div>
+    </div>
+    <input type="tel" id="otpInput" class="otp-input" maxlength="6" placeholder="------">
+    <div id="errOtp" style="display:none;color:#e53935;text-align:center;font-size:13px;margin-top:8px;font-weight:700">❌ Codice errato. Riprovi.</div>
+    <button class="btn-primary" id="btnConferma" disabled>✅ Conferma e firma il documento</button>
+    <button id="btnTorna" style="display:block;width:100%;padding:12px;border-radius:10px;background:white;border:1px solid #ccc;font-size:13px;cursor:pointer;margin-top:8px">← Torna indietro</button>
+  </div>
+</div>
+
+<!-- modal rifiuto -->
+<div class="overlay" id="oRif">
+  <div class="modal">
+    <h3 style="color:#e53935;margin-bottom:12px">Motivo del rifiuto</h3>
+    <textarea id="motivo" placeholder="Inserisca il motivo..."></textarea>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button id="btnAnnullaRif" style="padding:10px 20px;border-radius:8px;background:#ddd;border:none;cursor:pointer;font-size:14px">Annulla</button>
+      <button id="btnConfermaRif" style="padding:10px 20px;border-radius:8px;background:#e53935;border:none;color:white;font-weight:700;cursor:pointer;font-size:14px">Conferma rifiuto</button>
+    </div>
+  </div>
+</div>
+
+<!-- modal successo -->
+<div class="overlay" id="oOk">
+  <div class="modal">
+    <div style="font-size:60px">✅</div>
+    <div style="font-size:20px;font-weight:700;color:#2e7d32;margin-top:12px">Documento firmato!</div>
+    <div style="font-size:13px;color:#555;margin-top:8px">Riceverà il PDF firmato via email entro pochi minuti.</div>
+    <div id="pdfLinkModal" style="margin-top:18px"></div>
+  </div>
+</div>
+
+<script>
+var EP = "https://alessia-631113cd.base44.app/api/functions/firmaConsulenza";
+var tok = new URLSearchParams(window.location.search).get("t") || "";
+var lettera = null;
+
+function ck() {
+  var ok = document.getElementById("chk1").checked &&
+           document.getElementById("chk2").checked &&
+           document.getElementById("chk3").checked;
+  document.getElementById("btnFirma").disabled = !ok;
+}
+
+function ckOtp() {
+  var v = document.getElementById("otpInput").value.replace(/\D/g,"");
+  document.getElementById("otpInput").value = v;
+  document.getElementById("btnConferma").disabled = v.length !== 6;
+}
+
+function mostraDoc(l) {
+  lettera = l;
+  document.getElementById("loading").style.display = "none";
+
+  if (l.stato === "approvata") {
+    document.getElementById("doc-approvato").style.display = "block";
+    document.getElementById("ts-firma").textContent = l.firma_timestamp || "";
+    if (l.pdf_firmato_url) {
+      document.getElementById("pdf-link").innerHTML = '<a href="'+l.pdf_firmato_url+'" target="_blank" style="background:#2e7d32;color:white;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px">📄 Scarica PDF Firmato</a>';
+    }
+    return;
+  }
+  if (l.stato === "rifiutata") {
+    document.getElementById("doc-rifiutato").style.display = "block";
+    return;
+  }
+
+  // documento da firmare
+  document.getElementById("doc-contenuto").style.display = "block";
+  document.getElementById("step-accetta").style.display = "block";
+  document.getElementById("d-numero").textContent = "N. " + l.numero;
+  document.getElementById("d-data").textContent = "Data: " + l.data_emissione;
+  document.getElementById("d-cliente-nome").innerHTML = "Gentile <b>" + l.nome_cliente + " " + l.cognome_cliente + "</b>";
+  document.getElementById("f-nome").textContent = l.nome_cliente + " " + l.cognome_cliente;
+  document.getElementById("f-res").textContent = l.indirizzo_cliente || "-";
+  document.getElementById("f-tel").textContent = l.telefono_cliente || "-";
+  document.getElementById("f-email").textContent = l.email_cliente || "-";
+  document.getElementById("f-email-otp").textContent = l.email_cliente || "-";
+  document.getElementById("f-ass1").textContent = (l.nome_assistito||"") + " " + (l.cognome_assistito||"") + " — nato il " + (l.data_nascita_assistito||"?") + " a " + (l.luogo_nascita_assistito||"?");
+  document.getElementById("f-ass1res").textContent = l.residenza_assistito || "-";
+  document.getElementById("f-ass2").textContent = "Pacciani Liliana — nata il 01/10/1938 a Radda in Chianti";
+  document.getElementById("f-tipo").textContent = "Ricerca e selezione badante convivente";
+  document.getElementById("f-imp").textContent = "54 ore settimanali — riposo notturno garantito";
+  document.getElementById("f-desc").textContent = l.descrizione_servizio || "Il compenso è dovuto alla presentazione di candidatura idonea e accettata.";
+  document.getElementById("f-imp2").textContent = "€ " + l.imponibile;
+  document.getElementById("f-iva").textContent = "€ " + l.iva;
+  document.getElementById("f-tot").textContent = "€ " + l.totale;
+}
+
+// Carica dati lettera
+fetch(EP + "?t=" + tok + "&json=1")
+  .then(function(r){ return r.json(); })
+  .then(function(d){ mostraDoc(d); })
+  .catch(function(){ document.getElementById("loading").style.display="none"; document.getElementById("errore").style.display="block"; });
+
+// Event listeners — tutti con addEventListener, zero inline
+document.getElementById("chk1").addEventListener("change", ck);
+document.getElementById("chk2").addEventListener("change", ck);
+document.getElementById("chk3").addEventListener("change", ck);
+document.getElementById("otpInput").addEventListener("input", ckOtp);
+
+document.getElementById("btnFirma").addEventListener("click", function() {
+  var btn = this;
+  btn.disabled = true;
+  btn.textContent = "⏳ Invio codice in corso...";
+  fetch(EP, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({token:tok, azione:"richiedi_otp"}) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.ok) {
+        document.getElementById("step-accetta").style.display = "none";
+        document.getElementById("step-otp").style.display = "block";
+        window.scrollTo(0, document.body.scrollHeight);
+      } else {
+        alert("Errore: " + (d.error || "riprovare"));
+        btn.disabled = false;
+        btn.textContent = "✉️ Ricevi codice di firma via email";
+      }
+    })
+    .catch(function(){
+      alert("Errore di rete.");
+      btn.disabled = false;
+      btn.textContent = "✉️ Ricevi codice di firma via email";
+    });
+});
+
+document.getElementById("btnConferma").addEventListener("click", function() {
+  var btn = this;
+  var otp = document.getElementById("otpInput").value;
+  btn.disabled = true;
+  btn.textContent = "⏳ Verifica in corso...";
+  document.getElementById("errOtp").style.display = "none";
+  fetch(EP, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({token:tok, azione:"conferma_otp", otp:otp}) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.ok) {
+        if (d.pdf_firmato_url) {
+          document.getElementById("pdfLinkModal").innerHTML = '<a href="'+d.pdf_firmato_url+'" target="_blank" style="background:#2e7d32;color:white;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700">📄 Scarica PDF Firmato</a>';
+        }
+        document.getElementById("oOk").style.display = "block";
+      } else {
+        document.getElementById("errOtp").style.display = "block";
+        document.getElementById("otpInput").value = "";
+        btn.disabled = true;
+        btn.textContent = "✅ Conferma e firma il documento";
+      }
+    })
+    .catch(function(){
+      alert("Errore di rete.");
+      btn.disabled = false;
+      btn.textContent = "✅ Conferma e firma il documento";
+    });
+});
+
+document.getElementById("btnRifiuta").addEventListener("click", function() {
+  document.getElementById("oRif").style.display = "block";
+});
+document.getElementById("btnAnnullaRif").addEventListener("click", function() {
+  document.getElementById("oRif").style.display = "none";
+});
+document.getElementById("btnConfermaRif").addEventListener("click", function() {
+  fetch(EP, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({token:tok, azione:"rifiuta", motivo:document.getElementById("motivo").value}) })
+    .then(function(){ location.reload(); });
+});
+document.getElementById("btnTorna").addEventListener("click", function() {
+  document.getElementById("step-otp").style.display = "none";
+  document.getElementById("step-accetta").style.display = "block";
+});
+</script>
+</body>
+</html>
