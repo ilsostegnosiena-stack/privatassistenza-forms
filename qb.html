@@ -398,14 +398,6 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f7fa;color:#333;min-h
     <div class="tit">👩‍⚕️ Preferenze per la badante</div>
     <div class="alert-info">Servizio: <strong>Badante convivente – 54 ore settimanali</strong></div>
     <div class="campo">
-      <label>Tipo di assistenza richiesta <span class="req">*</span></label>
-      <div class="grid2" id="gTipoServ">
-        <div class="btn-op" onclick="sel('tipoServ','convivente',this)">🏠 Convivente (54h/sett.)</div>
-        <div class="btn-op" onclick="sel('tipoServ','ore',this)">⏰ A ore</div>
-      </div>
-      <div class="msg-err" id="eTipoServ">Seleziona il tipo di assistenza.</div>
-    </div>
-    <div class="campo">
       <label>Sesso preferito <span class="req">*</span></label>
       <div class="grid3" id="gSesso">
         <div class="btn-op" onclick="sel('sesso','donna',this)">👩 Donna</div>
@@ -608,7 +600,7 @@ function valida(n){
   if(n===4){if(!reqChk('conv'))ok=false;if(!reqChk('barr'))ok=false;if(!reqSel('stanza'))ok=false;if(!reqChk('anim'))ok=false;}
   if(n===5){if(!reqChk('pat'))ok=false;if(!reqSel('deamb'))ok=false;if(!reqSel('farm'))ok=false;if(!reqSel('inco'))ok=false;if(!reqChk('aus'))ok=false;if(!reqSel('disturbi'))ok=false;if(!reqSel('alim'))ok=false;}
   if(n===6){if(!reqSel('sec'))ok=false;if(V['sec']==='si'){if(!req('s2Nome'))ok=false;if(!req('s2Cog'))ok=false;}}
-  if(n===7){if(!reqSel('tipoServ'))ok=false;if(!reqSel('sesso'))ok=false;if(!reqSel('patente'))ok=false;if(!reqSel('urg'))ok=false;}
+  if(n===7){if(!reqSel('sesso'))ok=false;if(!reqSel('patente'))ok=false;if(!reqSel('urg'))ok=false;}
   if(n===8){if(!reqSel('esp'))ok=false;if(!reqSel('conosc'))ok=false;}
   if(!ok)window.scrollTo({top:0,behavior:'smooth'});
   return ok;
@@ -641,7 +633,7 @@ function invia(){
     disturbi_comportamento:V['disturbi']==='si'?('Si - '+(C['distTipo']||[]).join(', ')):'No',
     alimentazione:V['alim']||'',
     secondo_assistito:V['sec']==='si'?JSON.stringify({nome:gv('s2Nome'),cognome:gv('s2Cog'),data_nascita:gv('s2DN'),luogo_nascita:getLuogo('s2N'),patologie:(C['pat2']||[]).join(', '),deambulazione:V['deamb2']||'',incontinenza:V['inco2']||''}):'No',
-    tipo_servizio:V['tipoServ']||'',nazionalita_badante:V['sesso']||'',patente_badante:V['patente']||'',urgenza:V['urg']||'',
+    nazionalita_badante:V['sesso']||'',patente_badante:V['patente']||'',urgenza:V['urg']||'',
     esperienza_precedente:V['esp']||'',come_conosciuto:V['conosc']||'',
     note:gv('note'),stato:'nuovo'
   };
