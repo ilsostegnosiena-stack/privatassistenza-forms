@@ -571,23 +571,36 @@ function reqSel(campo){
   var ok=!!V[campo];
   var e=document.getElementById('e'+campo[0].toUpperCase()+campo.slice(1));if(e)e.classList.toggle('vis',!ok);return ok;
 }
+
+function reqLuogo(p){
+  var prov=document.getElementById(p+'P').value, com=document.getElementById(p+'C').value.trim();
+  var err=document.getElementById('e'+p[0].toUpperCase()+p.slice(1));
+  if(!prov||!com){if(err)err.classList.add('vis');return false;}
+  if(err)err.classList.remove('vis');return true;
+}
+function reqResidenza(p,via){
+  var prov=document.getElementById(p+'P').value, com=document.getElementById(p+'C').value.trim(), v=document.getElementById(via)?document.getElementById(via).value.trim():'x';
+  var err=document.getElementById('e'+p[0].toUpperCase()+p.slice(1));
+  if(!prov||!com||!v){if(err)err.classList.add('vis');return false;}
+  if(err)err.classList.remove('vis');return true;
+}
 function valida(n){
   var ok=true;
   if(n===1){if(!document.getElementById('cCheck').checked){document.getElementById('eConsenso').classList.add('vis');ok=false;}}
   if(n===2){
     if(!reqSel('rapporto'))ok=false;
     if(V['rapporto']==='familiare'&&!V['legame']){document.getElementById('eLegame').classList.add('vis');ok=false;}
-    if(!req('rNome'))ok=false;if(!req('rCognome'))ok=false;if(!req('rDN'))ok=false;
+    if(!req('rNome'))ok=false;if(!req('rCognome'))ok=false;if(!req('rDN'))ok=false;if(!reqLuogo('rN'))ok=false;if(!reqResidenza('rR','rVia'))ok=false;
     if(!reqTel('rTel'))ok=false;if(!reqEmail('rEmail'))ok=false;
   }
   if(n===3){
-    if(V['rapporto']!=='assistito'){if(!req('aNome'))ok=false;if(!req('aCognome'))ok=false;if(!req('aDN'))ok=false;}
+    if(V['rapporto']!=='assistito'){if(!req('aNome'))ok=false;if(!req('aCognome'))ok=false;if(!req('aDN'))ok=false;if(!reqLuogo('aN'))ok=false;if(!reqResidenza('aR','aVia'))ok=false;}
     if(!reqSel('indAss'))ok=false;
   }
   if(n===4){if(!reqChk('conv'))ok=false;if(!reqChk('barr'))ok=false;if(!reqSel('stanza'))ok=false;if(!reqChk('anim'))ok=false;}
   if(n===5){if(!reqChk('pat'))ok=false;if(!reqSel('deamb'))ok=false;if(!reqSel('farm'))ok=false;if(!reqSel('inco'))ok=false;if(!reqChk('aus'))ok=false;if(!reqSel('disturbi'))ok=false;if(!reqSel('alim'))ok=false;}
   if(n===6){if(!reqSel('sec'))ok=false;if(V['sec']==='si'){if(!req('s2Nome'))ok=false;if(!req('s2Cog'))ok=false;}}
-  if(n===7){if(!reqSel('sesso'))ok=false;if(!reqSel('patente'))ok=false;if(!reqSel('urg'))ok=false;}
+  if(n===7){if(!reqSel('tipoServ'))ok=false;if(!reqSel('sesso'))ok=false;if(!reqSel('patente'))ok=false;if(!reqSel('urg'))ok=false;}
   if(n===8){if(!reqSel('esp'))ok=false;if(!reqSel('conosc'))ok=false;}
   if(!ok)window.scrollTo({top:0,behavior:'smooth'});
   return ok;
@@ -620,7 +633,7 @@ function invia(){
     disturbi_comportamento:V['disturbi']==='si'?('Si - '+(C['distTipo']||[]).join(', ')):'No',
     alimentazione:V['alim']||'',
     secondo_assistito:V['sec']==='si'?JSON.stringify({nome:gv('s2Nome'),cognome:gv('s2Cog'),data_nascita:gv('s2DN'),luogo_nascita:getLuogo('s2N'),patologie:(C['pat2']||[]).join(', '),deambulazione:V['deamb2']||'',incontinenza:V['inco2']||''}):'No',
-    nazionalita_badante:V['sesso']||'',patente_badante:V['patente']||'',urgenza:V['urg']||'',
+    tipo_servizio:V['tipoServ']||'',nazionalita_badante:V['sesso']||'',patente_badante:V['patente']||'',urgenza:V['urg']||'',
     esperienza_precedente:V['esp']||'',come_conosciuto:V['conosc']||'',
     note:gv('note'),stato:'nuovo'
   };
