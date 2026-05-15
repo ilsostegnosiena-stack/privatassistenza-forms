@@ -624,7 +624,7 @@ function invia(){
     esperienza_precedente:V['esp']||'',come_conosciuto:V['conosc']||'',
     note:gv('note'),stato:'nuovo'
   };
-  fetch('https://alessia-631113cd.base44.app/api/functions/salvaQuestionario',{
+  fetch('https://alessia-631113cd.base44.app/api/functions/aggiornaQuestionario',{
     method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
   }).then(function(r){return r.json();}).then(function(data){
     document.getElementById('spinner').classList.remove('vis');
