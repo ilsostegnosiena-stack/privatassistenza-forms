@@ -2,6 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<meta name="cache-version" content="v20260515b">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prenota Appuntamento – PrivatAssistenza</title>
 <style>
@@ -48,6 +49,7 @@ textarea { height: 70px; resize: none; }
     <div class="btn-group">
       <button class="btn-sede" onclick="selezionaSede('Siena', this)">📍 Siena</button>
       <button class="btn-sede" onclick="selezionaSede('Poggibonsi', this)">📍 Poggibonsi</button>
+      <button class="btn-sede" onclick="selezionaSede('Follonica', this)">📍 Follonica</button>
     </div>
 
     <div id="sezione-data" style="display:none">
@@ -118,7 +120,6 @@ const maxData = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().spl
 document.getElementById('data').min = oggi;
 document.getElementById('data').max = maxData;
 
-// Leggi parametro sede dall'URL
 
 function selezionaSede(s, el) {
   sede = s;
@@ -249,6 +250,14 @@ async function prenota() {
     btn.textContent = 'Conferma Appuntamento ✓';
   }
 }
+// Pre-seleziona sede da URL
+window.addEventListener("load", function() {
+  const urlSede = new URLSearchParams(window.location.search).get("sede");
+  if (urlSede) {
+    const btnMatch = [...document.querySelectorAll(".btn-sede")].find(b => b.textContent.includes(urlSede));
+    if (btnMatch) selezionaSede(urlSede, btnMatch);
+  }
+});
 </script>
 </body>
 </html>
