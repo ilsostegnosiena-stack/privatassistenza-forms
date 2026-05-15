@@ -3,271 +3,405 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Firma Lettera di Consulenza</title>
+<title>Firma Lettera di Consulenza — PrivatAssistenza</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#f0f4ff;font-family:Arial,sans-serif;padding:14px;max-width:600px;margin:0 auto}
-.box{background:white;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-h3{color:#1565C0;font-size:13px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e8eeff}
-.row{display:flex;gap:8px;margin-bottom:6px;font-size:13px;flex-wrap:wrap}
-.lbl{font-weight:700;color:#1565C0;min-width:120px;flex-shrink:0}
-.totale-box{background:#eaf4fb;border:2px solid #1565C0;border-radius:10px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin:12px 0;flex-wrap:wrap;gap:8px}
-.chk-area{background:#f5f7ff;border:1px solid #dde;border-radius:10px;padding:14px;margin:12px 0}
-.chk-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
-.chk-row:last-child{margin-bottom:0}
-.chk-row input[type=checkbox]{width:24px;height:24px;flex-shrink:0;accent-color:#1565C0;cursor:pointer}
-.chk-row label{font-size:13px;line-height:1.5;cursor:pointer}
-.btn-primary{display:block;width:100%;padding:18px;border-radius:12px;font-size:17px;font-weight:700;border:none;background:#1565C0;color:white;cursor:pointer;margin-top:12px}
-.btn-primary:disabled{background:#aaa;cursor:not-allowed}
-.btn-danger{display:block;width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;background:white;color:#e53935;border:3px solid #e53935;cursor:pointer;margin-top:10px}
-.otp-box{background:#fff8e1;border:2px solid #f57f17;border-radius:12px;padding:18px;margin:14px 0;text-align:center}
-.otp-input{font-size:32px;font-weight:700;letter-spacing:12px;width:200px;text-align:center;border:3px solid #1565C0;border-radius:10px;padding:12px;margin:12px auto;display:block;color:#1565C0}
-.overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:100;padding:20px;overflow-y:auto}
-.modal{background:white;border-radius:14px;padding:22px;max-width:480px;margin:40px auto;text-align:center}
-textarea{width:100%;padding:10px;border:2px solid #1565C0;border-radius:8px;font-size:14px;min-height:80px;margin:10px 0}
-#step-otp{display:none}
-#step-accetta{display:none}
-#loading{text-align:center;padding:60px 20px;color:#1565C0;font-size:16px}
-#errore{display:none;text-align:center;padding:40px;color:#e53935}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #222; min-height: 100vh; }
+  
+  .header { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; padding: 20px 24px; text-align: center; }
+  .header h1 { font-size: 22px; font-weight: 700; }
+  .header p { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+  
+  .container { max-width: 680px; margin: 24px auto; padding: 0 16px 40px; }
+  
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 16px; overflow: hidden; }
+  .card-header { background: #1a5276; color: white; padding: 12px 20px; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 20px; }
+  
+  .row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .label { font-weight: 600; color: #1a5276; min-width: 130px; font-size: 13px; flex-shrink: 0; }
+  .value { color: #333; font-size: 13px; }
+  
+  .totale-box { background: linear-gradient(135deg, #e8f4fd, #d1ecf1); border: 2px solid #1a5276; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+  .totale-box .t-label { font-weight: 700; color: #1a5276; font-size: 15px; }
+  .totale-box .t-value { font-weight: 800; color: #1a5276; font-size: 24px; }
+  
+  .check-section { margin-bottom: 20px; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border: 1.5px solid #e0e0e0; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+  .check-item:hover { border-color: #2980b9; background: #f8fbff; }
+  .check-item.checked { border-color: #27ae60; background: #f0fff4; }
+  .check-item input { width: 20px; height: 20px; cursor: pointer; accent-color: #27ae60; flex-shrink: 0; margin-top: 2px; }
+  .check-item label { font-size: 13px; color: #333; cursor: pointer; line-height: 1.5; }
+  
+  .otp-section { display: none; }
+  .otp-section.visible { display: block; }
+  
+  .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; }
+  .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #154360, #1f618d); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-success { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; }
+  .btn-success:hover:not(:disabled) { background: linear-gradient(135deg, #1e8449, #27ae60); }
+  .btn-success:disabled { opacity: 0.5; cursor: not-allowed; }
+  
+  .otp-input-wrap { display: flex; gap: 10px; margin: 16px 0; }
+  .otp-input { flex: 1; padding: 16px; font-size: 28px; font-weight: 700; text-align: center; letter-spacing: 8px; border: 2px solid #ccc; border-radius: 8px; outline: none; }
+  .otp-input:focus { border-color: #2980b9; }
+  .btn-verify { flex-shrink: 0; padding: 16px 20px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .btn-verify:hover { background: #1e8449; }
+  
+  .info-box { background: #e8f4fd; border-left: 4px solid #2980b9; padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13px; color: #1a5276; margin-bottom: 16px; }
+  .warning-box { background: #fff3cd; border-left: 4px solid #f0ad4e; padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13px; color: #856404; margin-bottom: 16px; }
+  
+  .success-screen { text-align: center; padding: 40px 20px; }
+  .success-icon { font-size: 64px; margin-bottom: 16px; }
+  .success-screen h2 { color: #27ae60; font-size: 24px; margin-bottom: 12px; }
+  .success-screen p { color: #555; font-size: 14px; line-height: 1.6; }
+  
+  .loading { display: none; text-align: center; padding: 20px; color: #555; font-size: 14px; }
+  .loading.visible { display: block; }
+  .spinner { width: 36px; height: 36px; border: 4px solid #e0e0e0; border-top: 4px solid #2980b9; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  
+  .error-msg { color: #c0392b; font-size: 13px; margin-top: 8px; font-weight: 600; }
+  
+  #resend-btn { background: none; border: none; color: #2980b9; text-decoration: underline; cursor: pointer; font-size: 13px; margin-top: 8px; }
+  #resend-btn:hover { color: #1a5276; }
+
+  .disclaimer { font-size: 11px; color: #888; text-align: center; margin-top: 16px; line-height: 1.6; }
+
+  @media (max-width: 500px) {
+    .row { flex-direction: column; gap: 2px; }
+    .label { min-width: unset; }
+    .totale-box .t-value { font-size: 20px; }
+  }
 </style>
 </head>
 <body>
 
-<div id="loading">⏳ Caricamento documento...</div>
-<div id="errore" class="box"><h2>Documento non trovato</h2><p style="margin-top:10px">Per assistenza: <b>0577 600904</b></p></div>
-
-<div id="doc-approvato" style="display:none" class="box" style="border-top:4px solid #2e7d32;text-align:center;padding:32px">
-  <div style="font-size:60px">✅</div>
-  <div style="font-size:22px;font-weight:700;color:#2e7d32;margin-top:10px">Lettera firmata con successo!</div>
-  <div style="font-size:13px;color:#555;margin-top:10px">Firmata il: <b id="ts-firma"></b></div>
-  <div id="pdf-link" style="margin-top:20px"></div>
+<div class="header">
+  <h1>PrivatAssistenza — Il Sostegno</h1>
+  <p>Firma digitale lettera di incarico</p>
 </div>
 
-<div id="doc-rifiutato" style="display:none" class="box" style="border-top:4px solid #e53935;text-align:center;padding:32px">
-  <div style="font-size:60px">✗</div>
-  <div style="font-size:20px;font-weight:700;color:#c62828;margin-top:10px">Lettera non accettata</div>
-  <div style="font-size:13px;color:#555;margin-top:8px">Per assistenza: <b>0577 600904</b></div>
-</div>
+<div class="container" id="main-container">
 
-<!-- contenuto documento dinamico -->
-<div id="doc-contenuto" style="display:none">
-  <div class="box" style="border-top:4px solid #1565C0">
-    <div style="font-size:11px;color:#aaa">PrivatAssistenza — Il Sostegno</div>
-    <div id="d-numero" style="font-size:22px;font-weight:700;color:#1565C0;margin-top:4px"></div>
-    <div id="d-data" style="font-size:12px;color:#777"></div>
-    <div id="d-cliente-nome" style="font-size:15px;margin-top:8px"></div>
-  </div>
-  <div class="box"><h3>👤 Cliente</h3>
-    <div class="row"><span class="lbl">Nome:</span><span id="f-nome"></span></div>
-    <div class="row"><span class="lbl">Residenza:</span><span id="f-res"></span></div>
-    <div class="row"><span class="lbl">Telefono:</span><span id="f-tel"></span></div>
-    <div class="row"><span class="lbl">Email:</span><span id="f-email"></span></div>
-  </div>
-  <div class="box"><h3>🏠 Assistiti</h3>
-    <div class="row"><span class="lbl">Assistito 1:</span><span id="f-ass1"></span></div>
-    <div class="row"><span class="lbl">Residenza:</span><span id="f-ass1res"></span></div>
-    <div class="row"><span class="lbl">Assistito 2:</span><span id="f-ass2"></span></div>
-  </div>
-  <div class="box"><h3>📋 Servizio</h3>
-    <div class="row"><span class="lbl">Tipo:</span><span id="f-tipo"></span></div>
-    <div class="row"><span class="lbl">Impegno:</span><span id="f-imp"></span></div>
-    <div class="row"><span class="lbl">Descrizione:</span><span id="f-desc" style="font-size:12px"></span></div>
-  </div>
-  <div class="box"><h3>💶 Corrispettivo</h3>
-    <div class="row"><span class="lbl">Imponibile:</span><span id="f-imp2"></span></div>
-    <div class="row"><span class="lbl">IVA (5%):</span><span id="f-iva"></span></div>
-    <div class="totale-box">
-      <span style="font-weight:700;color:#1565C0;font-size:15px">TOTALE DOVUTO:</span>
-      <span id="f-tot" style="font-weight:700;color:#1565C0;font-size:26px"></span>
-    </div>
-    <div style="font-size:11px;color:#888">Pagamento entro 7 giorni dalla candidatura accettata.</div>
+  <!-- Loading iniziale -->
+  <div class="loading visible" id="loading-init">
+    <div class="spinner"></div>
+    <p>Caricamento documento in corso...</p>
   </div>
 
-  <!-- STEP 1 -->
-  <div class="box" id="step-accetta">
-    <h3>✅ Accettazione e Firma</h3>
-    <p style="font-size:13px;color:#555;margin-bottom:12px">Spunti tutte le caselle e prema il bottone per ricevere il codice di firma.</p>
-    <div class="chk-area">
-      <div class="chk-row"><input type="checkbox" id="chk1"><label for="chk1">Ho letto e compreso la presente lettera di incarico in ogni sua parte.</label></div>
-      <div class="chk-row"><input type="checkbox" id="chk2"><label for="chk2">Accetto il corrispettivo indicato per il servizio di consulenza descritto.</label></div>
-      <div class="chk-row"><input type="checkbox" id="chk3"><label for="chk3">Autorizzo il trattamento dei miei dati personali ai sensi del GDPR 679/2016.</label></div>
-    </div>
-    <button class="btn-primary" id="btnFirma" disabled>✉️ Ricevi codice di firma via email</button>
-    <button class="btn-danger" id="btnRifiuta">✗ Non accetto</button>
-  </div>
-
-  <!-- STEP 2 -->
-  <div class="box" id="step-otp">
-    <h3>🔐 Inserisci il codice di firma</h3>
-    <div class="otp-box">
-      <div style="font-size:14px;color:#555;margin-bottom:6px">Abbiamo inviato un codice a 6 cifre a:</div>
-      <div id="f-email-otp" style="font-size:16px;font-weight:700;color:#1565C0"></div>
-      <div style="font-size:12px;color:#888;margin-top:6px">Controlla anche la cartella spam. Valido 10 minuti.</div>
-    </div>
-    <input type="tel" id="otpInput" class="otp-input" maxlength="6" placeholder="------">
-    <div id="errOtp" style="display:none;color:#e53935;text-align:center;font-size:13px;margin-top:8px;font-weight:700">❌ Codice errato. Riprovi.</div>
-    <button class="btn-primary" id="btnConferma" disabled>✅ Conferma e firma il documento</button>
-    <button id="btnTorna" style="display:block;width:100%;padding:12px;border-radius:10px;background:white;border:1px solid #ccc;font-size:13px;cursor:pointer;margin-top:8px">← Torna indietro</button>
-  </div>
-</div>
-
-<!-- modal rifiuto -->
-<div class="overlay" id="oRif">
-  <div class="modal">
-    <h3 style="color:#e53935;margin-bottom:12px">Motivo del rifiuto</h3>
-    <textarea id="motivo" placeholder="Inserisca il motivo..."></textarea>
-    <div style="display:flex;gap:10px;justify-content:center">
-      <button id="btnAnnullaRif" style="padding:10px 20px;border-radius:8px;background:#ddd;border:none;cursor:pointer;font-size:14px">Annulla</button>
-      <button id="btnConfermaRif" style="padding:10px 20px;border-radius:8px;background:#e53935;border:none;color:white;font-weight:700;cursor:pointer;font-size:14px">Conferma rifiuto</button>
+  <!-- Schermata errore caricamento -->
+  <div id="error-load" style="display:none;">
+    <div class="card">
+      <div class="card-header">⚠️ Errore</div>
+      <div class="card-body">
+        <p style="color:#c0392b;">Impossibile caricare il documento. Il link potrebbe essere scaduto o non valido.</p>
+        <p style="margin-top:12px; font-size:13px;">Contattaci al <strong>0577 600904</strong> o scrivi a <strong>ilsostegnosiena@gmail.com</strong></p>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- modal successo -->
-<div class="overlay" id="oOk">
-  <div class="modal">
-    <div style="font-size:60px">✅</div>
-    <div style="font-size:20px;font-weight:700;color:#2e7d32;margin-top:12px">Documento firmato!</div>
-    <div style="font-size:13px;color:#555;margin-top:8px">Riceverà il PDF firmato via email entro pochi minuti.</div>
-    <div id="pdfLinkModal" style="margin-top:18px"></div>
+  <!-- Documento + firma -->
+  <div id="doc-section" style="display:none;">
+
+    <div class="info-box">
+      📄 Di seguito trovate il riepilogo della vostra lettera di incarico. Leggete attentamente prima di procedere con la firma.
+    </div>
+
+    <!-- Dati cliente -->
+    <div class="card">
+      <div class="card-header">👤 Dati del Cliente</div>
+      <div class="card-body" id="dati-cliente">
+        <!-- compilato via JS -->
+      </div>
+    </div>
+
+    <!-- Dati assistiti -->
+    <div class="card">
+      <div class="card-header">🧓 Dati degli Assistiti</div>
+      <div class="card-body" id="dati-assistiti">
+        <!-- compilato via JS -->
+      </div>
+    </div>
+
+    <!-- Servizio e corrispettivo -->
+    <div class="card">
+      <div class="card-header">📋 Servizio e Corrispettivo</div>
+      <div class="card-body">
+        <div class="row">
+          <span class="label">Tipo:</span>
+          <span class="value">Ricerca e selezione badante convivente</span>
+        </div>
+        <div class="row">
+          <span class="label">Impegno:</span>
+          <span class="value">54 ore settimanali — riposo notturno garantito</span>
+        </div>
+        <div class="row">
+          <span class="label">Descrizione:</span>
+          <span class="value" id="desc-servizio"></span>
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <span class="label">Imponibile:</span>
+          <span class="value" id="val-imponibile"></span>
+        </div>
+        <div class="row">
+          <span class="label">IVA (5%):</span>
+          <span class="value" id="val-iva"></span>
+        </div>
+        <div class="totale-box">
+          <span class="t-label">TOTALE DOVUTO:</span>
+          <span class="t-value" id="val-totale"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consensi -->
+    <div class="card">
+      <div class="card-header">✅ Dichiarazioni obbligatorie</div>
+      <div class="card-body">
+        <p style="font-size:13px; color:#555; margin-bottom:16px;">Prima di procedere, confermate di aver letto e accettato i seguenti punti:</p>
+        <div class="check-section">
+          <div class="check-item" id="wrap1" onclick="toggleCheck(1)">
+            <input type="checkbox" id="check1" onchange="checkAll()">
+            <label for="check1">Ho letto integralmente la lettera di incarico e confermo che i dati riportati sono corretti.</label>
+          </div>
+          <div class="check-item" id="wrap2" onclick="toggleCheck(2)">
+            <input type="checkbox" id="check2" onchange="checkAll()">
+            <label for="check2">Prendo atto che il compenso di <strong id="label-totale"></strong> è dovuto alla presentazione di una candidatura idonea e accettata.</label>
+          </div>
+          <div class="check-item" id="wrap3" onclick="toggleCheck(3)">
+            <input type="checkbox" id="check3" onchange="checkAll()">
+            <label for="check3">Accetto il trattamento dei miei dati personali ai sensi del GDPR (Reg. UE 2016/679) per l'erogazione del servizio richiesto.</label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="btn-otp" onclick="richiestaOtp()" disabled>
+          📩 Ricevi codice OTP per firmare
+        </button>
+        <div class="error-msg" id="err-otp"></div>
+      </div>
+    </div>
+
+    <!-- OTP -->
+    <div class="card otp-section" id="otp-card">
+      <div class="card-header">🔐 Verifica identità con OTP</div>
+      <div class="card-body">
+        <div class="info-box" id="otp-info-box">
+          Un codice di 6 cifre è stato inviato a <strong id="email-label"></strong>. Inseritelo qui sotto per completare la firma.
+        </div>
+        <div class="warning-box">
+          ⚠️ Il codice è valido per 10 minuti. Controllate anche la cartella spam.
+        </div>
+        <div class="otp-input-wrap">
+          <input type="text" class="otp-input" id="otp-input" maxlength="6" placeholder="------" inputmode="numeric" pattern="[0-9]*">
+          <button class="btn-verify" onclick="verificaOtp()">Verifica</button>
+        </div>
+        <div class="error-msg" id="err-verify"></div>
+        <button id="resend-btn" onclick="richiestaOtp(true)">Reinvia codice</button>
+      </div>
+    </div>
+
+    <!-- Loading firma -->
+    <div class="loading" id="loading-firma">
+      <div class="spinner"></div>
+      <p>Generazione documento firmato in corso...<br><small>Attendete, questa operazione richiede qualche secondo.</small></p>
+    </div>
+
   </div>
+
+  <!-- Successo -->
+  <div id="success-section" style="display:none;">
+    <div class="card">
+      <div class="card-body success-screen">
+        <div class="success-icon">✅</div>
+        <h2>Documento firmato con successo!</h2>
+        <p>La vostra lettera di incarico è stata firmata digitalmente.<br>Riceverete una copia via email all'indirizzo che ci avete fornito.</p>
+        <p style="margin-top:16px; color:#888;">Grazie per aver scelto <strong>PrivatAssistenza – Il Sostegno</strong>.<br>Vi contatteremo al più presto per presentarvi le candidature selezionate.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    PrivatAssistenza — Il Sostegno Cooperativa Sociale<br>
+    Viale Goffredo Mameli 100, 53100 Siena — Tel. 0577 600904<br>
+    ilsostegnosiena@gmail.com
+  </div>
+
 </div>
 
 <script>
-var EP = "https://alessia-631113cd.base44.app/api/functions/firmaConsulenza";
-var tok = new URLSearchParams(window.location.search).get("t") || "";
-var lettera = null;
+const API = "https://alessia-631113cd.base44.app/api/functions";
+let LETTERA_ID = "";
+let LETTERA = null;
+let OTP_INVIATO = false;
 
-function ck() {
-  var ok = document.getElementById("chk1").checked &&
-           document.getElementById("chk2").checked &&
-           document.getElementById("chk3").checked;
-  document.getElementById("btnFirma").disabled = !ok;
-}
-
-function ckOtp() {
-  var v = document.getElementById("otpInput").value.replace(/\D/g,"");
-  document.getElementById("otpInput").value = v;
-  document.getElementById("btnConferma").disabled = v.length !== 6;
-}
-
-function mostraDoc(l) {
-  lettera = l;
-  document.getElementById("loading").style.display = "none";
-
-  if (l.stato === "approvata") {
-    document.getElementById("doc-approvato").style.display = "block";
-    document.getElementById("ts-firma").textContent = l.firma_timestamp || "";
-    if (l.pdf_firmato_url) {
-      document.getElementById("pdf-link").innerHTML = '<a href="'+l.pdf_firmato_url+'" target="_blank" style="background:#2e7d32;color:white;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px">📄 Scarica PDF Firmato</a>';
+// ─── INIT ───
+window.onload = async () => {
+  const params = new URLSearchParams(window.location.search);
+  LETTERA_ID = params.get("id") || params.get("lettera") || params.get("t") || params.get("token") || "";
+  
+  if (!LETTERA_ID) {
+    showError();
+    return;
+  }
+  
+  try {
+    // Prima proviamo a caricare tramite la funzione serviQuestionario o getPreventivo
+    // Usiamo la funzione getLetteraConsulenza
+    const r = await fetch(`${API}/getLetteraConsulenza`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: LETTERA_ID })
+    });
+    const data = await r.json();
+    
+    if (!data || data.error || !data.id) {
+      showError();
+      return;
     }
-    return;
+    
+    if (data.stato === "firmata") {
+      showAlreadySigned();
+      return;
+    }
+    
+    LETTERA = data;
+    populateDoc(data);
+    document.getElementById("loading-init").classList.remove("visible");
+    document.getElementById("doc-section").style.display = "block";
+    
+  } catch(e) {
+    showError();
   }
-  if (l.stato === "rifiutata") {
-    document.getElementById("doc-rifiutato").style.display = "block";
-    return;
-  }
+};
 
-  // documento da firmare
-  document.getElementById("doc-contenuto").style.display = "block";
-  document.getElementById("step-accetta").style.display = "block";
-  document.getElementById("d-numero").textContent = "N. " + l.numero;
-  document.getElementById("d-data").textContent = "Data: " + l.data_emissione;
-  document.getElementById("d-cliente-nome").innerHTML = "Gentile <b>" + l.nome_cliente + " " + l.cognome_cliente + "</b>";
-  document.getElementById("f-nome").textContent = l.nome_cliente + " " + l.cognome_cliente;
-  document.getElementById("f-res").textContent = l.indirizzo_cliente || "-";
-  document.getElementById("f-tel").textContent = l.telefono_cliente || "-";
-  document.getElementById("f-email").textContent = l.email_cliente || "-";
-  document.getElementById("f-email-otp").textContent = l.email_cliente || "-";
-  document.getElementById("f-ass1").textContent = (l.nome_assistito||"") + " " + (l.cognome_assistito||"") + " — nato il " + (l.data_nascita_assistito||"?") + " a " + (l.luogo_nascita_assistito||"?");
-  document.getElementById("f-ass1res").textContent = l.residenza_assistito || "-";
-  document.getElementById("f-ass2").textContent = "Pacciani Liliana — nata il 01/10/1938 a Radda in Chianti";
-  document.getElementById("f-tipo").textContent = "Ricerca e selezione badante convivente";
-  document.getElementById("f-imp").textContent = "54 ore settimanali — riposo notturno garantito";
-  document.getElementById("f-desc").textContent = l.descrizione_servizio || "Il compenso è dovuto alla presentazione di candidatura idonea e accettata.";
-  document.getElementById("f-imp2").textContent = "€ " + l.imponibile;
-  document.getElementById("f-iva").textContent = "€ " + l.iva;
-  document.getElementById("f-tot").textContent = "€ " + l.totale;
+function showError() {
+  document.getElementById("loading-init").classList.remove("visible");
+  document.getElementById("error-load").style.display = "block";
 }
 
-// Carica dati lettera
-fetch(EP + "?t=" + tok + "&json=1")
-  .then(function(r){ return r.json(); })
-  .then(function(d){ mostraDoc(d); })
-  .catch(function(){ document.getElementById("loading").style.display="none"; document.getElementById("errore").style.display="block"; });
+function showAlreadySigned() {
+  document.getElementById("loading-init").classList.remove("visible");
+  document.getElementById("success-section").style.display = "block";
+}
 
-// Event listeners — tutti con addEventListener, zero inline
-document.getElementById("chk1").addEventListener("change", ck);
-document.getElementById("chk2").addEventListener("change", ck);
-document.getElementById("chk3").addEventListener("change", ck);
-document.getElementById("otpInput").addEventListener("input", ckOtp);
+function populateDoc(l) {
+  // Cliente
+  document.getElementById("dati-cliente").innerHTML = `
+    <div class="row"><span class="label">Nome e Cognome:</span><span class="value">${l.nome_cliente} ${l.cognome_cliente}</span></div>
+    <div class="row"><span class="label">Residenza:</span><span class="value">${l.indirizzo_cliente||"-"}</span></div>
+    <div class="row"><span class="label">Telefono:</span><span class="value">${l.telefono_cliente||"-"}</span></div>
+    <div class="row"><span class="label">Email:</span><span class="value">${l.email_cliente||"-"}</span></div>
+  `;
+  
+  // Assistiti
+  let assistitiHTML = `<div class="row"><span class="label">Assistito 1:</span><span class="value">${l.nome_assistito} ${l.cognome_assistito}</span></div>`;
+  if (l.data_nascita_assistito) assistitiHTML += `<div class="row"><span class="label">Nato il:</span><span class="value">${l.data_nascita_assistito} a ${l.luogo_nascita_assistito||""}</span></div>`;
+  if (l.residenza_assistito) assistitiHTML += `<div class="row"><span class="label">Residenza:</span><span class="value">${l.residenza_assistito}</span></div>`;
+  assistitiHTML += `<div class="row" style="margin-top:8px"><span class="label">Assistito 2:</span><span class="value">Pacciani Liliana — nata il 01/10/1938 a Radda in Chianti</span></div>`;
+  document.getElementById("dati-assistiti").innerHTML = assistitiHTML;
+  
+  // Servizio
+  document.getElementById("desc-servizio").textContent = l.descrizione_servizio || "Ricerca e selezione badante convivente";
+  document.getElementById("val-imponibile").textContent = "€ " + parseFloat(l.imponibile||350).toFixed(2);
+  document.getElementById("val-iva").textContent = "€ " + parseFloat(l.iva||17.5).toFixed(2);
+  const totale = "€ " + parseFloat(l.totale||367.5).toFixed(2);
+  document.getElementById("val-totale").textContent = totale;
+  document.getElementById("label-totale").textContent = totale;
+  document.getElementById("email-label").textContent = l.email_cliente;
+}
 
-document.getElementById("btnFirma").addEventListener("click", function() {
-  var btn = this;
+function toggleCheck(n) {
+  const cb = document.getElementById("check" + n);
+  cb.checked = !cb.checked;
+  document.getElementById("wrap" + n).classList.toggle("checked", cb.checked);
+  checkAll();
+}
+
+function checkAll() {
+  const all = document.getElementById("check1").checked && 
+               document.getElementById("check2").checked && 
+               document.getElementById("check3").checked;
+  document.getElementById("btn-otp").disabled = !all;
+}
+
+async function richiestaOtp(resend = false) {
+  const btn = document.getElementById("btn-otp");
   btn.disabled = true;
-  btn.textContent = "⏳ Invio codice in corso...";
-  fetch(EP, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({token:tok, azione:"richiedi_otp"}) })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d.ok) {
-        document.getElementById("step-accetta").style.display = "none";
-        document.getElementById("step-otp").style.display = "block";
-        window.scrollTo(0, document.body.scrollHeight);
-      } else {
-        alert("Errore: " + (d.error || "riprovare"));
-        btn.disabled = false;
-        btn.textContent = "✉️ Ricevi codice di firma via email";
-      }
-    })
-    .catch(function(){
-      alert("Errore di rete.");
-      btn.disabled = false;
-      btn.textContent = "✉️ Ricevi codice di firma via email";
+  btn.textContent = "Invio OTP in corso...";
+  document.getElementById("err-otp").textContent = "";
+  
+  try {
+    const r = await fetch(`${API}/inviaOtpConsulenza`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: LETTERA_ID, email: LETTERA.email_cliente })
     });
-});
-
-document.getElementById("btnConferma").addEventListener("click", function() {
-  var btn = this;
-  var otp = document.getElementById("otpInput").value;
-  btn.disabled = true;
-  btn.textContent = "⏳ Verifica in corso...";
-  document.getElementById("errOtp").style.display = "none";
-  fetch(EP, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({token:tok, azione:"conferma_otp", otp:otp}) })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d.ok) {
-        if (d.pdf_firmato_url) {
-          document.getElementById("pdfLinkModal").innerHTML = '<a href="'+d.pdf_firmato_url+'" target="_blank" style="background:#2e7d32;color:white;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700">📄 Scarica PDF Firmato</a>';
-        }
-        document.getElementById("oOk").style.display = "block";
-      } else {
-        document.getElementById("errOtp").style.display = "block";
-        document.getElementById("otpInput").value = "";
-        btn.disabled = true;
-        btn.textContent = "✅ Conferma e firma il documento";
+    const data = await r.json();
+    
+    if (data.success) {
+      OTP_INVIATO = true;
+      document.getElementById("otp-card").classList.add("visible");
+      document.getElementById("otp-card").scrollIntoView({ behavior: "smooth", block: "start" });
+      if (resend) {
+        document.getElementById("otp-info-box").innerHTML = `Nuovo codice inviato a <strong>${LETTERA.email_cliente}</strong>.`;
       }
-    })
-    .catch(function(){
-      alert("Errore di rete.");
+      btn.textContent = "✅ Codice OTP inviato";
+    } else {
+      document.getElementById("err-otp").textContent = data.error || "Errore nell'invio del codice. Riprova.";
       btn.disabled = false;
-      btn.textContent = "✅ Conferma e firma il documento";
-    });
-});
+      btn.textContent = "📩 Ricevi codice OTP per firmare";
+    }
+  } catch(e) {
+    document.getElementById("err-otp").textContent = "Errore di connessione. Riprova tra qualche secondo.";
+    btn.disabled = false;
+    btn.textContent = "📩 Ricevi codice OTP per firmare";
+  }
+}
 
-document.getElementById("btnRifiuta").addEventListener("click", function() {
-  document.getElementById("oRif").style.display = "block";
-});
-document.getElementById("btnAnnullaRif").addEventListener("click", function() {
-  document.getElementById("oRif").style.display = "none";
-});
-document.getElementById("btnConfermaRif").addEventListener("click", function() {
-  fetch(EP, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({token:tok, azione:"rifiuta", motivo:document.getElementById("motivo").value}) })
-    .then(function(){ location.reload(); });
-});
-document.getElementById("btnTorna").addEventListener("click", function() {
-  document.getElementById("step-otp").style.display = "none";
-  document.getElementById("step-accetta").style.display = "block";
-});
+async function verificaOtp() {
+  const otp = document.getElementById("otp-input").value.trim();
+  document.getElementById("err-verify").textContent = "";
+  
+  if (otp.length !== 6 || !/^\d+$/.test(otp)) {
+    document.getElementById("err-verify").textContent = "Inserite un codice di 6 cifre valido.";
+    return;
+  }
+  
+  document.getElementById("loading-firma").classList.add("visible");
+  document.getElementById("otp-card").style.display = "none";
+  
+  try {
+    const r = await fetch(`${API}/firmaConsulenza`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        id: LETTERA_ID, 
+        otp: otp,
+        email: LETTERA.email_cliente 
+      })
+    });
+    const data = await r.json();
+    
+    if (data.success) {
+      document.getElementById("loading-firma").classList.remove("visible");
+      document.getElementById("doc-section").style.display = "none";
+      document.getElementById("success-section").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      document.getElementById("loading-firma").classList.remove("visible");
+      document.getElementById("otp-card").style.display = "block";
+      document.getElementById("err-verify").textContent = data.error || "Codice OTP non valido o scaduto. Riprova.";
+    }
+  } catch(e) {
+    document.getElementById("loading-firma").classList.remove("visible");
+    document.getElementById("otp-card").style.display = "block";
+    document.getElementById("err-verify").textContent = "Errore di connessione. Riprova tra qualche secondo.";
+  }
+}
 </script>
+
 </body>
 </html>
