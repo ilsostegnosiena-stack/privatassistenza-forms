@@ -398,6 +398,14 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f7fa;color:#333;min-h
     <div class="tit">👩‍⚕️ Preferenze per la badante</div>
     <div class="alert-info">Servizio: <strong>Badante convivente – 54 ore settimanali</strong></div>
     <div class="campo">
+      <label>Tipo di assistenza richiesta <span class="req">*</span></label>
+      <div class="grid2" id="gTipoServ">
+        <div class="btn-op" onclick="sel('tipoServ','convivente',this)">🏠 Convivente (54h/sett.)</div>
+        <div class="btn-op" onclick="sel('tipoServ','ore',this)">⏰ A ore</div>
+      </div>
+      <div class="msg-err" id="eTipoServ">Seleziona il tipo di assistenza.</div>
+    </div>
+    <div class="campo">
       <label>Sesso preferito <span class="req">*</span></label>
       <div class="grid3" id="gSesso">
         <div class="btn-op" onclick="sel('sesso','donna',this)">👩 Donna</div>
