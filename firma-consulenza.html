@@ -85,8 +85,8 @@
     background: white;
     padding: 12px 16px;
     box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
-    z-index: 100;
-    display: none;
+    z-index: 9999;
+    display: block;
   }
   .sticky-footer.visible { display: block; }
   .container { padding-bottom: 90px; }
@@ -283,7 +283,7 @@ window.onload = async () => {
     populateDoc(data);
     document.getElementById("loading-init").classList.remove("visible");
     document.getElementById("doc-section").style.display = "block";
-    document.getElementById("sticky-otp-footer").classList.add("visible");
+    // footer sempre visibile
     
   } catch(e) {
     showError();
@@ -357,7 +357,7 @@ async function richiestaOtp(resend = false) {
     if (data.success) {
       OTP_INVIATO = true;
       document.getElementById("otp-card").classList.add("visible");
-      document.getElementById("sticky-otp-footer").classList.remove("visible");
+      // footer sempre visibile
       document.getElementById("otp-card").scrollIntoView({ behavior: "smooth", block: "start" });
       if (resend) {
         document.getElementById("otp-info-box").innerHTML = `Nuovo codice inviato a <strong>${LETTERA.email_cliente}</strong>.`;
