@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invia Preventivo — PrivatAssistenza</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f0f4ff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.card { background: white; border-radius: 16px; padding: 32px 24px; max-width: 480px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,.1); border-top: 6px solid #1e40af; }
+h1 { font-size: 20px; color: #1e40af; margin-bottom: 6px; }
+p { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+label { font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px; }
+select, input { width: 100%; padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 15px; margin-bottom: 20px; outline: none; }
+select:focus, input:focus { border-color: #1e40af; }
+.btn { width: 100%; padding: 16px; background: #1e40af; color: white; border: none; border-radius: 10px; font-size: 17px; font-weight: 700; cursor: pointer; }
+.btn:hover { background: #1d3a8a; }
+.btn:disabled { background: #9ca3af; cursor: not-allowed; }
+.msg { margin-top: 20px; padding: 14px; border-radius: 10px; font-size: 14px; text-align: center; display: none; }
+.ok { background: #d1fae5; color: #065f46; }
+.err { background: #fee2e2; color: #991b1b; }
+.loading { display: none; text-align: center; margin-top: 16px; color: #6b7280; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>📄 Invia Preventivo</h1>
+  <p>Seleziona il preventivo e invia l'email al cliente.</p>
+
+  <label>Preventivo</label>
+  <select id="sel">
+    <option value="">— Caricamento in corso... —</option>
+  </select>
+
+  <div id="info" style="background:#f8faff;border-radius:8px;padding:12px;margin-bottom:20px;font-size:13px;color:#374151;display:none;">
+    <div id="info-nome" style="font-weight:700;margin-bottom:4px;"></div>
+    <div id="info-email" style="color:#6b7280;"></div>
+    <div id="info-totale" style="color:#1e40af;font-weight:600;margin-top:4px;"></div>
+  </div>
+
+  <button class="btn" id="btn" onclick="invia()" disabled>📧 Invia Email al Cliente</button>
+  <div class="loading" id="loading">⏳ Invio in corso...</div>
+  <div class="msg" id="msg"></div>
+</div>
+
+<script>
+const API = 'https://app.base44.com/api/apps/6a0b208e3015e59c6287c091/entities/Preventivo';
+const API_KEY = '8b0dc4f967f94184b29b562c8caacf06';
+const INVIA_URL = 'https://alessia-631113cd.base44.app/api/functions/inviaPreventivoAssistenza';
+
+let preventivi = [];
+
+async function carica() {
+  try {
+    const res = await fetch(API + '?limit=100&sort=-created_date', { headers: { 'api_key': API_KEY } });
+    const data = await res.json();
+    preventivi = Array.isArray(data) ? data : (data.items || data.data || []);
+    
+    const sel = document.getElementById('sel');
+    sel.innerHTML = '<option value="">— Seleziona un preventivo —</option>';
+    
+    preventivi.forEach(p => {
+      const nome = (p.nome_richiedente || '') + ' ' + (p.cognome_richiedente || '');
+      const stato = p.stato || 'bozza';
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = `${p.numero || 'N/D'} — ${nome.trim()} (${stato})`;
+      sel.appendChild(opt);
+    });
+  } catch(e) {
+    document.getElementById('sel').innerHTML = '<option>Errore caricamento</option>';
+  }
+}
+
+document.getElementById('sel').addEventListener('change', function() {
+  const id = this.value;
+  const btn = document.getElementById('btn');
+  const info = document.getElementById('info');
+  
+  if (!id) {
+    btn.disabled = true;
+    info.style.display = 'none';
+    return;
+  }
+  
+  const p = preventivi.find(x => x.id === id);
+  if (p) {
+    const nome = (p.nome_richiedente || '') + ' ' + (p.cognome_richiedente || '');
+    const totale = parseFloat(p.totale_lordo || p.totale || 0).toFixed(2);
+    document.getElementById('info-nome').textContent = nome.trim();
+    document.getElementById('info-email').textContent = '📧 ' + (p.email_richiedente || 'Email non inserita');
+    document.getElementById('info-totale').textContent = '💰 Totale: € ' + totale;
+    info.style.display = 'block';
+    btn.disabled = !p.email_richiedente;
+  }
+  
+  document.getElementById('msg').style.display = 'none';
+});
+
+async function invia() {
+  const id = document.getElementById('sel').value;
+  if (!id) return;
+  
+  const btn = document.getElementById('btn');
+  const loading = document.getElementById('loading');
+  const msg = document.getElementById('msg');
+  
+  btn.disabled = true;
+  loading.style.display = 'block';
+  msg.style.display = 'none';
+  
+  try {
+    const res = await fetch(INVIA_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Base44-App-Id': '69ef7a8bd1efc59f631113cd' },
+      body: JSON.stringify({ id: id })
+    });
+    const data = await res.json();
+    
+    loading.style.display = 'none';
+    
+    if (res.ok && data.success) {
+      msg.className = 'msg ok';
+      msg.textContent = '✅ Email inviata a ' + data.sentTo;
+      msg.style.display = 'block';
+      // Ricarica lista
+      await carica();
+    } else {
+      msg.className = 'msg err';
+      msg.textContent = '❌ Errore: ' + (data.error || 'Riprova');
+      msg.style.display = 'block';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    loading.style.display = 'none';
+    msg.className = 'msg err';
+    msg.textContent = '❌ Errore di rete. Riprova.';
+    msg.style.display = 'block';
+    btn.disabled = false;
+  }
+}
+
+carica();
+</script>
+</body>
+</html>
