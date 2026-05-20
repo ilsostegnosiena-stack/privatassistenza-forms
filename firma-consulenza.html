@@ -298,6 +298,7 @@ function showError() {
 function showAlreadySigned() {
   document.getElementById("loading-init").classList.remove("visible");
   document.getElementById("success-section").style.display = "block";
+  document.getElementById("sticky-otp-footer").style.display = "none";
 }
 
 function populateDoc(l) {
@@ -405,6 +406,7 @@ async function verificaOtp() {
       document.getElementById("loading-firma").classList.remove("visible");
       document.getElementById("doc-section").style.display = "none";
       document.getElementById("success-section").style.display = "block";
+      document.getElementById("sticky-otp-footer").style.display = "none";
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       document.getElementById("loading-firma").classList.remove("visible");
