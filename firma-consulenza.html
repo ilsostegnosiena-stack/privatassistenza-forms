@@ -133,7 +133,7 @@
       <div class="card-body">
         <div class="row">
           <span class="label">Tipo:</span>
-          <span class="value">Consulenza ricerca assistente convivente</span>
+          <span class="value">Consulenza assistente convivente</span>
         </div>
         <div class="row">
           <span class="label">Descrizione:</span>
@@ -306,7 +306,7 @@ function populateDoc(l) {
   if (l.residenza_assistito) assistitiHTML += `<div class="row"><span class="label">Residenza:</span><span class="value">${l.residenza_assistito}</span></div>`;
   document.getElementById("dati-assistiti").innerHTML = assistitiHTML;
   
-  document.getElementById("desc-servizio").textContent = l.descrizione_servizio || "Ricerca e selezione assistente convivente";
+  document.getElementById("desc-servizio").textContent = l.descrizione_servizio || "Consulenza assistente convivente";
   document.getElementById("val-imponibile").textContent = "€ " + parseFloat(l.imponibile||350).toFixed(2);
   document.getElementById("val-iva").textContent = "€ " + parseFloat(l.iva||17.5).toFixed(2);
   const totale = "€ " + parseFloat(l.totale||367.5).toFixed(2);
