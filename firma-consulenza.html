@@ -26,6 +26,11 @@
   .totale-box .t-label { font-weight: 700; color: #1a5276; font-size: 15px; }
   .totale-box .t-value { font-weight: 800; color: #1a5276; font-size: 24px; }
   
+  .articoli { font-size: 13px; line-height: 1.75; color: #333; }
+  .articoli .art-titolo { font-weight: 700; color: #1a5276; margin-top: 16px; margin-bottom: 4px; }
+  .articoli .art-titolo:first-child { margin-top: 0; }
+  .articoli p { margin-bottom: 0; }
+
   .check-section { margin-bottom: 20px; }
   .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border: 1.5px solid #e0e0e0; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
   .check-item:hover { border-color: #2980b9; background: #f8fbff; }
@@ -44,10 +49,10 @@
   .btn-success:hover:not(:disabled) { background: linear-gradient(135deg, #1e8449, #27ae60); }
   .btn-success:disabled { opacity: 0.5; cursor: not-allowed; }
   
-  .otp-input-wrap { display: block; margin: 16px 0; }
+  .otp-input-wrap { display: flex; gap: 10px; margin: 16px 0; }
   .otp-input { flex: 1; padding: 16px; font-size: 28px; font-weight: 700; text-align: center; letter-spacing: 8px; border: 2px solid #ccc; border-radius: 8px; outline: none; }
   .otp-input:focus { border-color: #2980b9; }
-  .btn-verify { width: 100%; padding: 16px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+  .btn-verify { flex-shrink: 0; padding: 16px 20px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
   .btn-verify:hover { background: #1e8449; }
   
   .info-box { background: #e8f4fd; border-left: 4px solid #2980b9; padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13px; color: #1a5276; margin-bottom: 16px; }
@@ -75,21 +80,6 @@
     .label { min-width: unset; }
     .totale-box .t-value { font-size: 20px; }
   }
-
-  /* Footer sticky per il pulsante OTP su mobile */
-  .sticky-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    padding: 12px 16px;
-    box-shadow: 0 -4px 16px rgba(0,0,0,0.12);
-    z-index: 9999;
-    display: block;
-  }
-  .sticky-footer.visible { display: block; }
-  .container { padding-bottom: 90px; }
 </style>
 </head>
 <body>
@@ -128,17 +118,13 @@
     <!-- Dati cliente -->
     <div class="card">
       <div class="card-header">👤 Dati del Cliente</div>
-      <div class="card-body" id="dati-cliente">
-        <!-- compilato via JS -->
-      </div>
+      <div class="card-body" id="dati-cliente"></div>
     </div>
 
     <!-- Dati assistiti -->
     <div class="card">
       <div class="card-header">🧓 Dati degli Assistiti</div>
-      <div class="card-body" id="dati-assistiti">
-        <!-- compilato via JS -->
-      </div>
+      <div class="card-body" id="dati-assistiti"></div>
     </div>
 
     <!-- Servizio e corrispettivo -->
@@ -147,11 +133,7 @@
       <div class="card-body">
         <div class="row">
           <span class="label">Tipo:</span>
-          <span class="value">Ricerca e selezione badante convivente</span>
-        </div>
-        <div class="row">
-          <span class="label">Impegno:</span>
-          <span class="value">54 ore settimanali — riposo notturno garantito</span>
+          <span class="value">Consulenza ricerca assistente convivente</span>
         </div>
         <div class="row">
           <span class="label">Descrizione:</span>
@@ -172,6 +154,29 @@
       </div>
     </div>
 
+    <!-- Articoli contrattuali -->
+    <div class="card">
+      <div class="card-header">📜 Condizioni contrattuali</div>
+      <div class="card-body">
+        <div class="articoli">
+          <p class="art-titolo">Art. 1 – Oggetto della consulenza</p>
+          <p>La Cooperativa si impegna a svolgere un'attività professionale di ricerca, selezione e valutazione di candidature idonee al ruolo di assistente convivente, finalizzata all'individuazione delle migliori condizioni assistenziali per la persona assistita.</p>
+
+          <p class="art-titolo">Art. 2 – Corrispettivo e pagamento in solido</p>
+          <p>Il corrispettivo è dovuto per l'attività di consulenza svolta dalla Cooperativa. Il pagamento è dovuto dal richiedente del servizio. Nel caso in cui il servizio sia richiesto per conto di un terzo, il richiedente assume piena responsabilità solidale per il pagamento del corrispettivo, indipendentemente dall'esito del rapporto successivamente instaurato.</p>
+
+          <p class="art-titolo">Art. 3 – Modalità di pagamento</p>
+          <p>Il corrispettivo è esigibile al completamento dell'attività di consulenza, da concludersi entro 30 giorni dalla firma della presente lettera di incarico, tramite bonifico bancario o in contanti, e resta dovuto a prescindere dall'esito del rapporto successivamente instaurato.</p>
+
+          <p class="art-titolo">Art. 4 – Riservatezza e trattamento dati</p>
+          <p>Entrambe le parti si impegnano al trattamento dei dati personali esclusivamente per le finalità connesse all'esecuzione del presente incarico, ai sensi del Regolamento UE 2016/679 (GDPR).</p>
+
+          <p class="art-titolo">Art. 5 – Foro competente</p>
+          <p>Per qualsiasi controversia derivante dal presente incarico, le parti concordano di fare riferimento al Foro di Siena.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Consensi -->
     <div class="card">
       <div class="card-header">✅ Dichiarazioni obbligatorie</div>
@@ -184,7 +189,7 @@
           </div>
           <div class="check-item" id="wrap2" onclick="toggleCheck(2)">
             <input type="checkbox" id="check2" onchange="checkAll()">
-            <label for="check2">Prendo atto che il compenso di <strong id="label-totale"></strong> è dovuto alla presentazione di una candidatura idonea e accettata.</label>
+            <label for="check2">Prendo atto che il corrispettivo di <strong id="label-totale"></strong> è dovuto per l'attività di consulenza svolta dalla Cooperativa, a prescindere dall'esito del rapporto successivamente instaurato, e che vige il pagamento in solido.</label>
           </div>
           <div class="check-item" id="wrap3" onclick="toggleCheck(3)">
             <input type="checkbox" id="check3" onchange="checkAll()">
@@ -192,6 +197,9 @@
           </div>
         </div>
 
+        <button class="btn btn-primary" id="btn-otp" onclick="richiestaOtp()" disabled>
+          📩 Ricevi codice OTP per firmare
+        </button>
         <div class="error-msg" id="err-otp"></div>
       </div>
     </div>
@@ -208,7 +216,7 @@
         </div>
         <div class="otp-input-wrap">
           <input type="text" class="otp-input" id="otp-input" maxlength="6" placeholder="------" inputmode="numeric" pattern="[0-9]*">
-          <button class="btn btn-success" id="btn-verify-footer" onclick="verificaOtp()" style="width:100%;padding:14px;margin-top:10px;">✅ Verifica e firma</button>
+          <button class="btn-verify" onclick="verificaOtp()">Verifica</button>
         </div>
         <div class="error-msg" id="err-verify"></div>
         <button id="resend-btn" onclick="richiestaOtp(true)">Reinvia codice</button>
@@ -230,7 +238,7 @@
         <div class="success-icon">✅</div>
         <h2>Documento firmato con successo!</h2>
         <p>La vostra lettera di incarico è stata firmata digitalmente.<br>Riceverete una copia via email all'indirizzo che ci avete fornito.</p>
-        <p style="margin-top:16px; color:#888;">Grazie per aver scelto <strong>PrivatAssistenza – Il Sostegno</strong>.<br>Vi contatteremo al più presto per presentarvi le candidature selezionate.</p>
+        <p style="margin-top:16px; color:#888;">Grazie per aver scelto <strong>PrivatAssistenza – Il Sostegno</strong>.<br>Vi contatteremo al più presto per aggiornarvi sull'avanzamento della consulenza.</p>
       </div>
     </div>
   </div>
@@ -249,19 +257,13 @@ let LETTERA_ID = "";
 let LETTERA = null;
 let OTP_INVIATO = false;
 
-// ─── INIT ───
 window.onload = async () => {
   const params = new URLSearchParams(window.location.search);
   LETTERA_ID = params.get("id") || params.get("lettera") || params.get("t") || params.get("token") || "";
   
-  if (!LETTERA_ID) {
-    showError();
-    return;
-  }
+  if (!LETTERA_ID) { showError(); return; }
   
   try {
-    // Prima proviamo a caricare tramite la funzione serviQuestionario o getPreventivo
-    // Usiamo la funzione getLetteraConsulenza
     const r = await fetch(`${API}/getLetteraConsulenza`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -269,22 +271,13 @@ window.onload = async () => {
     });
     const data = await r.json();
     
-    if (!data || data.error || !data.id) {
-      showError();
-      return;
-    }
-    
-    if (data.stato === "firmata") {
-      showAlreadySigned();
-      return;
-    }
+    if (!data || data.error || !data.id) { showError(); return; }
+    if (data.stato === "firmata") { showAlreadySigned(); return; }
     
     LETTERA = data;
     populateDoc(data);
     document.getElementById("loading-init").classList.remove("visible");
     document.getElementById("doc-section").style.display = "block";
-    // footer sempre visibile
-    
   } catch(e) {
     showError();
   }
@@ -298,11 +291,9 @@ function showError() {
 function showAlreadySigned() {
   document.getElementById("loading-init").classList.remove("visible");
   document.getElementById("success-section").style.display = "block";
-  document.getElementById("sticky-otp-footer").style.display = "none";
 }
 
 function populateDoc(l) {
-  // Cliente
   document.getElementById("dati-cliente").innerHTML = `
     <div class="row"><span class="label">Nome e Cognome:</span><span class="value">${l.nome_cliente} ${l.cognome_cliente}</span></div>
     <div class="row"><span class="label">Residenza:</span><span class="value">${l.indirizzo_cliente||"-"}</span></div>
@@ -310,15 +301,12 @@ function populateDoc(l) {
     <div class="row"><span class="label">Email:</span><span class="value">${l.email_cliente||"-"}</span></div>
   `;
   
-  // Assistiti
   let assistitiHTML = `<div class="row"><span class="label">Assistito 1:</span><span class="value">${l.nome_assistito} ${l.cognome_assistito}</span></div>`;
   if (l.data_nascita_assistito) assistitiHTML += `<div class="row"><span class="label">Nato il:</span><span class="value">${l.data_nascita_assistito} a ${l.luogo_nascita_assistito||""}</span></div>`;
   if (l.residenza_assistito) assistitiHTML += `<div class="row"><span class="label">Residenza:</span><span class="value">${l.residenza_assistito}</span></div>`;
-  assistitiHTML += `<div class="row" style="margin-top:8px"><span class="label">Assistito 2:</span><span class="value">Pacciani Liliana — nata il 01/10/1938 a Radda in Chianti</span></div>`;
   document.getElementById("dati-assistiti").innerHTML = assistitiHTML;
   
-  // Servizio
-  document.getElementById("desc-servizio").textContent = l.descrizione_servizio || "Ricerca e selezione badante convivente";
+  document.getElementById("desc-servizio").textContent = l.descrizione_servizio || "Ricerca e selezione assistente convivente";
   document.getElementById("val-imponibile").textContent = "€ " + parseFloat(l.imponibile||350).toFixed(2);
   document.getElementById("val-iva").textContent = "€ " + parseFloat(l.iva||17.5).toFixed(2);
   const totale = "€ " + parseFloat(l.totale||367.5).toFixed(2);
@@ -358,14 +346,11 @@ async function richiestaOtp(resend = false) {
     if (data.success) {
       OTP_INVIATO = true;
       document.getElementById("otp-card").classList.add("visible");
-      // footer sempre visibile
       document.getElementById("otp-card").scrollIntoView({ behavior: "smooth", block: "start" });
       if (resend) {
         document.getElementById("otp-info-box").innerHTML = `Nuovo codice inviato a <strong>${LETTERA.email_cliente}</strong>.`;
       }
       btn.textContent = "✅ Codice OTP inviato";
-      document.getElementById("footer-stato-otp").style.display="none";
-      document.getElementById("footer-stato-verifica").style.display="block";
     } else {
       document.getElementById("err-otp").textContent = data.error || "Errore nell'invio del codice. Riprova.";
       btn.disabled = false;
@@ -406,7 +391,6 @@ async function verificaOtp() {
       document.getElementById("loading-firma").classList.remove("visible");
       document.getElementById("doc-section").style.display = "none";
       document.getElementById("success-section").style.display = "block";
-      document.getElementById("sticky-otp-footer").style.display = "none";
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       document.getElementById("loading-firma").classList.remove("visible");
@@ -421,20 +405,5 @@ async function verificaOtp() {
 }
 </script>
 
-<!-- Footer sticky con pulsante OTP -->
-<div class="sticky-footer" id="sticky-otp-footer">
-  <div id="footer-stato-otp">
-    <button class="btn btn-primary" id="btn-otp" onclick="richiestaOtp()" disabled>
-      📩 Ricevi codice OTP per firmare
-    </button>
-  </div>
-  <div id="footer-stato-verifica" style="display:none;">
-    <button class="btn btn-success" onclick="verificaOtp()" style="background:linear-gradient(135deg,#27ae60,#2ecc71);color:white;width:100%;padding:14px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;">
-      ✅ Verifica e firma il documento
-    </button>
-  </div>
-</div>
-
 </body>
 </html>
-
