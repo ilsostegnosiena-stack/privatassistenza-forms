@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invia Link Appuntamento – PrivatAssistenza</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f4ff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .card { background: white; border-radius: 16px; padding: 32px; max-width: 480px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+    .header { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 24px; }
+    .header h2 { font-size: 20px; margin-bottom: 4px; }
+    .header p { font-size: 12px; opacity: 0.85; }
+    label { display: block; font-size: 13px; font-weight: bold; color: #444; margin-top: 14px; margin-bottom: 5px; }
+    input, select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+    .btn { width: 100%; margin-top: 24px; padding: 14px; background: #117a3a; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    .btn:disabled { background: #90a4ae; cursor: not-allowed; }
+    .msg { margin-top: 16px; padding: 12px; border-radius: 8px; font-size: 14px; text-align: center; display: none; }
+    .msg.ok { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .msg.err { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+    .info-box { background: #f8f9fa; border-left: 4px solid #1565C0; padding: 12px 16px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; line-height: 1.6; }
+    .info-box strong { color: #1565C0; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <h2>PrivatAssistenza</h2>
+    <p>Invia link prenotazione appuntamento</p>
+  </div>
+
+  <div class="info-box">
+    <strong>Destinatario:</strong> <span id="info-nome">—</span><br>
+    <strong>Email:</strong> <span id="info-email">—</span><br>
+    <strong>Sede:</strong> <span id="info-sede">—</span>
+  </div>
+
+  <label>Nome</label>
+  <input type="text" id="nome" placeholder="Nome">
+
+  <label>Cognome</label>
+  <input type="text" id="cognome" placeholder="Cognome">
+
+  <label>Email destinatario</label>
+  <input type="email" id="email" placeholder="email@esempio.it">
+
+  <label>Sede</label>
+  <select id="sede">
+    <option value="Siena">Siena</option>
+    <option value="Poggibonsi">Poggibonsi</option>
+    <option value="Follonica">Follonica</option>
+  </select>
+
+  <button class="btn" id="btnInvia" onclick="invia()">📅 Invia link appuntamento</button>
+
+  <div class="msg" id="msg"></div>
+</div>
+
+<script>
+const API = "https://alessia-631113cd.base44.app/api/functions/inviaLinkPrenotazione";
+
+// Pre-carica parametri dall'URL
+const params = new URLSearchParams(window.location.search);
+const nome = params.get("nome") || "";
+const cognome = params.get("cognome") || "";
+const email = params.get("email") || "";
+const sede = params.get("sede") || "Siena";
+
+document.getElementById("nome").value = nome;
+document.getElementById("cognome").value = cognome;
+document.getElementById("email").value = email;
+document.getElementById("sede").value = sede;
+document.getElementById("info-nome").textContent = [nome, cognome].filter(Boolean).join(" ") || "—";
+document.getElementById("info-email").textContent = email || "—";
+document.getElementById("info-sede").textContent = sede;
+
+async function invia() {
+  const btn = document.getElementById("btnInvia");
+  const msg = document.getElementById("msg");
+  const dNome = document.getElementById("nome").value.trim();
+  const dCognome = document.getElementById("cognome").value.trim();
+  const dEmail = document.getElementById("email").value.trim();
+  const dSede = document.getElementById("sede").value;
+
+  if (!dEmail) {
+    showMsg("Inserisci l'email del destinatario", false);
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Invio in corso...";
+  msg.style.display = "none";
+
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: dEmail, nome: dNome, cognome: dCognome, sede: dSede })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showMsg("✅ Email inviata correttamente a " + dEmail, true);
+      btn.textContent = "✅ Email inviata!";
+    } else {
+      showMsg("❌ Errore: " + (data.error || "Errore sconosciuto"), false);
+      btn.disabled = false;
+      btn.textContent = "📅 Invia link appuntamento";
+    }
+  } catch (e) {
+    showMsg("❌ Errore di rete: " + e.message, false);
+    btn.disabled = false;
+    btn.textContent = "📅 Invia link appuntamento";
+  }
+}
+
+function showMsg(text, ok) {
+  const msg = document.getElementById("msg");
+  msg.textContent = text;
+  msg.className = "msg " + (ok ? "ok" : "err");
+  msg.style.display = "block";
+}
+</script>
+</body>
+</html>
