@@ -529,10 +529,7 @@ function renderQ(data) {
       <td>${q.telefono_referente || '—'}</td>
       <td>${q.created_date ? q.created_date.substring(0,10) : '—'}</td>
       <td><span class="badge badge-aperto">${q.stato || 'ricevuto'}</span></td>
-      <td style="display:flex;gap:4px">
-        <button class="btn btn-secondary btn-sm" onclick="apriDettaglioQ('${q.id}')" title="Dettaglio">👁</button>
-        <button class="btn btn-sm" onclick="inviaModuloPF('${q.id}')" title="Invia Modulo PF" style="background:#7b1fa2;color:white">${q.modulo_pf_firmato_url ? '✅' : q.modulo_pf_inviato ? '📩' : '📋'}</button>
-      </td>
+      <td><button class="btn btn-secondary btn-sm" onclick="alert(JSON.stringify(arguments[0]))">👁</button></td>
     </tr>
   `).join('');
 }
@@ -578,53 +575,6 @@ function filtraL() {
 }
 
 // ===== INVIA LETTERA INFORMATIVA =====
-async function inviaModuloPF(id) {
-  const q = tuttiQ.find(x => x.id === id);
-  if (!q) return;
-  const email = q.email_referente;
-  const nome = (q.nome_referente||'') + ' ' + (q.cognome_referente||'');
-  if (!email) { alert('Email non trovata per questo cliente.'); return; }
-  let msg = q.modulo_pf_firmato_url
-    ? 'Il modulo risulta gia firmato.\nVuoi inviarlo di nuovo?'
-    : q.modulo_pf_inviato
-    ? 'Il modulo e gia stato inviato ma non ancora firmato.\nVuoi reinviarlo a ' + email + '?'
-    : 'Inviare il Modulo di Adesione Professione in Famiglia a:\n' + nome.trim() + ' (' + email + ')?';
-  if (!confirm(msg)) return;
-  try {
-    const r = await fetch(API + '/inviaModuloProfessioneFamiglia', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    const d = await r.json();
-    if (!r.ok || d.error) throw new Error(d.error || 'Errore');
-    alert('Modulo inviato con successo a ' + email);
-    caricaQ();
-  } catch(e) {
-    alert('Errore invio: ' + e.message);
-  }
-}
-
-async function apriDettaglioQ(id) {
-  const q = tuttiQ.find(x => x.id === id);
-  if (!q) return;
-  const nome = (q.nome_referente||'') + ' ' + (q.cognome_referente||'');
-  const assistito = (q.nome_assistito||'') + ' ' + (q.cognome_assistito||'');
-  const pfStato = q.modulo_pf_firmato_url ? 'FIRMATO' : q.modulo_pf_inviato ? 'Inviato (non firmato)' : 'Non inviato';
-  alert(
-    'REFERENTE: ' + nome.trim() +
-    '\nEmail: ' + (q.email_referente||'—') +
-    '\nTel: ' + (q.telefono_referente||'—') +
-    '\n\nASSISTITO: ' + assistito.trim() +
-    '\nData nascita: ' + (q.data_nascita_assistito||'—') +
-    '\n\nAutosufficienza: ' + (q.autosufficienza||'—') +
-    '\nPatologie: ' + (q.patologie||'—') +
-    '\nUrgenza: ' + (q.urgenza||'—') +
-    '\nNote: ' + (q.note||'—') +
-    '\n\nModulo PF: ' + pfStato
-  );
-}
-
 async function inviaLetteraInfo(id) {
   const c = tuttiContatti.find(x => x.id === id);
   if (!c) return;
