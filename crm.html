@@ -531,7 +531,7 @@ function renderQ(data) {
       <td><span class="badge badge-aperto">${q.stato || 'ricevuto'}</span></td>
       <td style="display:flex;gap:4px">
         <button class="btn btn-secondary btn-sm" onclick="apriDettaglioQ('${q.id}')" title="Dettaglio">👁</button>
-        <button class="btn btn-sm" onclick="inviaModuloPF('${q.id}','${q.nome_referente||\"\"} ${q.cognome_referente||\"\"}','${q.email_referente||\"\"}','${q.modulo_pf_firmato_url||\"\"}','${q.modulo_pf_inviato||\"\"}' )" title="Invia Modulo PF" style="background:#7b1fa2;color:white">\${q.modulo_pf_firmato_url ? '✅' : q.modulo_pf_inviato ? '📩' : '📋'}</button>
+        <button class="btn btn-sm" onclick="inviaModuloPF('${q.id}')" title="Invia Modulo PF" style="background:#7b1fa2;color:white">${q.modulo_pf_firmato_url ? '✅' : q.modulo_pf_inviato ? '📩' : '📋'}</button>
       </td>
     </tr>
   `).join('');
@@ -578,12 +578,16 @@ function filtraL() {
 }
 
 // ===== INVIA LETTERA INFORMATIVA =====
-async function inviaModuloPF(id, nome, email, firmato, inviato) {
-  if (!email || email === 'undefined') { alert('Email non trovata per questo cliente.'); return; }
-  let msg = firmato
-    ? 'Il modulo risulta già firmato.\nVuoi inviarlo di nuovo?'
-    : inviato
-    ? 'Il modulo è già stato inviato ma non ancora firmato.\nVuoi reinviarlo a ' + email + '?'
+async function inviaModuloPF(id) {
+  const q = tuttiQ.find(x => x.id === id);
+  if (!q) return;
+  const email = q.email_referente;
+  const nome = (q.nome_referente||'') + ' ' + (q.cognome_referente||'');
+  if (!email) { alert('Email non trovata per questo cliente.'); return; }
+  let msg = q.modulo_pf_firmato_url
+    ? 'Il modulo risulta gia firmato.\nVuoi inviarlo di nuovo?'
+    : q.modulo_pf_inviato
+    ? 'Il modulo e gia stato inviato ma non ancora firmato.\nVuoi reinviarlo a ' + email + '?'
     : 'Inviare il Modulo di Adesione Professione in Famiglia a:\n' + nome.trim() + ' (' + email + ')?';
   if (!confirm(msg)) return;
   try {
@@ -594,10 +598,10 @@ async function inviaModuloPF(id, nome, email, firmato, inviato) {
     });
     const d = await r.json();
     if (!r.ok || d.error) throw new Error(d.error || 'Errore');
-    alert('✅ Modulo inviato con successo a ' + email);
+    alert('Modulo inviato con successo a ' + email);
     caricaQ();
   } catch(e) {
-    alert('❌ Errore invio: ' + e.message);
+    alert('Errore invio: ' + e.message);
   }
 }
 
@@ -606,17 +610,19 @@ async function apriDettaglioQ(id) {
   if (!q) return;
   const nome = (q.nome_referente||'') + ' ' + (q.cognome_referente||'');
   const assistito = (q.nome_assistito||'') + ' ' + (q.cognome_assistito||'');
-  const pfStato = q.modulo_pf_firmato_url ? '✅ FIRMATO' : q.modulo_pf_inviato ? '📩 Inviato (non firmato)' : '⬜ Non inviato';
-  alert('👤 REFERENTE: ' + nome.trim() +
+  const pfStato = q.modulo_pf_firmato_url ? 'FIRMATO' : q.modulo_pf_inviato ? 'Inviato (non firmato)' : 'Non inviato';
+  alert(
+    'REFERENTE: ' + nome.trim() +
     '\nEmail: ' + (q.email_referente||'—') +
     '\nTel: ' + (q.telefono_referente||'—') +
-    '\n\n🧓 ASSISTITO: ' + assistito.trim() +
+    '\n\nASSISTITO: ' + assistito.trim() +
     '\nData nascita: ' + (q.data_nascita_assistito||'—') +
-    '\n\n📋 Autosufficienza: ' + (q.autosufficienza||'—') +
+    '\n\nAutosufficienza: ' + (q.autosufficienza||'—') +
     '\nPatologie: ' + (q.patologie||'—') +
     '\nUrgenza: ' + (q.urgenza||'—') +
     '\nNote: ' + (q.note||'—') +
-    '\n\n📝 Modulo PF: ' + pfStato);
+    '\n\nModulo PF: ' + pfStato
+  );
 }
 
 async function inviaLetteraInfo(id) {
