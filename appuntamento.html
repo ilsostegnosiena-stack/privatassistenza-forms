@@ -1,263 +1,298 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="cache-version" content="v20260515b">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prenota Appuntamento – PrivatAssistenza</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 16px; }
-.card { background: white; border-radius: 16px; padding: 28px; max-width: 480px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.10); margin-top: 10px; }
-.logo { width: 130px; display: block; margin: 0 auto 14px; }
-h2 { text-align: center; color: #1565C0; font-size: 20px; margin-bottom: 4px; }
-.sottotitolo { text-align: center; color: #888; font-size: 11px; margin-bottom: 20px; }
-label { display: block; font-weight: bold; font-size: 13px; color: #444; margin-bottom: 6px; margin-top: 14px; }
-input, textarea, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; font-family: Arial, sans-serif; }
-textarea { height: 70px; resize: none; }
-.btn-group { display: flex; gap: 10px; margin-bottom: 4px; }
-.btn-sede { flex: 1; padding: 12px 8px; border-radius: 10px; border: 2px solid #ddd; background: white; cursor: pointer; font-size: 14px; font-weight: bold; color: #444; transition: all 0.2s; }
-.btn-sede.active { border-color: #1565C0; background: #e3f2fd; color: #1565C0; }
-.slots-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-.slot { padding: 8px 14px; border-radius: 8px; border: 2px solid #ddd; background: white; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.2s; }
-.slot.active { border-color: #1565C0; background: #1565C0; color: white; }
-.btn-tipo { width: 100%; padding: 10px 14px; border-radius: 8px; border: 2px solid #ddd; background: white; cursor: pointer; font-size: 13px; text-align: left; margin-bottom: 8px; transition: all 0.2s; }
-.btn-tipo.active { border-color: #1565C0; background: #e3f2fd; color: #1565C0; font-weight: bold; }
-.btn-primary { width: 100%; margin-top: 16px; padding: 13px; background: #1565C0; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; }
-.btn-primary:disabled { background: #90a4ae; cursor: not-allowed; }
-.btn-secondary { padding: 12px 16px; background: #f5f5f5; color: #444; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; margin-top: 16px; }
-.riepilogo-box { background: #f0f4ff; border-left: 4px solid #1565C0; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
-.modifica { color: #1565C0; cursor: pointer; text-decoration: underline; margin-left: 8px; font-size: 12px; }
-.errore { color: #e53935; font-size: 13px; margin-top: 8px; }
-.footer { text-align: center; font-size: 11px; color: #aaa; margin-top: 24px; }
-.successo-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
-.btn-row { display: flex; gap: 10px; }
-.btn-row .btn-primary { flex: 1; }
-#loading { color: #888; font-size: 13px; margin-top: 8px; }
-#nessuno-slot { color: #e53935; font-size: 13px; margin-top: 8px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrivatAssistenza - Prenota Appuntamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .slot-btn { transition: all 0.15s; }
+        .slot-btn:active { transform: scale(0.95); }
+    </style>
 </head>
-<body>
-<div class="card">
-  <img src="https://base44.app/api/apps/69ef7a8bd1efc59f631113cd/files/mp/public/69ef7a8bd1efc59f631113cd/831d91b14_logo_privatassistenza_real.png" class="logo" />
-  <h2>Prenota un Appuntamento</h2>
-  <p class="sottotitolo">Cooperativa Sociale Il Sostegno · PrivatAssistenza Siena</p>
+<body class="bg-gradient-to-b from-blue-50 to-white min-h-screen">
+    <div class="max-w-md mx-auto p-4">
+        <!-- Header -->
+        <div class="text-center mb-6 mt-4">
+            <img src="https://media.base44.com/images/public/6a0b208e3015e59c6287c091/8dd2c6afc_logo.png" alt="Logo" class="w-20 h-20 mx-auto mb-3 rounded-xl">
+            <h1 class="text-2xl font-bold text-blue-900">PrivatAssistenza</h1>
+            <p class="text-gray-500 mt-1">Prenota il tuo appuntamento</p>
+        </div>
 
-  <!-- STEP 1 -->
-  <div id="step1">
-    <label>Sede *</label>
-    <div class="btn-group">
-      <button class="btn-sede" onclick="selezionaSede('Siena', this)">📍 Siena</button>
-      <button class="btn-sede" onclick="selezionaSede('Poggibonsi', this)">📍 Poggibonsi</button>
-      <button class="btn-sede" onclick="selezionaSede('Follonica', this)">📍 Follonica</button>
+        <!-- Step 1: Sede -->
+        <div id="step-sede" class="bg-white rounded-2xl shadow-lg p-6 mb-4">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Scegli la sede</h2>
+            <div class="space-y-3">
+                <button onclick="selectSede('Siena')" class="w-full p-4 text-left rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition">
+                    <span class="text-lg font-medium">Siena</span>
+                    <span class="text-sm text-gray-500 block">Viale Goffredo Mameli 100</span>
+                </button>
+                <button onclick="selectSede('Poggibonsi')" class="w-full p-4 text-left rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition">
+                    <span class="text-lg font-medium">Poggibonsi</span>
+                    <span class="text-sm text-gray-500 block">Via Borgaccio 61</span>
+                </button>
+                <button onclick="selectSede('Follonica')" class="w-full p-4 text-left rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition">
+                    <span class="text-lg font-medium">Follonica</span>
+                    <span class="text-sm text-gray-500 block">Via Bicocchi 91</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Calendario -->
+        <div id="step-calendario" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-4">
+            <div class="flex items-center justify-between mb-4">
+                <button onclick="prevWeek()" class="p-2 rounded-full hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h2 id="week-label" class="text-lg font-semibold text-gray-800 text-center"></h2>
+                <button onclick="nextWeek()" class="p-2 rounded-full hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+            
+            <div id="giorni-grid" class="grid grid-cols-7 gap-1 mb-4"></div>
+            
+            <div id="slot-container" class="mt-4">
+                <p class="text-center text-gray-400 py-8">Seleziona un giorno per vedere gli orari</p>
+            </div>
+        </div>
+
+        <!-- Step 3: Form dati -->
+        <div id="step-form" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-4">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">I tuoi dati</h2>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-sm text-gray-600">Nome *</label>
+                    <input id="form-nome" type="text" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600">Cognome *</label>
+                    <input id="form-cognome" type="text" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600">Telefono *</label>
+                    <input id="form-telefono" type="tel" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600">Email</label>
+                    <input id="form-email" type="email" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600">Motivo dell'appuntamento</label>
+                    <textarea id="form-motivazione" rows="3" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none" placeholder="Es: Consulenza assistenza domiciliare, informazione badante..."></textarea>
+                </div>
+            </div>
+            <button id="btn-conferma" onclick="confermaPrenotazione()" class="w-full mt-5 p-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">
+                Conferma prenotazione
+            </button>
+        </div>
+
+        <!-- Step 4: Conferma -->
+        <div id="step-conferma" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-4 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Prenotazione confermata!</h2>
+            <div id="riepilogo" class="text-gray-600 mt-3"></div>
+        </div>
     </div>
 
-    <div id="sezione-data" style="display:none">
-      <label>Data *</label>
-      <input type="date" id="data" onchange="caricaSlots()" />
-    </div>
+    <script>
+        const API_URL = 'https://alessia-631113cd.base44.app/api/functions';
+        const CRM_API = 'https://app.base44.com/api/apps/6a0b208e3015e59c6287c091/entities';
+        const CRM_KEY = '8b0dc4f967f94184b29b562c8caacf06';
+        
+        let sedeSelezionata = '';
+        let dataSelezionata = '';
+        let oraSelezionata = '';
+        let settimanaCorrente = [];
 
-    <div id="sezione-slots" style="display:none">
-      <label>Orario disponibile *</label>
-      <div id="loading" style="display:none">Carico orari disponibili...</div>
-      <div id="nessuno-slot" style="display:none">Nessun orario disponibile per questa data. Prova un altro giorno.</div>
-      <div class="slots-grid" id="slots-container"></div>
-    </div>
+        function formatDate(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const g = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${g}`;
+        }
 
-    <button class="btn-primary" id="btn-continua" style="display:none" onclick="vaiStep2()">Continua →</button>
-  </div>
+        function getMonday(d) {
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff));
+        }
 
-  <!-- STEP 2 -->
-  <div id="step2" style="display:none">
-    <div class="riepilogo-box" id="riepilogo-step2"></div>
+        function selectSede(sede) {
+            sedeSelezionata = sede;
+            document.getElementById('step-sede').classList.add('hidden');
+            document.getElementById('step-calendario').classList.remove('hidden');
+            const today = new Date();
+            settimanaCorrente = getMonday(today);
+            renderWeek();
+        }
 
-    <label>Motivo dell'appuntamento *</label>
-    <button class="btn-tipo" onclick="selezionaTipo('Informazioni Assistenza Domiciliare', this)">Informazioni Assistenza Domiciliare</button>
-    <button class="btn-tipo" onclick="selezionaTipo('Informazioni Servizio Badanti', this)">Informazioni Servizio Badanti</button>
-    <button class="btn-tipo" onclick="selezionaTipo('Colloquio di Lavoro', this)">Colloquio di Lavoro</button>
-    <button class="btn-tipo" onclick="selezionaTipo('Altro', this)">Altro</button>
+        function renderWeek() {
+            const giorni = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+            const mesi = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+            
+            const lunedi = new Date(settimanaCorrente);
+            const domenica = new Date(lunedi);
+            domenica.setDate(lunedi.getDate() + 6);
+            
+            document.getElementById('week-label').textContent = 
+                `${lunedi.getDate()} ${mesi[lunedi.getMonth()]} - ${domenica.getDate()} ${mesi[domenica.getMonth()]}`;
+            
+            const grid = document.getElementById('giorni-grid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(lunedi);
+                d.setDate(lunedi.getDate() + i);
+                const dataStr = formatDate(d);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const isPast = d < today;
+                const isToday = formatDate(d) === formatDate(today);
+                
+                const cella = document.createElement('button');
+                cella.className = `p-2 rounded-lg text-center transition ${isPast ? 'opacity-30 pointer-events-none' : 'hover:bg-blue-100'} ${isToday ? 'ring-2 ring-blue-400' : ''}`;
+                cella.innerHTML = `
+                    <div class="text-xs text-gray-400">${giorni[i]}</div>
+                    <div class="text-sm font-semibold mt-1">${d.getDate()}</div>
+                `;
+                cella.onclick = () => selectDay(dataStr, d);
+                grid.appendChild(cella);
+            }
+            
+            document.getElementById('slot-container').innerHTML = 
+                '<p class="text-center text-gray-400 py-8">Seleziona un giorno per vedere gli orari</p>';
+        }
 
-    <label>Nome *</label>
-    <input type="text" id="nome" placeholder="Mario" />
-    <label>Cognome *</label>
-    <input type="text" id="cognome" placeholder="Rossi" />
-    <label>Telefono *</label>
-    <input type="tel" id="telefono" placeholder="333 1234567" />
-    <label>Email *</label>
-    <input type="email" id="email" placeholder="mario.rossi@email.it" />
-    <label>Note (facoltativo)</label>
-    <textarea id="note" placeholder="Informazioni aggiuntive..."></textarea>
+        function prevWeek() {
+            const d = new Date(settimanaCorrente);
+            d.setDate(d.getDate() - 7);
+            settimanaCorrente = d;
+            renderWeek();
+        }
 
-    <div id="errore" class="errore" style="display:none"></div>
+        function nextWeek() {
+            const d = new Date(settimanaCorrente);
+            d.setDate(d.getDate() + 7);
+            settimanaCorrente = d;
+            renderWeek();
+        }
 
-    <div class="btn-row">
-      <button class="btn-secondary" onclick="tornaStep1()">← Indietro</button>
-      <button class="btn-primary" id="btn-prenota" onclick="prenota()">Conferma Appuntamento ✓</button>
-    </div>
-  </div>
+        async function selectDay(dataStr, dateObj) {
+            dataSelezionata = dataStr;
+            const container = document.getElementById('slot-container');
+            container.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-200 border-t-blue-600"></div></div>';
+            
+            try {
+                const resp = await fetch(`${API_URL}/getDisponibilita`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sede: sedeSelezionata, data: dataStr })
+                });
+                const result = await resp.json();
+                
+                if (!result.ok || !result.slots || result.slots.length === 0) {
+                    container.innerHTML = '<p class="text-center text-gray-400 py-8">Nessun orario disponibile per questo giorno</p>';
+                    return;
+                }
+                
+                const mesi3 = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+                const giornoNome = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'][dateObj.getDay()];
+                container.innerHTML = `<p class="text-sm text-gray-500 mb-3">${giornoNome} ${dateObj.getDate()} ${mesi3[dateObj.getMonth()]} - ${sedeSelezionata}</p>`;
+                
+                const slotsDiv = document.createElement('div');
+                slotsDiv.className = 'grid grid-cols-4 gap-2';
+                
+                for (const slot of result.slots) {
+                    const btn = document.createElement('button');
+                    btn.className = 'slot-btn p-3 border-2 border-gray-200 rounded-xl text-sm font-medium hover:border-blue-500 hover:bg-blue-50';
+                    btn.textContent = slot;
+                    btn.onclick = () => selectSlot(slot, btn);
+                    slotsDiv.appendChild(btn);
+                }
+                container.appendChild(slotsDiv);
+            } catch (err) {
+                container.innerHTML = '<p class="text-center text-red-400 py-8">Errore di caricamento. Riprova.</p>';
+            }
+        }
 
-  <!-- SUCCESSO -->
-  <div id="successo" style="display:none">
-    <div class="successo-icon">✅</div>
-    <h2 style="color:#2e7d32;margin-bottom:12px">Appuntamento confermato!</h2>
-    <div class="riepilogo-box" id="riepilogo-successo"></div>
-    <p style="color:#555;font-size:13px;margin-top:12px">Riceverai una email di conferma all'indirizzo fornito.</p>
-    <p style="color:#888;font-size:12px;margin-top:8px">Per modifiche o annullamenti: <strong>0577 600904</strong></p>
-  </div>
+        function selectSlot(ora, btn) {
+            oraSelezionata = ora;
+            document.querySelectorAll('.slot-btn').forEach(b => {
+                b.classList.remove('border-blue-500', 'bg-blue-50', 'text-blue-600');
+                b.classList.add('border-gray-200');
+            });
+            btn.classList.remove('border-gray-200');
+            btn.classList.add('border-blue-500', 'bg-blue-50', 'text-blue-600');
+            
+            setTimeout(() => {
+                document.getElementById('step-form').classList.remove('hidden');
+                document.getElementById('step-form').scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
 
-  <p class="footer">Tel. 0577 600904 · siena@privatassistenza.it</p>
-</div>
-
-<script>
-const API = 'https://alessia-631113cd.base44.app/api/functions';
-let sede = '';
-let oraSelezionata = '';
-let tipoSelezionato = '';
-
-// Data minima = oggi
-const oggi = new Date().toISOString().split('T')[0];
-const maxData = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-document.getElementById('data').min = oggi;
-document.getElementById('data').max = maxData;
-
-
-function selezionaSede(s, el) {
-  sede = s;
-  document.querySelectorAll('.btn-sede').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('sezione-data').style.display = 'block';
-  document.getElementById('sezione-slots').style.display = 'none';
-  document.getElementById('btn-continua').style.display = 'none';
-  document.getElementById('data').value = '';
-  oraSelezionata = '';
-}
-
-async function caricaSlots() {
-  const data = document.getElementById('data').value;
-  if (!data || !sede) return;
-
-  oraSelezionata = '';
-  document.getElementById('btn-continua').style.display = 'none';
-  document.getElementById('sezione-slots').style.display = 'block';
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('nessuno-slot').style.display = 'none';
-  document.getElementById('slots-container').innerHTML = '';
-
-  try {
-    const r = await fetch(`${API}/getDisponibilita`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sede, data })
-    });
-    const d = await r.json();
-    document.getElementById('loading').style.display = 'none';
-
-    if (!d.slots || d.slots.length === 0) {
-      document.getElementById('nessuno-slot').style.display = 'block';
-      return;
-    }
-
-    const container = document.getElementById('slots-container');
-    d.slots.forEach(s => {
-      const btn = document.createElement('button');
-      btn.className = 'slot';
-      btn.textContent = s;
-      btn.onclick = () => {
-        document.querySelectorAll('.slot').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        oraSelezionata = s;
-        document.getElementById('btn-continua').style.display = 'block';
-      };
-      container.appendChild(btn);
-    });
-  } catch(e) {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('nessuno-slot').textContent = 'Errore di connessione. Riprova.';
-    document.getElementById('nessuno-slot').style.display = 'block';
-  }
-}
-
-function vaiStep2() {
-  const data = document.getElementById('data').value;
-  const [y, m, d] = data.split('-');
-  const dataIt = `${d}/${m}/${y}`;
-  document.getElementById('riepilogo-step2').innerHTML =
-    `📅 <strong>${dataIt}</strong> ore <strong>${oraSelezionata}</strong> · 📍 <strong>${sede}</strong>
-    <span class="modifica" onclick="tornaStep1()">modifica</span>`;
-  document.getElementById('step1').style.display = 'none';
-  document.getElementById('step2').style.display = 'block';
-}
-
-function tornaStep1() {
-  document.getElementById('step1').style.display = 'block';
-  document.getElementById('step2').style.display = 'none';
-}
-
-function selezionaTipo(t, el) {
-  tipoSelezionato = t;
-  document.querySelectorAll('.btn-tipo').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-async function prenota() {
-  const nome = document.getElementById('nome').value.trim();
-  const cognome = document.getElementById('cognome').value.trim();
-  const telefono = document.getElementById('telefono').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const note = document.getElementById('note').value.trim();
-  const data = document.getElementById('data').value;
-
-  if (!nome || !cognome || !telefono || !email || !tipoSelezionato) {
-    const err = document.getElementById('errore');
-    err.textContent = 'Compila tutti i campi obbligatori e seleziona il motivo.';
-    err.style.display = 'block';
-    return;
-  }
-
-  const btn = document.getElementById('btn-prenota');
-  btn.disabled = true;
-  btn.textContent = 'Invio in corso...';
-  document.getElementById('errore').style.display = 'none';
-
-  try {
-    const r = await fetch(`${API}/prenotaAppuntamento`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sede, data, ora: oraSelezionata, tipo: tipoSelezionato, nome, cognome, telefono, email, note })
-    });
-    const d = await r.json();
-    if (d.ok) {
-      const [y, m, g] = data.split('-');
-      const dataIt = `${g}/${m}/${y}`;
-      document.getElementById('step2').style.display = 'none';
-      document.getElementById('successo').style.display = 'block';
-      document.getElementById('riepilogo-successo').innerHTML =
-        `📅 <strong>${dataIt}</strong> ore <strong>${oraSelezionata}</strong><br>
-         📍 Sede <strong>${sede}</strong><br>
-         📋 ${tipoSelezionato}`;
-    } else {
-      const err = document.getElementById('errore');
-      err.textContent = d.error || 'Errore durante la prenotazione. Riprova.';
-      err.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Conferma Appuntamento ✓';
-    }
-  } catch(e) {
-    const err = document.getElementById('errore');
-    err.textContent = 'Errore di connessione. Riprova.';
-    err.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'Conferma Appuntamento ✓';
-  }
-}
-// Pre-seleziona sede da URL
-window.addEventListener("load", function() {
-  const urlSede = new URLSearchParams(window.location.search).get("sede");
-  if (urlSede) {
-    const btnMatch = [...document.querySelectorAll(".btn-sede")].find(b => b.textContent.includes(urlSede));
-    if (btnMatch) selezionaSede(urlSede, btnMatch);
-  }
-});
-</script>
+        async function confermaPrenotazione() {
+            const nome = document.getElementById('form-nome').value.trim();
+            const cognome = document.getElementById('form-cognome').value.trim();
+            const telefono = document.getElementById('form-telefono').value.trim();
+            const email = document.getElementById('form-email').value.trim();
+            const motivazione = document.getElementById('form-motivazione').value.trim();
+            
+            if (!nome || !cognome || !telefono) {
+                alert('Inserisci nome, cognome e telefono');
+                return;
+            }
+            
+            const btn = document.getElementById('btn-conferma');
+            btn.disabled = true;
+            btn.textContent = 'Prenotazione in corso...';
+            
+            try {
+                const resp = await fetch(`${CRM_API}/Appuntamento`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'api_key': CRM_KEY
+                    },
+                    body: JSON.stringify({
+                        data: dataSelezionata,
+                        ora: oraSelezionata,
+                        sede: sedeSelezionata,
+                        tipo_appuntamento: 'Prima visita',
+                        nome: nome,
+                        cognome: cognome,
+                        email_cliente: email,
+                        telefono: telefono,
+                        oggetto: motivazione || 'Appuntamento online',
+                        tipo: 'clienti',
+                        motivazione: motivazione,
+                        stato: 'confermato'
+                    })
+                });
+                
+                if (!resp.ok) throw new Error('Errore API');
+                
+                document.getElementById('step-form').classList.add('hidden');
+                document.getElementById('step-calendario').classList.add('hidden');
+                document.getElementById('step-conferma').classList.remove('hidden');
+                
+                const mesi3 = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+                const d = new Date(dataSelezionata + 'T00:00:00');
+                document.getElementById('riepilogo').innerHTML = `
+                    <p><strong>${nome} ${cognome}</strong></p>
+                    <p class="mt-2">${sedeSelezionata}</p>
+                    <p>${d.getDate()} ${mesi3[d.getMonth()]} alle ${oraSelezionata}</p>
+                    <p class="mt-3 text-sm text-gray-400">Ti contatteremo per confermare l'appuntamento</p>
+                `;
+            } catch (err) {
+                alert('Errore durante la prenotazione: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = 'Conferma prenotazione';
+            }
+        }
+    </script>
 </body>
 </html>
