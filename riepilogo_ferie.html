@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riepilogo Mensile Ferie e Permessi</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f0f4ff; color: #1a237e; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); overflow: hidden; }
+.header { background: linear-gradient(135deg, #1565C0, #0D47A1); color: white; padding: 20px 30px; }
+.header h1 { font-size: 22px; margin-bottom: 5px; }
+.header .subtitle { font-size: 14px; opacity: 0.85; }
+.controls { display: flex; gap: 15px; align-items: center; padding: 15px 30px; background: #f5f7ff; border-bottom: 1px solid #e0e0e0; flex-wrap: wrap; }
+.controls label { font-weight: 600; font-size: 14px; }
+.controls select, .controls button { padding: 8px 16px; border-radius: 8px; border: 1px solid #bbdefb; font-size: 14px; cursor: pointer; }
+.controls select { background: white; }
+.controls button { background: #1565C0; color: white; border: none; font-weight: 600; transition: background 0.2s; }
+.controls button:hover { background: #0D47A1; }
+.loading { text-align: center; padding: 40px; color: #888; font-size: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead { background: #e8eaf6; position: sticky; top: 0; }
+th { padding: 12px 8px; text-align: center; font-weight: 700; color: #283593; border-bottom: 2px solid #c5cae9; white-space: nowrap; }
+th:first-child { text-align: left; padding-left: 20px; }
+td { padding: 8px; text-align: center; border-bottom: 1px solid #eee; }
+td:first-child { text-align: left; padding-left: 20px; font-weight: 600; }
+tr:hover { background: #f5f7ff; }
+.ferie-cell { background: #fff3e0; font-weight: 700; }
+.perm-cell { background: #e8f5e9; font-weight: 700; }
+.zero { color: #ccc; }
+.footer { padding: 15px 30px; background: #f5f7ff; font-size: 12px; color: #666; text-align: center; }
+.print-btn { background: #4CAF50 !important; }
+@media print {
+  .controls, .print-btn { display: none; }
+  .container { box-shadow: none; }
+  body { background: white; padding: 0; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Riepilogo Mensile Ferie e Permessi</h1>
+    <div class="subtitle">PrivatAssistenza — Cooperativa Sociale Il Sostegno Siena</div>
+  </div>
+
+  <div class="controls">
+    <label>Mese:</label>
+    <select id="mese">
+      <option value="1">Gennaio</option>
+      <option value="2">Febbraio</option>
+      <option value="3">Marzo</option>
+      <option value="4">Aprile</option>
+      <option value="5">Maggio</option>
+      <option value="6">Giugno</option>
+      <option value="7" selected>Luglio</option>
+      <option value="8">Agosto</option>
+      <option value="9">Settembre</option>
+      <option value="10">Ottobre</option>
+      <option value="11">Novembre</option>
+      <option value="12">Dicembre</option>
+    </select>
+    <label>Anno:</label>
+    <select id="anno">
+      <option value="2026" selected>2026</option>
+      <option value="2025">2025</option>
+    </select>
+    <button onclick="carica()">Aggiorna</button>
+    <button class="print-btn" onclick="window.print()">Stampa PDF</button>
+  </div>
+
+  <div id="content">
+    <div class="loading">Caricamento dati...</div>
+  </div>
+
+  <div class="footer">
+    Dati estratti dal CRM PrivatAssistenza — generato automaticamente
+  </div>
+</div>
+
+<script>
+const API_URL = "https://alessia-631113cd.base44.app/api/functions/getRiepilogoMensileFerie";
+const NOMI_MESI = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+
+async function carica() {
+  const mese = document.getElementById("mese").value;
+  const anno = document.getElementById("anno").value;
+  const content = document.getElementById("content");
+  content.innerHTML = '<div class="loading">Caricamento dati...</div>';
+
+  try {
+    const res = await fetch(`${API_URL}?mese=${mese}&anno=${anno}`);
+    if (!res.ok) throw new Error("Errore API: " + res.status);
+    const data = await res.json();
+
+    let html = `<div style="padding: 15px 30px; font-size: 18px; font-weight: 700; color: #1565C0;">${NOMI_MESI[parseInt(mese)-1]} ${anno}</div>`;
+    
+    if (data.riepilogo.length === 0) {
+      html += '<div class="loading">Nessun dato disponibile</div>';
+      content.innerHTML = html;
+      return;
+    }
+
+    html += `<table><thead><tr>`;
+    html += `<th>Dipendente</th>`;
+    html += `<th>GG</th><th>Ore</th>`;
+    html += `<th>Ferie</th><th>Perm.</th><th>P.Retrib.</th>`;
+    html += `<th>Mal.</th><th>Matern.</th><th>Infort.</th>`;
+    html += `<th>Donaz.</th><th>Studio</th><th>Congedo</th><th>Altro</th>`;
+    html += `</tr></thead><tbody>`;
+
+    // Mostra solo chi ha timbrature o assenze nel mese
+    const filtrati = data.riepilogo.filter(r => 
+      r.gg > 0 || r.ferie > 0 || r.permessi > 0 || r.permRetribuito > 0 || 
+      r.malattia > 0 || r.maternita > 0 || r.infortunio > 0 || 
+      r.donazione > 0 || r.studio > 0 || r.congedo > 0 || r.altro > 0
+    );
+
+    if (filtrati.length === 0) {
+      html += `<tr><td colspan="13" style="padding: 30px; color: #888;">Nessun dato per ${NOMI_MESI[parseInt(mese)-1]} ${anno}</td></tr>`;
+    } else {
+      for (const r of filtrati) {
+        const z = (v) => v > 0 ? v : `<span class="zero">—</span>`;
+        html += `<tr>`;
+        html += `<td>${r.dipendente}</td>`;
+        html += `<td>${z(r.gg)}</td><td>${z(r.ore)}</td>`;
+        html += `<td class="ferie-cell">${z(r.ferie)}</td>`;
+        html += `<td class="perm-cell">${z(r.permessi)}</td>`;
+        html += `<td>${z(r.permRetribuito)}</td>`;
+        html += `<td>${z(r.malattia)}</td><td>${z(r.maternita)}</td><td>${z(r.infortunio)}</td>`;
+        html += `<td>${z(r.donazione)}</td><td>${z(r.studio)}</td><td>${z(r.congedo)}</td><td>${z(r.altro)}</td>`;
+        html += `</tr>`;
+      }
+    }
+
+    html += `</tbody></table>`;
+    content.innerHTML = html;
+  } catch (e) {
+    content.innerHTML = `<div class="loading" style="color: #c62828;">Errore: ${e.message}</div>`;
+  }
+}
+
+// Auto-load with current month
+const now = new Date();
+document.getElementById("mese").value = String(now.getMonth() + 1);
+document.getElementById("anno").value = String(now.getFullYear());
+carica();
+</script>
+</body>
+</html>
