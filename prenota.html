@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrivatAssistenza - Prenota Appuntamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .slot-btn { transition: all 0.15s; }
+        .slot-btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-blue-50 to-white min-h-screen">
+    <div class="max-w-md mx-auto p-4">
+        <!-- Header -->
+        <div class="text-center mb-6 mt-4">
+            <img src="https://media.base44.com/images/public/6a0b208e3015e59c6287c091/8dd2c6afc_logo.png" alt="Logo" class="w-20 h-20 mx-auto mb-3 rounded-xl">
+            <h1 class="text-2xl font-bold text-blue-900">PrivatAssistenza</h1>
+            <p class="text-gray-500 mt-1">Prenota il tuo appuntamento</p>
+        </div>
+
+        <!-- Step 1: Sede -->
+        <div id="step-sede" class="bg-white rounded-2xl shadow-lg p-6 mb-4">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Scegli la sede</h2>
+            <div class="space-y-3">
+                <button onclick="selectSede('Siena')" class="w-full p-4 text-left rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition">
+                    <span class="text-lg font-medium">Siena</span>
+                    <span class="text-sm text-gray-500 block">Viale Goffredo Mameli 100</span>
+                </button>
+                <button onclick="selectSede('Poggibonsi')" class="w-full p-4 text-left rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition">
+                    <span class="text-lg font-medium">Poggibonsi</span>
+                    <span class="text-sm text-gray-500 block">Via Borgaccio 61</span>
+                </button>
+                <button onclick="selectSede('Follonica')" class="w-full p-4 text-left rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition">
+                    <span class="text-lg font-medium">Follonica</span>
+                    <span class="text-sm text-gray-500 block">Via Bicocchi 91</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Calendario -->
+        <div id="step-calendario" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-4">
+            <div class="flex items-center justify-between mb-4">
+                <button onclick="prevWeek()" class="p-2 rounded-full hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h2 id="week-label" class="text-lg font-semibold text-gray-800 text-center"></h2>
+                <button onclick="nextWeek()" class="p-2 rounded-full hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+            
+            <div id="giorni-grid" class="grid grid-cols-7 gap-1 mb-4"></div>
+            
+            <div id="slot-container" class="mt-4">
+                <p class="text-center text-gray-400 py-8">Seleziona un giorno per vedere gli orari</p>
+            </div>
+        </div>
+
+        <!-- Step 3: Form dati -->
+        <div id="step-form" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-4">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">I tuoi dati</h2>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-sm text-gray-600">Nome *</label>
+                    <input id="form-nome" type="text" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600">Cognome *</label>
+                    <input id="form-cognome" type="text" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600">Telefono *</label>
+                    <input id="form-telefono" type="tel" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600">Email</label>
+                    <input id="form-email" type="email" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600">Motivo dell'appuntamento</label>
+                    <textarea id="form-motivazione" rows="3" class="w-full p-3 border border-gray-300 rounded-xl focus:border-blue-500 outline-none" placeholder="Es: Consulenza assistenza domiciliare, informazione badante..."></textarea>
+                </div>
+            </div>
+            <button id="btn-conferma" onclick="confermaPrenotazione()" class="w-full mt-5 p-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition">
+                Conferma prenotazione
+            </button>
+        </div>
+
+        <!-- Step 4: Conferma -->
+        <div id="step-conferma" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-4 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Prenotazione confermata!</h2>
+            <div id="riepilogo" class="text-gray-600 mt-3"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://alessia-631113cd.base44.app/api/functions';
+        const CRM_API = 'https://app.base44.com/api/apps/6a0b208e3015e59c6287c091/entities';
+        const CRM_KEY = '8b0dc4f967f94184b29b562c8caacf06';
+        
+        let sedeSelezionata = '';
+        let dataSelezionata = '';
+        let oraSelezionata = '';
+        let settimanaCorrente = [];
+
+        function formatDate(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const g = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${g}`;
+        }
+
+        function getMonday(d) {
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff));
+        }
+
+        function selectSede(sede) {
+            sedeSelezionata = sede;
+            document.getElementById('step-sede').classList.add('hidden');
+            document.getElementById('step-calendario').classList.remove('hidden');
+            const today = new Date();
+            settimanaCorrente = getMonday(today);
+            renderWeek();
+        }
+
+        function renderWeek() {
+            const giorni = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+            const mesi = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+            
+            const lunedi = new Date(settimanaCorrente);
+            const domenica = new Date(lunedi);
+            domenica.setDate(lunedi.getDate() + 6);
+            
+            document.getElementById('week-label').textContent = 
+                `${lunedi.getDate()} ${mesi[lunedi.getMonth()]} - ${domenica.getDate()} ${mesi[domenica.getMonth()]}`;
+            
+            const grid = document.getElementById('giorni-grid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(lunedi);
+                d.setDate(lunedi.getDate() + i);
+                const dataStr = formatDate(d);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const isPast = d < today;
+                const isToday = formatDate(d) === formatDate(today);
+                
+                const cella = document.createElement('button');
+                cella.className = `p-2 rounded-lg text-center transition ${isPast ? 'opacity-30 pointer-events-none' : 'hover:bg-blue-100'} ${isToday ? 'ring-2 ring-blue-400' : ''}`;
+                cella.innerHTML = `
+                    <div class="text-xs text-gray-400">${giorni[i]}</div>
+                    <div class="text-sm font-semibold mt-1">${d.getDate()}</div>
+                `;
+                cella.onclick = () => selectDay(dataStr, d);
+                grid.appendChild(cella);
+            }
+            
+            document.getElementById('slot-container').innerHTML = 
+                '<p class="text-center text-gray-400 py-8">Seleziona un giorno per vedere gli orari</p>';
+        }
+
+        function prevWeek() {
+            const d = new Date(settimanaCorrente);
+            d.setDate(d.getDate() - 7);
+            settimanaCorrente = d;
+            renderWeek();
+        }
+
+        function nextWeek() {
+            const d = new Date(settimanaCorrente);
+            d.setDate(d.getDate() + 7);
+            settimanaCorrente = d;
+            renderWeek();
+        }
+
+        async function selectDay(dataStr, dateObj) {
+            dataSelezionata = dataStr;
+            const container = document.getElementById('slot-container');
+            container.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-200 border-t-blue-600"></div></div>';
+            
+            try {
+                const resp = await fetch(`${API_URL}/getDisponibilita`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sede: sedeSelezionata, data: dataStr })
+                });
+                const result = await resp.json();
+                
+                if (!result.ok || !result.slots || result.slots.length === 0) {
+                    container.innerHTML = '<p class="text-center text-gray-400 py-8">Nessun orario disponibile per questo giorno</p>';
+                    return;
+                }
+                
+                const mesi3 = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+                const giornoNome = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'][dateObj.getDay()];
+                container.innerHTML = `<p class="text-sm text-gray-500 mb-3">${giornoNome} ${dateObj.getDate()} ${mesi3[dateObj.getMonth()]} - ${sedeSelezionata}</p>`;
+                
+                const slotsDiv = document.createElement('div');
+                slotsDiv.className = 'grid grid-cols-4 gap-2';
+                
+                for (const slot of result.slots) {
+                    const btn = document.createElement('button');
+                    btn.className = 'slot-btn p-3 border-2 border-gray-200 rounded-xl text-sm font-medium hover:border-blue-500 hover:bg-blue-50';
+                    btn.textContent = slot;
+                    btn.onclick = () => selectSlot(slot, btn);
+                    slotsDiv.appendChild(btn);
+                }
+                container.appendChild(slotsDiv);
+            } catch (err) {
+                container.innerHTML = '<p class="text-center text-red-400 py-8">Errore di caricamento. Riprova.</p>';
+            }
+        }
+
+        function selectSlot(ora, btn) {
+            oraSelezionata = ora;
+            document.querySelectorAll('.slot-btn').forEach(b => {
+                b.classList.remove('border-blue-500', 'bg-blue-50', 'text-blue-600');
+                b.classList.add('border-gray-200');
+            });
+            btn.classList.remove('border-gray-200');
+            btn.classList.add('border-blue-500', 'bg-blue-50', 'text-blue-600');
+            
+            setTimeout(() => {
+                document.getElementById('step-form').classList.remove('hidden');
+                document.getElementById('step-form').scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+        async function confermaPrenotazione() {
+            const nome = document.getElementById('form-nome').value.trim();
+            const cognome = document.getElementById('form-cognome').value.trim();
+            const telefono = document.getElementById('form-telefono').value.trim();
+            const email = document.getElementById('form-email').value.trim();
+            const motivazione = document.getElementById('form-motivazione').value.trim();
+            
+            if (!nome || !cognome || !telefono) {
+                alert('Inserisci nome, cognome e telefono');
+                return;
+            }
+            
+            const btn = document.getElementById('btn-conferma');
+            btn.disabled = true;
+            btn.textContent = 'Prenotazione in corso...';
+            
+            try {
+                const resp = await fetch(`${CRM_API}/Appuntamento`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'api_key': CRM_KEY
+                    },
+                    body: JSON.stringify({
+                        data: dataSelezionata,
+                        ora: oraSelezionata,
+                        sede: sedeSelezionata,
+                        tipo_appuntamento: 'Prima visita',
+                        nome: nome,
+                        cognome: cognome,
+                        email_cliente: email,
+                        telefono: telefono,
+                        oggetto: motivazione || 'Appuntamento online',
+                        tipo: 'clienti',
+                        motivazione: motivazione,
+                        stato: 'confermato'
+                    })
+                });
+                
+                if (!resp.ok) throw new Error('Errore API');
+                
+                document.getElementById('step-form').classList.add('hidden');
+                document.getElementById('step-calendario').classList.add('hidden');
+                document.getElementById('step-conferma').classList.remove('hidden');
+                
+                const mesi3 = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+                const d = new Date(dataSelezionata + 'T00:00:00');
+                document.getElementById('riepilogo').innerHTML = `
+                    <p><strong>${nome} ${cognome}</strong></p>
+                    <p class="mt-2">${sedeSelezionata}</p>
+                    <p>${d.getDate()} ${mesi3[d.getMonth()]} alle ${oraSelezionata}</p>
+                    <p class="mt-3 text-sm text-gray-400">Ti contatteremo per confermare l'appuntamento</p>
+                `;
+            } catch (err) {
+                alert('Errore durante la prenotazione: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = 'Conferma prenotazione';
+            }
+        }
+    </script>
+</body>
+</html>
